@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getMarkets } from '../lib/coingecko'
 import { formatUSD, formatPercent } from '../utils/formatters'
 
 const FLOATING_COINS = [
@@ -10,6 +9,15 @@ const FLOATING_COINS = [
   { id: 'ripple', symbol: 'XRP', color: '#8A919E', img: 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png' },
   { id: 'binancecoin', symbol: 'BNB', color: '#F3BA2F', img: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png' },
   { id: 'usd-coin', symbol: 'USDC', color: '#2775CA', img: 'https://assets.coingecko.com/coins/images/6319/large/usdc.png' },
+]
+
+const FALLBACK_COINS = [
+  { id: 'bitcoin',     name: 'Bitcoin',  symbol: 'btc',  image: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png',          current_price: 72000,   price_change_percentage_24h: 2.14 },
+  { id: 'ethereum',    name: 'Ethereum', symbol: 'eth',  image: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',       current_price: 2200,    price_change_percentage_24h: -1.20 },
+  { id: 'tether',      name: 'Tether',   symbol: 'usdt', image: null,                                                                     current_price: 1.00,    price_change_percentage_24h: 0.01 },
+  { id: 'ripple',      name: 'XRP',      symbol: 'xrp',  image: 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png', current_price: 1.35, price_change_percentage_24h: 3.50 },
+  { id: 'binancecoin', name: 'BNB',      symbol: 'bnb',  image: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png',   current_price: 605,     price_change_percentage_24h: 1.80 },
+  { id: 'solana',      name: 'Solana',   symbol: 'sol',  image: 'https://assets.coingecko.com/coins/images/4128/large/solana.png',        current_price: 178,     price_change_percentage_24h: -2.30 },
 ]
 
 export default function LandingPage() {
@@ -22,10 +30,18 @@ export default function LandingPage() {
     let cancelled = false
     async function load() {
       try {
-        const data = await getMarkets(1, 6)
+        const res = await fetch(
+          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=6&page=1'
+        )
+        if (!res.ok) throw new Error(`CoinGecko responded ${res.status}`)
+        const data = await res.json()
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error('CoinGecko returned no data')
+        }
         if (!cancelled) setCoins(data)
       } catch (err) {
-        console.error('Failed to load prices', err)
+        console.error('Failed to load prices, using fallback data', err)
+        if (!cancelled) setCoins(FALLBACK_COINS)
       } finally {
         if (!cancelled) setLoadingCoins(false)
       }
@@ -43,7 +59,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-black font-sans">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-2 no-underline">
@@ -70,6 +86,9 @@ export default function LandingPage() {
           </div>
         </div>
       </nav>
+
+      {/* Spacer to offset fixed navbar (h-16 = 64px) */}
+      <div aria-hidden="true" className="h-16" />
 
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 sm:pt-24 sm:pb-32">
@@ -155,7 +174,16 @@ export default function LandingPage() {
                       }}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <img src={coin.image} alt={coin.symbol} className="w-10 h-10 rounded-full flex-shrink-0" />
+                        {coin.image ? (
+                          <img src={coin.image} alt={coin.symbol} className="w-10 h-10 rounded-full flex-shrink-0" />
+                        ) : (
+                          <div
+                            className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white"
+                            style={{ backgroundColor: '#26A17B' }}
+                          >
+                            {(coin.symbol || '').slice(0, 3).toUpperCase()}
+                          </div>
+                        )}
                         <div className="min-w-0">
                           <div className="text-white font-semibold text-sm truncate">{coin.name}</div>
                           <div className="text-xs uppercase" style={{ color: '#8A919E' }}>{coin.symbol}</div>

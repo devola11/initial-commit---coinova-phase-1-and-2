@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import { useHoldings } from '../hooks/useHoldings'
-import { formatUSD, formatPercent, formatCrypto } from '../utils/formatters'
+import { formatUSD, formatCrypto } from '../utils/formatters'
 
-// Known CoinGecko image IDs used as a fallback when a holdings row in Supabase
-// has no cached image URL. The URL pattern is stable on CoinGecko's CDN.
+// Known CoinGecko image IDs. BNB and LINK 404 on the naive {symbol}.png
+// pattern because CoinGecko serves them under different filenames — so the
+// <CoinLogo> component catches the image error and falls back to a colored
+// initials circle for those.
 const COIN_IMAGE_IDS = {
   bitcoin: 1,
   ethereum: 279,
@@ -11,11 +14,58 @@ const COIN_IMAGE_IDS = {
   chainlink: 877,
 }
 
-function coinLogoUrl(coinId, stored) {
-  if (stored) return stored
+// Deterministic color per symbol so the fallback circle stays stable across
+// renders and is distinguishable at a glance.
+const FALLBACK_COLORS = [
+  '#f7931a', '#627eea', '#14f195', '#f3ba2f', '#2a5ada',
+  '#e84142', '#8247e5', '#0033ad', '#345d9d', '#26a17b',
+]
+
+function colorForSymbol(sym) {
+  const s = String(sym || '')
+  let hash = 0
+  for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) | 0
+  return FALLBACK_COLORS[Math.abs(hash) % FALLBACK_COLORS.length]
+}
+
+function initialsFor(symbol, name) {
+  const src = symbol || name || '?'
+  return String(src).slice(0, 2).toUpperCase()
+}
+
+function CoinLogo({ coinId, symbol, name, storedImage }) {
+  const [errored, setErrored] = useState(false)
   const imgId = COIN_IMAGE_IDS[coinId]
-  if (!imgId) return null
-  return `https://assets.coingecko.com/coins/images/${imgId}/small/${coinId}.png`
+  const sym = (symbol || '').toLowerCase()
+  const primarySrc =
+    storedImage ||
+    (imgId ? `https://assets.coingecko.com/coins/images/${imgId}/small/${sym}.png` : null)
+
+  if (!primarySrc || errored) {
+    return (
+      <div
+        className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] font-bold"
+        style={{ backgroundColor: colorForSymbol(sym || name) }}
+      >
+        {initialsFor(symbol, name)}
+      </div>
+    )
+  }
+
+  return (
+    <img
+      src={primarySrc}
+      alt={symbol}
+      onError={() => setErrored(true)}
+      className="w-8 h-8 rounded-full flex-shrink-0"
+    />
+  )
+}
+
+function format2dp(value) {
+  if (value == null || Number.isNaN(value)) return '0.00%'
+  const sign = value >= 0 ? '+' : ''
+  return `${sign}${Number(value).toFixed(2)}%`
 }
 
 export default function HoldingsTable({ onBuy, onSell }) {
@@ -63,75 +113,79 @@ export default function HoldingsTable({ onBuy, onSell }) {
           </thead>
           <tbody>
             {holdings.map((h) => {
-              const logo = coinLogoUrl(h.coin_id, h.image)
+              const coinName = h.coin_name || h.name
+              const coinSymbol = h.coin_symbol || h.symbol
               return (
-              <tr
-                key={h.id}
-                className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors"
-              >
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-3">
-                    {logo && (
-                      <img
-                        src={logo}
-                        alt={h.symbol}
-                        className="w-8 h-8 rounded-full flex-shrink-0"
+                <tr
+                  key={h.id}
+                  className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors"
+                >
+                  <td className="py-4 px-4">
+                    <div className="flex items-center gap-3">
+                      <CoinLogo
+                        coinId={h.coin_id}
+                        symbol={coinSymbol}
+                        name={coinName}
+                        storedImage={h.image}
                       />
-                    )}
-                    <div>
-                      <div className="text-text-primary font-semibold">{h.name}</div>
-                      <div className="text-text-muted text-xs uppercase">{h.symbol}</div>
+                      <div>
+                        <div className="text-text-primary font-semibold">
+                          {coinName}
+                        </div>
+                        <div className="text-text-muted text-xs uppercase">
+                          {coinSymbol}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td className="py-4 px-4 text-text-primary">
-                  {formatUSD(h.currentPrice)}
-                </td>
-                <td
-                  className={`py-4 px-4 font-medium ${
-                    h.change24h >= 0 ? 'text-profit' : 'text-loss'
-                  }`}
-                >
-                  {formatPercent(h.change24h)}
-                </td>
-                <td className="py-4 px-4 text-text-primary">
-                  {formatCrypto(h.quantity)}
-                </td>
-                <td className="py-4 px-4 text-text-primary font-medium">
-                  {formatUSD(h.currentValue)}
-                </td>
-                <td
-                  className={`py-4 px-4 font-medium ${
-                    h.pnl >= 0 ? 'text-profit' : 'text-loss'
-                  }`}
-                >
-                  <div>{formatUSD(h.pnl)}</div>
-                  <div className="text-xs">{formatPercent(h.pnlPercent)}</div>
-                </td>
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-2 justify-end">
-                    <button
-                      onClick={() =>
-                        onBuy?.({
-                          id: h.coin_id,
-                          symbol: h.symbol,
-                          name: h.name,
-                          image: h.image,
-                        })
-                      }
-                      className="px-3 py-1.5 rounded-lg bg-primary-blue hover:bg-primary-blue-hover text-white text-xs font-semibold border-none cursor-pointer transition-colors"
-                    >
-                      Buy
-                    </button>
-                    <button
-                      onClick={() => onSell?.(h)}
-                      className="px-3 py-1.5 rounded-lg bg-transparent text-text-primary border border-card-border hover:border-loss hover:text-loss text-xs font-semibold cursor-pointer transition-colors"
-                    >
-                      Sell
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                  <td className="py-4 px-4 text-text-primary">
+                    {formatUSD(h.currentPrice)}
+                  </td>
+                  <td
+                    className={`py-4 px-4 font-medium ${
+                      h.change24h >= 0 ? 'text-profit' : 'text-loss'
+                    }`}
+                  >
+                    {format2dp(h.change24h)}
+                  </td>
+                  <td className="py-4 px-4 text-text-primary">
+                    {formatCrypto(h.quantity)}
+                  </td>
+                  <td className="py-4 px-4 text-text-primary font-medium">
+                    {formatUSD(h.currentValue)}
+                  </td>
+                  <td
+                    className={`py-4 px-4 font-medium ${
+                      h.pnl >= 0 ? 'text-profit' : 'text-loss'
+                    }`}
+                  >
+                    <div>{formatUSD(h.pnl)}</div>
+                    <div className="text-xs">{format2dp(h.pnlPercent)}</div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="flex items-center gap-2 justify-end">
+                      <button
+                        onClick={() =>
+                          onBuy?.({
+                            id: h.coin_id,
+                            symbol: coinSymbol,
+                            name: coinName,
+                            image: h.image,
+                          })
+                        }
+                        className="px-3 py-1.5 rounded-lg bg-primary-blue hover:bg-primary-blue-hover text-white text-xs font-semibold border-none cursor-pointer transition-colors"
+                      >
+                        Buy
+                      </button>
+                      <button
+                        onClick={() => onSell?.(h)}
+                        className="px-3 py-1.5 rounded-lg bg-transparent text-text-primary border border-card-border hover:border-loss hover:text-loss text-xs font-semibold cursor-pointer transition-colors"
+                      >
+                        Sell
+                      </button>
+                    </div>
+                  </td>
+                </tr>
               )
             })}
           </tbody>

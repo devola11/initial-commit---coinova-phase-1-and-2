@@ -11,6 +11,14 @@ import SavingsGoal from '../components/SavingsGoal'
 import { useHoldings } from '../hooks/useHoldings'
 import { formatUSD, formatPercent } from '../utils/formatters'
 
+// formatUSD stretches to 6 decimals for sub-$1 values, which looked noisy on
+// the 24h-change stat (e.g. -$53.96386). Force exactly 2 dp here.
+function formatUSD2dp(value) {
+  const n = Number(value || 0)
+  const sign = n < 0 ? '-' : ''
+  return `${sign}$${Math.abs(n).toFixed(2)}`
+}
+
 export default function Dashboard() {
   const { holdings, totalValue, totalPnl, totalPnlPercent } = useHoldings()
   const [buyCoin, setBuyCoin] = useState(null)
@@ -45,7 +53,7 @@ export default function Dashboard() {
         />
         <StatCard
           label="24h Change"
-          value={formatUSD(change24h)}
+          value={formatUSD2dp(change24h)}
           subtext={formatPercent(change24hPct)}
           tone={change24h >= 0 ? 'positive' : 'negative'}
         />

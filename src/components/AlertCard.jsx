@@ -1,7 +1,24 @@
 import { supabase } from '../lib/supabase'
 import { formatUSD } from '../utils/formatters'
 
+const COIN_IMAGE_IDS = {
+  bitcoin: 1,
+  ethereum: 279,
+  solana: 4128,
+  binancecoin: 825,
+  chainlink: 877,
+}
+
+function coinLogoUrl(coinId, stored) {
+  if (stored) return stored
+  const imgId = COIN_IMAGE_IDS[coinId]
+  if (!imgId) return null
+  return `https://assets.coingecko.com/coins/images/${imgId}/small/${coinId}.png`
+}
+
 export default function AlertCard({ alert, onChange }) {
+  const logo = coinLogoUrl(alert.coin_id, alert.image)
+  const targetPrice = alert.target_price_usd ?? alert.target_price
   const triggered = !!alert.triggered_at
   const active = !!alert.is_active
 
@@ -35,9 +52,9 @@ export default function AlertCard({ alert, onChange }) {
   return (
     <div className="bg-card-bg border border-card-border rounded-xl p-5 flex items-center justify-between gap-4 flex-wrap">
       <div className="flex items-center gap-3 min-w-0">
-        {alert.image && (
+        {logo && (
           <img
-            src={alert.image}
+            src={logo}
             alt={alert.symbol}
             className="w-10 h-10 rounded-full"
           />
@@ -51,7 +68,7 @@ export default function AlertCard({ alert, onChange }) {
             Notify when price{' '}
             <span className="text-text-primary font-medium">{alert.condition}</span>{' '}
             <span className="text-text-primary font-medium">
-              {formatUSD(alert.target_price)}
+              {formatUSD(targetPrice)}
             </span>
           </div>
         </div>

@@ -86,6 +86,11 @@ export default function Settings() {
           className="w-full bg-root-bg border border-card-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary-blue mb-4"
         >
           <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+          <option value="NGN">NGN (₦)</option>
+          <option value="BTC">BTC (₿)</option>
+          <option value="ETH">ETH (Ξ)</option>
         </select>
         <div className="flex items-center gap-3">
           <button

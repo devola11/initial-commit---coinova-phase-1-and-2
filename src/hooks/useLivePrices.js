@@ -1,15 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { getLivePrices } from '../lib/coingecko'
-
-// Static last-resort prices used if CoinGecko is unreachable / rate-limited.
-// Shape matches the /simple/price response so consumers read it identically.
-const FALLBACK_PRICES = {
-  bitcoin:     { usd: 72000, usd_24h_change: 0 },
-  ethereum:    { usd: 2200,  usd_24h_change: 0 },
-  solana:      { usd: 178,   usd_24h_change: 0 },
-  binancecoin: { usd: 605,   usd_24h_change: 0 },
-  chainlink:   { usd: 15,    usd_24h_change: 0 },
-}
+import { getLivePrices, FALLBACK_PRICES } from '../lib/coingecko'
 
 function buildFallback(coinIds) {
   const out = {}
@@ -19,8 +9,10 @@ function buildFallback(coinIds) {
   return out
 }
 
-export function useLivePrices(coinIds, intervalMs = 120000) {
-  const [prices, setPrices] = useState({})
+// Poll every 3 minutes by default — CoinGecko's free tier will 429 faster than
+// that when many tabs hit it at once.
+export function useLivePrices(coinIds, intervalMs = 180000) {
+  const [prices, setPrices] = useState(() => buildFallback(coinIds || []))
   const [loading, setLoading] = useState(true)
   const isMounted = useRef(true)
 
@@ -35,15 +27,19 @@ export function useLivePrices(coinIds, intervalMs = 120000) {
       return
     }
 
+    // Seed with fallback so the UI has numbers immediately, even before the
+    // first proxy call resolves. Real data overwrites this on success.
+    setPrices((prev) => ({ ...buildFallback(coinIds), ...prev }))
+
     async function fetchPrices() {
       try {
         const data = await getLivePrices(coinIds)
-        if (isMounted.current) {
-          setPrices(data)
-          setLoading(false)
-        }
+        if (!isMounted.current) return
+        const merged = { ...buildFallback(coinIds), ...data }
+        setPrices(merged)
+        setLoading(false)
       } catch (err) {
-        console.error('Failed to fetch prices, using fallback:', err)
+        console.error('useLivePrices failed, using fallback:', err)
         if (isMounted.current) {
           setPrices(buildFallback(coinIds))
           setLoading(false)

@@ -1,6 +1,23 @@
 import { useHoldings } from '../hooks/useHoldings'
 import { formatUSD, formatPercent, formatCrypto } from '../utils/formatters'
 
+// Known CoinGecko image IDs used as a fallback when a holdings row in Supabase
+// has no cached image URL. The URL pattern is stable on CoinGecko's CDN.
+const COIN_IMAGE_IDS = {
+  bitcoin: 1,
+  ethereum: 279,
+  solana: 4128,
+  binancecoin: 825,
+  chainlink: 877,
+}
+
+function coinLogoUrl(coinId, stored) {
+  if (stored) return stored
+  const imgId = COIN_IMAGE_IDS[coinId]
+  if (!imgId) return null
+  return `https://assets.coingecko.com/coins/images/${imgId}/small/${coinId}.png`
+}
+
 export default function HoldingsTable({ onBuy, onSell }) {
   const { holdings, loading } = useHoldings()
 
@@ -45,16 +62,18 @@ export default function HoldingsTable({ onBuy, onSell }) {
             </tr>
           </thead>
           <tbody>
-            {holdings.map((h) => (
+            {holdings.map((h) => {
+              const logo = coinLogoUrl(h.coin_id, h.image)
+              return (
               <tr
                 key={h.id}
                 className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors"
               >
                 <td className="py-4 px-4">
                   <div className="flex items-center gap-3">
-                    {h.image && (
+                    {logo && (
                       <img
-                        src={h.image}
+                        src={logo}
                         alt={h.symbol}
                         className="w-8 h-8 rounded-full flex-shrink-0"
                       />
@@ -113,7 +132,8 @@ export default function HoldingsTable({ onBuy, onSell }) {
                   </div>
                 </td>
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </div>

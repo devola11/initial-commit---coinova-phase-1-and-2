@@ -88,7 +88,6 @@ export default function Settings() {
           <option value="USD">USD ($)</option>
           <option value="EUR">EUR (€)</option>
           <option value="GBP">GBP (£)</option>
-          <option value="NGN">NGN (₦)</option>
           <option value="BTC">BTC (₿)</option>
           <option value="ETH">ETH (Ξ)</option>
         </select>

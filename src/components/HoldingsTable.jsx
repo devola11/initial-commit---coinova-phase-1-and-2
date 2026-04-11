@@ -1,18 +1,7 @@
 import { useState } from 'react'
 import { useHoldings } from '../hooks/useHoldings'
 import { formatUSD, formatCrypto } from '../utils/formatters'
-
-// Known CoinGecko image IDs. BNB and LINK 404 on the naive {symbol}.png
-// pattern because CoinGecko serves them under different filenames — so the
-// <CoinLogo> component catches the image error and falls back to a colored
-// initials circle for those.
-const COIN_IMAGE_IDS = {
-  bitcoin: 1,
-  ethereum: 279,
-  solana: 4128,
-  binancecoin: 825,
-  chainlink: 877,
-}
+import { getCoinImageUrl } from '../utils/coinImages'
 
 // Deterministic color per symbol so the fallback circle stays stable across
 // renders and is distinguishable at a glance.
@@ -35,11 +24,8 @@ function initialsFor(symbol, name) {
 
 function CoinLogo({ coinId, symbol, name, storedImage }) {
   const [errored, setErrored] = useState(false)
-  const imgId = COIN_IMAGE_IDS[coinId]
+  const primarySrc = getCoinImageUrl(coinId, storedImage)
   const sym = (symbol || '').toLowerCase()
-  const primarySrc =
-    storedImage ||
-    (imgId ? `https://assets.coingecko.com/coins/images/${imgId}/small/${sym}.png` : null)
 
   if (!primarySrc || errored) {
     return (
@@ -57,7 +43,7 @@ function CoinLogo({ coinId, symbol, name, storedImage }) {
       src={primarySrc}
       alt={symbol}
       onError={() => setErrored(true)}
-      className="w-8 h-8 rounded-full flex-shrink-0"
+      className="w-8 h-8 rounded-full flex-shrink-0 bg-white/5"
     />
   )
 }

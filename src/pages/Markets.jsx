@@ -1,8 +1,29 @@
 import { useEffect, useState } from 'react'
 import { getTopCoins } from '../lib/coingecko'
 import { formatUSD, formatPercent, formatNumber } from '../utils/formatters'
+import { getCoinImageUrl } from '../utils/coinImages'
 import CoinSearch from '../components/CoinSearch'
 import BuyModal from '../components/BuyModal'
+
+function MarketLogo({ coin }) {
+  const [errored, setErrored] = useState(false)
+  const src = getCoinImageUrl(coin.id, coin.image)
+  if (!src || errored) {
+    return (
+      <div className="w-8 h-8 rounded-full bg-card-border flex items-center justify-center text-[10px] font-bold text-text-primary uppercase">
+        {(coin.symbol || '').slice(0, 3)}
+      </div>
+    )
+  }
+  return (
+    <img
+      src={src}
+      alt={coin.symbol}
+      onError={() => setErrored(true)}
+      className="w-8 h-8 rounded-full bg-white/5"
+    />
+  )
+}
 
 // Top-10 fallback used when CoinGecko is blocked / rate-limited.
 // Shape matches /coins/markets so the render code stays identical.
@@ -100,17 +121,7 @@ export default function Markets() {
                       </td>
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-3">
-                          {coin.image ? (
-                            <img
-                              src={coin.image}
-                              alt={coin.symbol}
-                              className="w-8 h-8 rounded-full"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-card-border flex items-center justify-center text-[10px] font-bold text-text-primary uppercase">
-                              {(coin.symbol || '').slice(0, 3)}
-                            </div>
-                          )}
+                          <MarketLogo coin={coin} />
                           <div>
                             <div className="text-text-primary font-semibold">
                               {coin.name}

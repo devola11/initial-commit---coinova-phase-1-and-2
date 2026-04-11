@@ -1,24 +1,13 @@
+import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { formatUSD } from '../utils/formatters'
-
-const COIN_IMAGE_IDS = {
-  bitcoin: 1,
-  ethereum: 279,
-  solana: 4128,
-  binancecoin: 825,
-  chainlink: 877,
-}
-
-function coinLogoUrl(coinId, stored) {
-  if (stored) return stored
-  const imgId = COIN_IMAGE_IDS[coinId]
-  if (!imgId) return null
-  return `https://assets.coingecko.com/coins/images/${imgId}/small/${coinId}.png`
-}
+import { getCoinImageUrl } from '../utils/coinImages'
 
 export default function AlertCard({ alert, onChange }) {
-  const logo = coinLogoUrl(alert.coin_id, alert.image)
+  const [imgErrored, setImgErrored] = useState(false)
+  const logo = getCoinImageUrl(alert.coin_id, alert.image)
   const targetPrice = alert.target_price_usd ?? alert.target_price
+  const initials = String(alert.symbol || alert.name || '?').slice(0, 2).toUpperCase()
   const triggered = !!alert.triggered_at
   const active = !!alert.is_active
 
@@ -52,12 +41,17 @@ export default function AlertCard({ alert, onChange }) {
   return (
     <div className="bg-card-bg border border-card-border rounded-xl p-5 flex items-center justify-between gap-4 flex-wrap">
       <div className="flex items-center gap-3 min-w-0">
-        {logo && (
+        {logo && !imgErrored ? (
           <img
             src={logo}
             alt={alert.symbol}
-            className="w-10 h-10 rounded-full"
+            onError={() => setImgErrored(true)}
+            className="w-10 h-10 rounded-full bg-white/5 flex-shrink-0"
           />
+        ) : (
+          <div className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold bg-primary-blue/40">
+            {initials}
+          </div>
         )}
         <div className="min-w-0">
           <div className="text-text-primary font-semibold">

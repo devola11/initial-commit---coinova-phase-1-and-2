@@ -9,6 +9,7 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Portfolio from './pages/Portfolio'
 import Markets from './pages/Markets'
+import Invest from './pages/Invest'
 import Alerts from './pages/Alerts'
 import Settings from './pages/Settings'
 
@@ -55,6 +56,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Markets />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/invest"
+                element={
+                  <ProtectedRoute>
+                    <Invest />
                   </ProtectedRoute>
                 }
               />

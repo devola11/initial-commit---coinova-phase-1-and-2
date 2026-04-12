@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import HoldingsTable from '../components/HoldingsTable'
 import TransactionHistory from '../components/TransactionHistory'
+import InvestmentHistory from '../components/InvestmentHistory'
 import BuyModal from '../components/BuyModal'
 import SellModal from '../components/SellModal'
 import CoinSearch from '../components/CoinSearch'
@@ -125,6 +126,10 @@ export default function Portfolio() {
       )}
 
       <TransactionHistory />
+
+      <div className="mt-6">
+        <InvestmentHistory />
+      </div>
 
       {showSearch && (
         <div

@@ -36,6 +36,19 @@ export async function getTopCoins() {
   }
 }
 
+// Fetch /coins/markets filtered by specific CoinGecko IDs — used by the
+// Invest page so we only pull the 12 coins it shows, and get back the real
+// image URLs alongside price and 24h change in a single call.
+export async function getCoinsByIds(ids) {
+  const idList = Array.isArray(ids) ? ids.join(',') : ids
+  try {
+    return await fetchJson(`/api/markets?ids=${encodeURIComponent(idList)}`)
+  } catch (err) {
+    console.error('getCoinsByIds proxy failed:', err)
+    return []
+  }
+}
+
 export async function getLivePrices(coinIds) {
   const ids = Array.isArray(coinIds) ? coinIds.join(',') : coinIds
   try {

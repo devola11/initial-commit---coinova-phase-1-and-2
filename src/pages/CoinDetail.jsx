@@ -310,57 +310,82 @@ function StatsTab({ detail }) {
 }
 
 /* ── News Tab ─────────────────────────────────────────────────────────── */
-function NewsTab({ coinName }) {
+function NewsSkeleton() {
+  return (
+    <div className="space-y-3">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="bg-[#141519] border border-[#1E2025] rounded-xl p-4 animate-pulse">
+          <div className="h-4 w-3/4 bg-[#1E2025] rounded mb-2" />
+          <div className="h-3 w-1/2 bg-[#1E2025] rounded mb-3" />
+          <div className="h-3 w-1/3 bg-[#1E2025] rounded" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function NewsTab({ coinName, coinSymbol }) {
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false
-    fetchJson('https://api.coingecko.com/api/v3/news')
+    setLoading(true)
+    fetchJson(
+      `/api/news?symbol=${encodeURIComponent(coinSymbol || '')}&name=${encodeURIComponent(coinName || '')}`
+    )
       .then((data) => {
-        if (cancelled) return
-        const list = (data.data || data || [])
-        const nameLC = (coinName || '').toLowerCase()
-        const filtered = list.filter((a) => {
-          const title = (a.title || '').toLowerCase()
-          const desc = (a.description || '').toLowerCase()
-          return title.includes(nameLC) || desc.includes(nameLC)
-        })
-        setArticles(filtered.slice(0, 20))
+        if (!cancelled) setArticles(Array.isArray(data) ? data.slice(0, 20) : [])
       })
-      .catch(() => {})
+      .catch(() => !cancelled && setArticles([]))
       .finally(() => !cancelled && setLoading(false))
     return () => { cancelled = true }
-  }, [coinName])
+  }, [coinName, coinSymbol])
 
-  if (loading) return <div className="text-[#8A8F98] text-sm py-10 text-center">Loading news...</div>
-  if (articles.length === 0) return <div className="text-[#8A8F98] text-sm py-10 text-center">No recent news for this coin.</div>
+  if (loading) return <NewsSkeleton />
+  if (articles.length === 0) {
+    return (
+      <div className="text-[#8A8F98] text-sm py-10 text-center">
+        No recent news for {coinName}.
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-3">
-      {articles.map((a, i) => (
-        <a
-          key={i}
-          href={a.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block bg-[#141519] border border-[#1E2025] rounded-xl p-4 hover:border-[#0052FF] transition-colors no-underline"
-        >
-          <div className="text-white text-sm font-semibold mb-1 leading-snug">{a.title}</div>
-          {a.description && (
-            <div className="text-[#8A8F98] text-xs mb-2 line-clamp-2">{a.description}</div>
-          )}
-          <div className="flex items-center gap-2 text-xs text-[#8A8F98]">
-            {a.author && <span>{a.author}</span>}
-            {a.updated_at && (
-              <>
-                <span>-</span>
-                <span>{fmtDate(a.updated_at * 1000)}</span>
-              </>
-            )}
-          </div>
-        </a>
-      ))}
+      {articles.map((a, i) => {
+        // CryptoPanic uses .url, CoinGecko fallback uses .url too
+        const link = a.url || '#'
+        const title = a.title || 'Untitled'
+        // CryptoPanic: source.title, CoinGecko: author
+        const source = a.source?.title || a.author || null
+        // CryptoPanic: published_at (ISO), CoinGecko: updated_at (unix)
+        const dateStr = a.published_at
+          ? fmtDate(a.published_at)
+          : a.updated_at
+            ? fmtDate(typeof a.updated_at === 'number' ? a.updated_at * 1000 : a.updated_at)
+            : null
+
+        return (
+          <a
+            key={i}
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between gap-3 bg-[#141519] border border-[#1E2025] rounded-xl p-3.5 hover:border-[#2C2F36] transition-colors no-underline"
+          >
+            <div className="min-w-0 flex-1">
+              <div className="text-white text-sm font-semibold mb-1 leading-snug">{title}</div>
+              <div className="flex items-center gap-2 text-xs text-[#8A8F98]">
+                {source && <span>{source}</span>}
+                {source && dateStr && <span>-</span>}
+                {dateStr && <span>{dateStr}</span>}
+              </div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8F98" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </a>
+        )
+      })}
     </div>
   )
 }
@@ -552,7 +577,7 @@ export default function CoinDetail() {
         />
       )}
       {tab === 'Stats' && <StatsTab detail={detail} />}
-      {tab === 'News' && <NewsTab coinName={detail.name} />}
+      {tab === 'News' && <NewsTab coinName={detail.name} coinSymbol={detail.symbol} />}
       {tab === 'About' && <AboutTab detail={detail} />}
 
       {/* Modals */}

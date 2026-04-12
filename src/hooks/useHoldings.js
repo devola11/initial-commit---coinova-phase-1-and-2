@@ -24,6 +24,7 @@ export function useHoldings() {
       )
       return {
         ...h,
+        coin_symbol: h.coin_symbol || (h.symbol || '').toUpperCase(),
         currentPrice,
         change24h,
         currentValue,

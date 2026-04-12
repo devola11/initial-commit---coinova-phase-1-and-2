@@ -156,7 +156,6 @@ export default function Markets() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-card-border text-left text-xs uppercase tracking-widest text-text-muted">
-                  <th className="py-3 px-4 font-medium">#</th>
                   <th className="py-3 px-4 font-medium">Asset</th>
                   <th className="py-3 px-4 font-medium">Price</th>
                   <th className="py-3 px-4 font-medium">24h</th>
@@ -170,7 +169,7 @@ export default function Markets() {
                 {visibleCoins.length === 0 && (
                   <tr>
                     <td
-                      colSpan={8}
+                      colSpan={7}
                       className="py-10 text-center text-text-muted text-sm"
                     >
                       No coins match this filter.
@@ -185,9 +184,6 @@ export default function Markets() {
                       key={coin.id}
                       className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors"
                     >
-                      <td className="py-4 px-4 text-text-muted">
-                        {coin.market_cap_rank ?? '—'}
-                      </td>
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-3">
                           <MarketLogo coin={coin} />

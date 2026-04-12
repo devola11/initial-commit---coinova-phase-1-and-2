@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getTopMarkets } from '../lib/coingecko'
 import { getCoinImageUrl } from '../utils/coinImages'
 import { formatUSD } from '../utils/formatters'
@@ -45,7 +46,7 @@ function ChangePill({ value }) {
   )
 }
 
-function CoinCard({ coin, onInvest }) {
+function CoinCard({ coin, onInvest, onNavigate }) {
   const [imgErr, setImgErr] = useState(false)
   const logo = getCoinImageUrl(coin.id, coin.image)
   const price = coin.current_price
@@ -53,7 +54,10 @@ function CoinCard({ coin, onInvest }) {
 
   return (
     <div className="bg-card-bg border border-card-border rounded-xl p-5 flex flex-col gap-4">
-      <div className="flex items-center gap-3">
+      <div
+        className="flex items-center gap-3 cursor-pointer"
+        onClick={() => onNavigate(coin.id)}
+      >
         {logo && !imgErr ? (
           <img
             src={logo}
@@ -67,7 +71,7 @@ function CoinCard({ coin, onInvest }) {
           </div>
         )}
         <div className="min-w-0">
-          <div className="text-text-primary font-semibold truncate">
+          <div className="text-text-primary font-semibold truncate hover:text-primary-blue transition-colors">
             {coin.name}
           </div>
           <div className="text-text-muted text-xs uppercase">{coin.symbol}</div>
@@ -113,6 +117,7 @@ function CardSkeleton() {
 }
 
 export default function Invest() {
+  const navigate = useNavigate()
   const [coins, setCoins] = useState([])
   const [loading, setLoading] = useState(true)
   const [category, setCategory] = useState('ALL')
@@ -195,7 +200,7 @@ export default function Invest() {
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {visibleCoins.map((coin) => (
-            <CoinCard key={coin.id} coin={coin} onInvest={setSelected} />
+            <CoinCard key={coin.id} coin={coin} onInvest={setSelected} onNavigate={(id) => navigate(`/coin/${id}`)} />
           ))}
         </div>
       )}

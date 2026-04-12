@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getTopMarkets } from '../lib/coingecko'
 import { formatUSD, formatNumber } from '../utils/formatters'
 import { getCoinImageUrl } from '../utils/coinImages'
@@ -55,6 +56,7 @@ function Skeleton() {
 }
 
 export default function Markets() {
+  const navigate = useNavigate()
   const [coins, setCoins] = useState([])
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
@@ -185,10 +187,13 @@ export default function Markets() {
                       className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors"
                     >
                       <td className="py-4 px-4">
-                        <div className="flex items-center gap-3">
+                        <div
+                          className="flex items-center gap-3 cursor-pointer"
+                          onClick={() => navigate(`/coin/${coin.id}`)}
+                        >
                           <MarketLogo coin={coin} />
                           <div>
-                            <div className="text-text-primary font-semibold">
+                            <div className="text-text-primary font-semibold hover:text-primary-blue transition-colors">
                               {coin.name}
                             </div>
                             <div className="text-text-muted text-xs uppercase">

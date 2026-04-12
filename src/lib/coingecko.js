@@ -62,12 +62,12 @@ export async function getMarketsPage(page = 1, perPage = 50) {
 }
 
 // Fetch multiple pages in parallel and concatenate — used by Markets and
-// Invest pages to show a ~150-coin catalog.
-export async function getTopMarkets(pages = 3, perPage = 50) {
+// Invest pages to show a ~250-coin catalog.
+export async function getTopMarkets(pages = 5, perPage = 50) {
   const results = await Promise.all(
     Array.from({ length: pages }, (_, i) => getMarketsPage(i + 1, perPage))
   )
-  return results.flat()
+  return results.flat().filter(Boolean)
 }
 
 export async function getLivePrices(coinIds) {

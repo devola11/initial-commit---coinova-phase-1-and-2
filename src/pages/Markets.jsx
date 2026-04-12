@@ -66,8 +66,8 @@ export default function Markets() {
   async function load() {
     setLoading(true)
     try {
-      // 3 pages × 50 coins = top-150 by market cap
-      const data = await getTopMarkets(3, 50)
+      // 5 pages × 50 coins = top-250 by market cap
+      const data = await getTopMarkets(5, 50)
       if (!Array.isArray(data) || data.length === 0) {
         throw new Error('No market data')
       }

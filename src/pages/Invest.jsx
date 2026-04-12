@@ -17,19 +17,19 @@ export const INVEST_WALLETS = {
     address: 'bc1qmc3umarwy6hfgql8rsuc5njuv0dpxzmkdh0pvl',
     label: 'BTC',
     network: 'Bitcoin (BTC)',
-    warning: 'Only send Bitcoin (BTC) to this address',
+    warning: 'Send Bitcoin (BTC) to this address to invest',
   },
   eth: {
     address: '0x52C50eb16a1a565e446EDBBE337B0D8e47bfb458',
     label: 'ETH',
     network: 'Ethereum (ERC-20)',
-    warning: 'Only send Ethereum (ETH) to this address',
+    warning: 'Send Ethereum (ETH) to this address to invest',
   },
   usdt_trc20: {
     address: 'TMKLBuSegAg4e1QvsjpsTgWrqKLfgx4gca',
     label: 'USDT TRC-20',
     network: 'Tron (TRC-20)',
-    warning: 'Send exact USDT (TRC-20) amount to this address',
+    warning: null,
   },
 }
 
@@ -121,7 +121,7 @@ export default function Invest() {
 
   async function load() {
     try {
-      const data = await getTopMarkets(3, 50)
+      const data = await getTopMarkets(5, 50)
       if (Array.isArray(data) && data.length > 0) setCoins(data)
     } catch (err) {
       console.error('Invest load failed:', err)

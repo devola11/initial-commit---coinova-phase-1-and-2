@@ -54,10 +54,10 @@ export default function InvestModal({ coin, wallets, onClose }) {
   const receiveQty = price > 0 && usdAmount > 0 ? usdAmount / price : 0
   const networkBadge =
     walletKey === 'btc'
-      ? 'Send via Bitcoin network'
+      ? 'Invest in Bitcoin via Bitcoin network'
       : walletKey === 'eth'
-        ? 'Send via Ethereum network'
-        : 'Send USDT via TRC-20 network'
+        ? 'Invest in Ethereum via Ethereum network'
+        : `Invest in ${coin.name} via USDT TRC-20 network`
 
   async function copyAddress() {
     try {
@@ -213,7 +213,12 @@ export default function InvestModal({ coin, wallets, onClose }) {
         {step === 2 && (
           <>
             <div className="bg-loss/10 border border-loss/30 rounded-lg px-4 py-3 text-xs text-loss mb-4">
-              {wallet.warning}. Wrong asset or wrong network = permanent loss.
+              {walletKey === 'btc'
+                ? 'Send Bitcoin (BTC) to this address to invest'
+                : walletKey === 'eth'
+                  ? 'Send Ethereum (ETH) to this address to invest'
+                  : `Send USDT (TRC-20) equivalent of ${formatUSD(usdAmount)} to invest in ${coin.name}`}
+              . Wrong asset or wrong network = permanent loss.
             </div>
 
             <div className="flex flex-col items-center bg-root-bg border border-card-border rounded-lg p-5 mb-4">

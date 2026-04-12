@@ -12,6 +12,7 @@ import Markets from './pages/Markets'
 import Invest from './pages/Invest'
 import Alerts from './pages/Alerts'
 import Settings from './pages/Settings'
+import Admin from './pages/Admin'
 
 function AppLayout() {
   return (
@@ -80,6 +81,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <Admin />
                   </ProtectedRoute>
                 }
               />

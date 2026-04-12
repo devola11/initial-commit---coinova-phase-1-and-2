@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { ADMIN_EMAIL } from './Admin'
 
 export default function Settings() {
   const { user, logout } = useAuth()
@@ -122,6 +123,21 @@ export default function Settings() {
           </div>
         </div>
       </div>
+
+      {user?.email?.toLowerCase() === ADMIN_EMAIL && (
+        <div className="bg-card-bg border border-primary-blue/30 rounded-xl p-6 mb-6">
+          <div className="text-primary-blue font-semibold mb-2">Admin</div>
+          <div className="text-text-muted text-sm mb-4">
+            You have administrator access.
+          </div>
+          <Link
+            to="/admin"
+            className="inline-block px-5 py-2.5 rounded-lg bg-primary-blue hover:bg-primary-blue-hover text-white text-sm font-semibold no-underline transition-colors"
+          >
+            Open admin dashboard
+          </Link>
+        </div>
+      )}
 
       <div className="bg-card-bg border border-loss/30 rounded-xl p-6">
         <div className="text-loss font-semibold mb-2">Danger zone</div>

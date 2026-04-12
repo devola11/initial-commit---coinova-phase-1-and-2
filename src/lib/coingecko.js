@@ -36,9 +36,8 @@ export async function getTopCoins() {
   }
 }
 
-// Fetch /coins/markets filtered by specific CoinGecko IDs — used by the
-// Invest page so we only pull the 12 coins it shows, and get back the real
-// image URLs alongside price and 24h change in a single call.
+// Fetch /coins/markets filtered by specific CoinGecko IDs — used when we
+// only care about a known subset of coins.
 export async function getCoinsByIds(ids) {
   const idList = Array.isArray(ids) ? ids.join(',') : ids
   try {
@@ -47,6 +46,28 @@ export async function getCoinsByIds(ids) {
     console.error('getCoinsByIds proxy failed:', err)
     return []
   }
+}
+
+// Fetch a single page of top markets. Callers paginate themselves when they
+// need more than one page; doing it client-side lets each page be a separate
+// cached edge request on Vercel.
+export async function getMarketsPage(page = 1, perPage = 50) {
+  try {
+    const data = await fetchJson(`/api/markets?page=${page}&per_page=${perPage}`)
+    return Array.isArray(data) ? data : []
+  } catch (err) {
+    console.error('getMarketsPage failed:', err)
+    return []
+  }
+}
+
+// Fetch multiple pages in parallel and concatenate — used by Markets and
+// Invest pages to show a ~150-coin catalog.
+export async function getTopMarkets(pages = 3, perPage = 50) {
+  const results = await Promise.all(
+    Array.from({ length: pages }, (_, i) => getMarketsPage(i + 1, perPage))
+  )
+  return results.flat()
 }
 
 export async function getLivePrices(coinIds) {

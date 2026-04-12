@@ -314,7 +314,7 @@ function NewsSkeleton() {
   return (
     <div className="space-y-3">
       {[0, 1, 2].map((i) => (
-        <div key={i} className="bg-[#141519] border border-[#1E2025] rounded-xl p-4 animate-pulse">
+        <div key={i} className="bg-[#141519] border border-[#1E2025] rounded-xl p-3.5 animate-pulse">
           <div className="h-4 w-3/4 bg-[#1E2025] rounded mb-2" />
           <div className="h-3 w-1/2 bg-[#1E2025] rounded mb-3" />
           <div className="h-3 w-1/3 bg-[#1E2025] rounded" />
@@ -335,7 +335,7 @@ function NewsTab({ coinName, coinSymbol }) {
       `/api/news?symbol=${encodeURIComponent(coinSymbol || '')}&name=${encodeURIComponent(coinName || '')}`
     )
       .then((data) => {
-        if (!cancelled) setArticles(Array.isArray(data) ? data.slice(0, 20) : [])
+        if (!cancelled) setArticles(Array.isArray(data) ? data : [])
       })
       .catch(() => !cancelled && setArticles([]))
       .finally(() => !cancelled && setLoading(false))
@@ -351,34 +351,49 @@ function NewsTab({ coinName, coinSymbol }) {
     )
   }
 
+  const hasGeneral = articles.some((a) => a.matched === false)
+
   return (
     <div className="space-y-3">
-      {articles.map((a, i) => {
-        // CryptoPanic uses .url, CoinGecko fallback uses .url too
-        const link = a.url || '#'
-        const title = a.title || 'Untitled'
-        // CryptoPanic: source.title, CoinGecko: author
-        const source = a.source?.title || a.author || null
-        // CryptoPanic: published_at (ISO), CoinGecko: updated_at (unix)
-        const dateStr = a.published_at
-          ? fmtDate(a.published_at)
-          : a.updated_at
-            ? fmtDate(typeof a.updated_at === 'number' ? a.updated_at * 1000 : a.updated_at)
-            : null
+      {hasGeneral && (
+        <div className="flex items-center gap-2 px-1 mb-1">
+          <span className="px-2.5 py-1 rounded-full bg-[#0052FF]/10 text-[#0052FF] text-[11px] font-semibold">
+            General crypto news
+          </span>
+          <span className="text-[#8A8F98] text-xs">
+            No {coinName}-specific articles found right now
+          </span>
+        </div>
+      )}
+      {articles.filter((a) => a.link).map((a, i) => {
+        let dateStr = null
+        if (a.pubDate) {
+          try {
+            dateStr = new Date(a.pubDate).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })
+          } catch (e) {
+            dateStr = null
+          }
+        }
 
         return (
           <a
             key={i}
-            href={link}
+            href={a.link}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-between gap-3 bg-[#141519] border border-[#1E2025] rounded-xl p-3.5 hover:border-[#2C2F36] transition-colors no-underline"
           >
             <div className="min-w-0 flex-1">
-              <div className="text-white text-sm font-semibold mb-1 leading-snug">{title}</div>
+              <div className="text-white text-sm font-semibold mb-1 leading-snug">
+                {a.title}
+              </div>
               <div className="flex items-center gap-2 text-xs text-[#8A8F98]">
-                {source && <span>{source}</span>}
-                {source && dateStr && <span>-</span>}
+                {a.source && <span>{a.source}</span>}
+                {a.source && dateStr && <span>-</span>}
                 {dateStr && <span>{dateStr}</span>}
               </div>
             </div>

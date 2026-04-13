@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { formatUSD, formatPercent } from '../utils/formatters'
+import GlobalPreferences, { useGlobalPrefs } from '../components/GlobalPreferences'
 import logo from '../assets/logo.jpeg'
 import hero1 from '../assets/hero1.avif'
 import hero2 from '../assets/hero2.avif'
@@ -18,6 +19,8 @@ export default function LandingPage() {
   const [email, setEmail] = useState('')
   const [coins, setCoins] = useState([])
   const [loadingCoins, setLoadingCoins] = useState(true)
+  const [prefsOpen, setPrefsOpen] = useState(false)
+  const prefs = useGlobalPrefs()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -289,10 +292,19 @@ export default function LandingPage() {
       <footer style={{ backgroundColor: '#F8F9FA' }} className="border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <Link to="/" className="flex items-center gap-2 no-underline">
-              <img src={logo} alt="Coinova" className="h-7 rounded" />
-              <span className="text-lg font-extrabold text-black tracking-tight">Coinova</span>
-            </Link>
+            <div className="flex flex-col gap-3">
+              <Link to="/" className="flex items-center gap-2 no-underline">
+                <img src={logo} alt="Coinova" className="h-7 rounded" />
+                <span className="text-lg font-extrabold text-black tracking-tight">Coinova</span>
+              </Link>
+              <button
+                onClick={() => setPrefsOpen(true)}
+                className="flex items-center gap-2 text-sm text-gray-500 hover:text-black bg-transparent border-none cursor-pointer transition-colors p-0"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                {prefs.country} &middot; {prefs.language}
+              </button>
+            </div>
             <div className="flex flex-wrap gap-6 text-sm font-medium text-gray-600">
               <Link to="/markets" className="hover:text-black no-underline text-gray-600">Markets</Link>
               <Link to="/portfolio" className="hover:text-black no-underline text-gray-600">Portfolio</Link>
@@ -303,6 +315,16 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {prefsOpen && (
+        <GlobalPreferences
+          onClose={() => setPrefsOpen(false)}
+          country={prefs.country}
+          language={prefs.language}
+          setCountry={prefs.setCountry}
+          setLanguage={prefs.setLanguage}
+        />
+      )}
     </div>
   )
 }

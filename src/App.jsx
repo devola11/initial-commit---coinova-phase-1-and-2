@@ -19,6 +19,7 @@ import Watchlist from './pages/Watchlist'
 import Convert from './pages/Convert'
 import Trending from './pages/Trending'
 import Staking from './pages/Staking'
+import Learn from './pages/Learn'
 
 function AppLayout() {
   return (
@@ -55,6 +56,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Portfolio />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/learn"
+                element={
+                  <ProtectedRoute>
+                    <Learn />
                   </ProtectedRoute>
                 }
               />

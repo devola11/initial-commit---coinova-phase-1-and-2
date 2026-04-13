@@ -7,6 +7,7 @@ import logo from '../assets/logo.jpeg'
 const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/portfolio', label: 'Portfolio' },
+  { to: '/learn', label: 'Learn', icon: 'book' },
   { to: '/convert', label: 'Convert', icon: 'swap' },
   { to: '/trending', label: 'Trending', icon: 'fire' },
   { to: '/markets', label: 'Markets' },
@@ -20,6 +21,12 @@ const navLinks = [
 function GiftIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+  )
+}
+
+function BookIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
   )
 }
 
@@ -96,6 +103,7 @@ export default function Navbar() {
                       }`}
                     >
                       {link.icon === 'gift' && <GiftIcon />}
+                      {link.icon === 'book' && <BookIcon />}
                       {link.icon === 'swap' && <SwapIcon />}
                       {link.icon === 'fire' && <FireIcon />}
                       {link.icon === 'shield' && <ShieldIcon />}

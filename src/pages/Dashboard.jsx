@@ -14,6 +14,7 @@ import SavingsGoal from '../components/SavingsGoal'
 import FearGreedIndex from '../components/FearGreedIndex'
 import { TrendingWidget } from './Trending'
 import { StakingWidget } from './Staking'
+import { LearnWidget } from './Learn'
 import { useHoldings } from '../hooks/useHoldings'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { formatUSD, formatPercent } from '../utils/formatters'
@@ -217,6 +218,10 @@ export default function Dashboard() {
 
       <div className="mb-6">
         <StakingWidget />
+      </div>
+
+      <div className="mb-6">
+        <LearnWidget />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

@@ -14,6 +14,7 @@ import InvestModal from '../components/InvestModal'
 import BuyModal from '../components/BuyModal'
 import { INVEST_WALLETS } from './Invest'
 import { useWatchlist } from '../hooks/useWatchlist'
+import { FearGreedBadge } from '../components/FearGreedIndex'
 
 function WatchlistStarIcon({ filled }) {
   return (
@@ -121,7 +122,7 @@ function ChartTooltip({ active, payload, days }) {
 }
 
 /* ── Overview Tab ─────────────────────────────────────────────────────── */
-function OverviewTab({ coinId, detail, onInvest, onBuy }) {
+function OverviewTab({ coinId, detail, onInvest, onBuy, sentimentBadge }) {
   const [chartData, setChartData] = useState([])
   const [days, setDays] = useState(7)
   const [chartLoading, setChartLoading] = useState(true)
@@ -157,6 +158,7 @@ function OverviewTab({ coinId, detail, onInvest, onBuy }) {
             {changePositive ? '+' : ''}{change24h.toFixed(2)}% (24h)
           </span>
         )}
+        {sentimentBadge && <div className="mt-2">{sentimentBadge}</div>}
       </div>
 
       {/* Chart */}
@@ -628,6 +630,7 @@ export default function CoinDetail() {
           detail={detail}
           onInvest={() => setShowInvest(true)}
           onBuy={() => setShowBuy(true)}
+          sentimentBadge={<FearGreedBadge />}
         />
       )}
       {tab === 'Stats' && <StatsTab detail={detail} />}

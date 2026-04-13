@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { formatUSD, formatPercent } from '../utils/formatters'
+import { FearGreedLanding } from '../components/FearGreedIndex'
 import GlobalPreferences, { useGlobalPrefs } from '../components/GlobalPreferences'
 import logo from '../assets/logo.jpeg'
 import hero1 from '../assets/hero1.avif'
@@ -215,6 +216,22 @@ export default function LandingPage() {
               See all assets
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── Market Sentiment ─────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <FearGreedLanding />
+        <div className="mt-6 text-center">
+          <Link
+            to="/register"
+            className="inline-block px-7 py-3.5 rounded-full text-sm font-semibold text-white no-underline"
+            style={{ backgroundColor: '#0052FF' }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0040CC')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0052FF')}
+          >
+            Join Coinova to track the market
+          </Link>
         </div>
       </section>
 

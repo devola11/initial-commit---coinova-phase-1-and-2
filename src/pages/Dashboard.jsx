@@ -11,6 +11,7 @@ import BuyModal from '../components/BuyModal'
 import SellModal from '../components/SellModal'
 import CoinSearch from '../components/CoinSearch'
 import SavingsGoal from '../components/SavingsGoal'
+import FearGreedIndex from '../components/FearGreedIndex'
 import { useHoldings } from '../hooks/useHoldings'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { formatUSD, formatPercent } from '../utils/formatters'
@@ -202,6 +203,10 @@ export default function Dashboard() {
 
       <div className="mb-6">
         <PortfolioChart />
+      </div>
+
+      <div className="mb-6">
+        <FearGreedIndex />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

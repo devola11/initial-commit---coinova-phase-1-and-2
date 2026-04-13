@@ -56,7 +56,7 @@ export default function Portfolio() {
         <h1 className="text-2xl font-bold text-text-primary tracking-tight">
           Portfolio
         </h1>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={() => setShowRecurring(true)}
             className="px-4 py-2 rounded-lg border border-card-border text-text-primary hover:border-primary-blue text-sm font-semibold bg-transparent cursor-pointer transition-colors"

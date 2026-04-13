@@ -188,7 +188,7 @@ export default function Invest() {
       </div>
 
       {loading && coins.length === 0 ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <CardSkeleton key={i} />
           ))}
@@ -198,7 +198,7 @@ export default function Invest() {
           No coins match this filter.
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {visibleCoins.map((coin) => (
             <CoinCard key={coin.id} coin={coin} onInvest={setSelected} onNavigate={(id) => navigate(`/coin/${id}`)} />
           ))}

@@ -22,6 +22,5 @@ export const coinImageMap = {
 export function getCoinImageUrl(coinId, storedImage) {
   if (storedImage) return storedImage
   if (coinImageMap[coinId]) return coinImageMap[coinId]
-  if (!coinId) return null
-  return `https://coin-images.coingecko.com/coins/images/1/large/${coinId}.png`
+  return null
 }

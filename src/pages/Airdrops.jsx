@@ -207,7 +207,7 @@ export default function Airdrops() {
       )}
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {[
           [totalClaimed + ' claimed', 'Your airdrops'],
           [formatUSD(totalEarned), 'Total earned'],

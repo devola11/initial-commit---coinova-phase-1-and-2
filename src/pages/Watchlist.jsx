@@ -134,8 +134,8 @@ export default function Watchlist() {
                   <th className="py-3 px-4 font-medium">Coin</th>
                   <th className="py-3 px-4 font-medium">Price</th>
                   <th className="py-3 px-4 font-medium">24h</th>
-                  <th className="py-3 px-4 font-medium">7d</th>
-                  <th className="py-3 px-4 font-medium">Market Cap</th>
+                  <th className="py-3 px-4 font-medium hidden md:table-cell">7d</th>
+                  <th className="py-3 px-4 font-medium hidden lg:table-cell">Market Cap</th>
                   <th className="py-3 px-4 font-medium text-right">Action</th>
                 </tr>
               </thead>
@@ -193,13 +193,13 @@ export default function Watchlist() {
                         {fmtPct(c24)}
                       </td>
                       <td
-                        className={`py-4 px-4 font-medium ${
+                        className={`py-4 px-4 font-medium hidden md:table-cell ${
                           (c7d ?? 0) >= 0 ? 'text-profit' : 'text-loss'
                         }`}
                       >
                         {fmtPct(c7d)}
                       </td>
-                      <td className="py-4 px-4 text-text-primary">
+                      <td className="py-4 px-4 text-text-primary hidden lg:table-cell">
                         {coin.market_cap != null
                           ? `$${formatNumber(coin.market_cap)}`
                           : '—'}

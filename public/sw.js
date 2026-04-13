@@ -29,24 +29,34 @@ self.addEventListener('activate', event => {
 })
 
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url)
+
   if (event.request.method !== 'GET') return
-  if (event.request.url.includes('/api/')) return
+  if (!url.protocol.startsWith('http')) return
+  if (url.pathname.startsWith('/api/')) return
+  if (url.hostname.includes('supabase.co')) return
+  if (url.hostname.includes('coingecko.com')) return
 
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        const clone = response.clone()
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, clone)
-        })
+        if (
+          response.ok &&
+          url.protocol.startsWith('http')
+        ) {
+          const clone = response.clone()
+          caches.open(CACHE_NAME).then(cache => {
+            try {
+              cache.put(event.request, clone)
+            } catch(e) {}
+          })
+        }
         return response
       })
       .catch(() => {
         return caches.match(event.request)
-          .then(cached => {
-            if (cached) return cached
-            return caches.match('/index.html')
-          })
+          .then(cached => cached ||
+            caches.match('/index.html'))
       })
   )
 })

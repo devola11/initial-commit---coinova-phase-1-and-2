@@ -11,6 +11,25 @@ import {
 import CoinSearch from '../components/CoinSearch'
 import InvestModal from '../components/InvestModal'
 import { INVEST_WALLETS } from './Invest'
+import { useWatchlist } from '../hooks/useWatchlist'
+
+function StarIcon({ filled }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill={filled ? '#F59E0B' : 'none'}
+      stroke={filled ? '#F59E0B' : '#8A919E'}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="hover:stroke-[#F59E0B] transition-colors"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  )
+}
 
 function MarketLogo({ coin }) {
   const [errored, setErrored] = useState(false)
@@ -57,6 +76,7 @@ function Skeleton() {
 
 export default function Markets() {
   const navigate = useNavigate()
+  const { isWatched, toggle } = useWatchlist()
   const [coins, setCoins] = useState([])
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
@@ -158,6 +178,7 @@ export default function Markets() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-card-border text-left text-xs uppercase tracking-widest text-text-muted">
+                  <th className="py-3 px-3 font-medium w-10"></th>
                   <th className="py-3 px-4 font-medium">Asset</th>
                   <th className="py-3 px-4 font-medium">Price</th>
                   <th className="py-3 px-4 font-medium">24h</th>
@@ -171,7 +192,7 @@ export default function Markets() {
                 {visibleCoins.length === 0 && (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="py-10 text-center text-text-muted text-sm"
                     >
                       No coins match this filter.
@@ -185,8 +206,24 @@ export default function Markets() {
                     <tr
                       key={coin.id}
                       onClick={() => navigate(`/coin/${coin.id}`)}
-                      className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors cursor-pointer"
+                      className="border-b border-card-border last:border-b-0 hover:bg-[#1a1d23] transition-colors cursor-pointer"
                     >
+                      <td className="py-4 px-3">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggle({
+                              id: coin.id,
+                              symbol: coin.symbol,
+                              name: coin.name,
+                              image: coin.image,
+                            })
+                          }}
+                          className="bg-transparent border-none cursor-pointer p-1 hover:scale-110 transition-transform"
+                        >
+                          <StarIcon filled={isWatched(coin.id)} />
+                        </button>
+                      </td>
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-3">
                           <MarketLogo coin={coin} />

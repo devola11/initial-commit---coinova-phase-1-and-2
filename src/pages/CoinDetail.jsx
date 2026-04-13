@@ -13,6 +13,25 @@ import { getCoinImageUrl } from '../utils/coinImages'
 import InvestModal from '../components/InvestModal'
 import BuyModal from '../components/BuyModal'
 import { INVEST_WALLETS } from './Invest'
+import { useWatchlist } from '../hooks/useWatchlist'
+
+function WatchlistStarIcon({ filled }) {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill={filled ? '#F59E0B' : 'none'}
+      stroke={filled ? '#F59E0B' : '#8A919E'}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="hover:stroke-[#F59E0B] transition-colors"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  )
+}
 
 const TIME_FILTERS = [
   { label: '1D', days: 1 },
@@ -489,6 +508,8 @@ export default function CoinDetail() {
   const [tab, setTab] = useState('Overview')
   const [showInvest, setShowInvest] = useState(false)
   const [showBuy, setShowBuy] = useState(false)
+  const { isWatched, toggle } = useWatchlist()
+  const [toast, setToast] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -560,7 +581,25 @@ export default function CoinDetail() {
           size={48}
         />
         <div>
-          <h1 className="text-white text-2xl font-bold">{detail.name}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-white text-2xl font-bold">{detail.name}</h1>
+            <button
+              onClick={async () => {
+                const added = await toggle({
+                  id: detail.id,
+                  symbol: detail.symbol,
+                  name: detail.name,
+                  image: detail.image?.large || detail.image?.small || null,
+                })
+                setToast(added ? 'Added to watchlist' : 'Removed from watchlist')
+                setTimeout(() => setToast(''), 2500)
+              }}
+              className="bg-transparent border-none cursor-pointer p-1 hover:scale-110 transition-transform"
+              title={isWatched(detail.id) ? 'Remove from watchlist' : 'Add to watchlist'}
+            >
+              <WatchlistStarIcon filled={isWatched(detail.id)} />
+            </button>
+          </div>
           <span className="text-[#8A8F98] text-sm uppercase">{detail.symbol}</span>
         </div>
       </div>
@@ -605,6 +644,16 @@ export default function CoinDetail() {
       )}
       {showBuy && coin && (
         <BuyModal coin={coin} onClose={() => setShowBuy(false)} />
+      )}
+
+      {/* Toast notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[200] bg-[#141519] border border-[#1E2025] rounded-xl px-5 py-3 text-white text-sm font-medium shadow-lg animate-[fadeIn_0.2s_ease-out]">
+          <div className="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+            {toast}
+          </div>
+        </div>
       )}
     </div>
   )

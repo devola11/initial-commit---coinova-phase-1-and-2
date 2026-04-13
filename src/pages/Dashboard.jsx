@@ -12,7 +12,10 @@ import SellModal from '../components/SellModal'
 import CoinSearch from '../components/CoinSearch'
 import SavingsGoal from '../components/SavingsGoal'
 import { useHoldings } from '../hooks/useHoldings'
+import { useWatchlist } from '../hooks/useWatchlist'
 import { formatUSD, formatPercent } from '../utils/formatters'
+import { getCoinImageUrl } from '../utils/coinImages'
+import { getTopMarkets } from '../lib/coingecko'
 
 // formatUSD stretches to 6 decimals for sub-$1 values, which looked noisy on
 // the 24h-change stat (e.g. -$53.96386). Force exactly 2 dp here.
@@ -60,6 +63,86 @@ function AirdropBanner() {
           &times;
         </button>
       </div>
+    </div>
+  )
+}
+
+function WatchlistLogo({ coinId, image, symbol }) {
+  const [err, setErr] = useState(false)
+  const src = getCoinImageUrl(coinId, image)
+  if (!src || err) {
+    return (
+      <div className="w-7 h-7 rounded-full bg-card-border flex items-center justify-center text-[9px] font-bold text-text-primary uppercase flex-shrink-0">
+        {(symbol || '').slice(0, 3)}
+      </div>
+    )
+  }
+  return <img src={src} alt={symbol} onError={() => setErr(true)} className="w-7 h-7 rounded-full bg-white/5 flex-shrink-0" />
+}
+
+function WatchlistWidget() {
+  const { watchlist, loading } = useWatchlist()
+  const [prices, setPrices] = useState({})
+
+  useEffect(() => {
+    getTopMarkets(5, 50)
+      .then((data) => {
+        if (!Array.isArray(data)) return
+        const map = {}
+        data.forEach((c) => { map[c.id] = c })
+        setPrices(map)
+      })
+      .catch(() => {})
+  }, [])
+
+  if (loading) return null
+
+  const items = watchlist.slice(0, 5)
+
+  return (
+    <div className="bg-card-bg border border-card-border rounded-xl p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-text-primary font-semibold text-sm">My Watchlist</h3>
+        {watchlist.length > 0 && (
+          <Link to="/watchlist" className="text-primary-blue text-xs font-semibold no-underline hover:underline">
+            View all
+          </Link>
+        )}
+      </div>
+      {items.length === 0 ? (
+        <p className="text-text-muted text-sm">Star coins in Markets to track them here.</p>
+      ) : (
+        <div className="space-y-3">
+          {items.map((w) => {
+            const live = prices[w.coin_id]
+            const price = live?.current_price
+            const change = live?.price_change_percentage_24h
+            return (
+              <Link
+                key={w.coin_id}
+                to={`/coin/${w.coin_id}`}
+                className="flex items-center gap-3 no-underline hover:bg-root-bg/40 rounded-lg p-1.5 -mx-1.5 transition-colors"
+              >
+                <WatchlistLogo coinId={w.coin_id} image={w.coin_image} symbol={w.coin_symbol} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-text-primary text-sm font-medium truncate">{w.coin_name}</div>
+                  <div className="text-text-muted text-xs uppercase">{w.coin_symbol}</div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="text-text-primary text-sm font-medium">
+                    {price != null ? formatUSD(price) : '—'}
+                  </div>
+                  {change != null && (
+                    <div className={`text-xs font-medium ${change >= 0 ? 'text-profit' : 'text-loss'}`}>
+                      {change >= 0 ? '+' : ''}{change.toFixed(2)}%
+                    </div>
+                  )}
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -130,8 +213,12 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div>
+      <div className="mb-6">
         <SavingsGoal />
+      </div>
+
+      <div>
+        <WatchlistWidget />
       </div>
 
       {showSearch && (

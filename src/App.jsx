@@ -15,6 +15,7 @@ import Settings from './pages/Settings'
 import Admin from './pages/Admin'
 import Airdrops from './pages/Airdrops'
 import CoinDetail from './pages/CoinDetail'
+import Watchlist from './pages/Watchlist'
 
 function AppLayout() {
   return (
@@ -75,6 +76,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Airdrops />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/watchlist"
+                element={
+                  <ProtectedRoute>
+                    <Watchlist />
                   </ProtectedRoute>
                 }
               />

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import logo from '../assets/logo.jpeg'
 
 const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -28,7 +29,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center gap-2 no-underline">
-            <div className="w-7 h-7 rounded-full bg-primary-blue" />
+            <img src={logo} alt="Coinova" className="h-7 rounded" />
             <span className="text-lg font-bold text-text-primary tracking-tight">
               Coinova
             </span>

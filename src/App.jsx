@@ -13,6 +13,7 @@ import Invest from './pages/Invest'
 import Alerts from './pages/Alerts'
 import Settings from './pages/Settings'
 import Admin from './pages/Admin'
+import Airdrops from './pages/Airdrops'
 import CoinDetail from './pages/CoinDetail'
 
 function AppLayout() {
@@ -66,6 +67,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Invest />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/airdrops"
+                element={
+                  <ProtectedRoute>
+                    <Airdrops />
                   </ProtectedRoute>
                 }
               />

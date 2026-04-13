@@ -1,4 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
 import WalletCard from '../components/WalletCard'
 import StatCard from '../components/StatCard'
 import PortfolioChart from '../components/PortfolioChart'
@@ -17,6 +20,48 @@ function formatUSD2dp(value) {
   const n = Number(value || 0)
   const sign = n < 0 ? '-' : ''
   return `${sign}$${Math.abs(n).toFixed(2)}`
+}
+
+function AirdropBanner() {
+  const { user } = useAuth()
+  const [show, setShow] = useState(false)
+  const [dismissed, setDismissed] = useState(() => localStorage.getItem('coinova_airdrop_dismissed') === '1')
+
+  useEffect(() => {
+    if (!user || dismissed) return
+    async function check() {
+      const [{ data: airdrops }, { data: claims }] = await Promise.all([
+        supabase.from('airdrops').select('id').eq('is_active', true),
+        supabase.from('airdrop_claims').select('airdrop_id').eq('user_id', user.id),
+      ])
+      const claimedIds = new Set((claims || []).map((c) => c.airdrop_id))
+      const unclaimed = (airdrops || []).filter((a) => !claimedIds.has(a.id))
+      if (unclaimed.length > 0) setShow(true)
+    }
+    check()
+  }, [user, dismissed])
+
+  if (!show) return null
+
+  return (
+    <div className="mb-6 rounded-xl p-4 flex items-center justify-between gap-3" style={{ background: 'linear-gradient(135deg, #0052FF 0%, #0040CC 100%)' }}>
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="text-xl">&#127873;</span>
+        <span className="text-white text-sm font-medium">Free crypto available! Claim your airdrops</span>
+      </div>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <Link to="/airdrops" className="px-4 py-1.5 rounded-lg bg-white text-[#0052FF] text-xs font-semibold no-underline hover:bg-gray-100 transition-colors whitespace-nowrap">
+          Claim now &#8594;
+        </Link>
+        <button
+          onClick={() => { setShow(false); setDismissed(true); localStorage.setItem('coinova_airdrop_dismissed', '1') }}
+          className="text-white/60 hover:text-white bg-transparent border-none cursor-pointer text-lg leading-none"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  )
 }
 
 export default function Dashboard() {
@@ -41,6 +86,8 @@ export default function Dashboard() {
       <h1 className="text-2xl font-bold text-text-primary mb-6 tracking-tight">
         Dashboard
       </h1>
+
+      <AirdropBanner />
 
       <div className="mb-6">
         <WalletCard />

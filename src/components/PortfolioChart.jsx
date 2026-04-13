@@ -19,23 +19,33 @@ const RANGES = [
 ]
 
 function generateSeries(days, currentValue) {
+  if (!currentValue || currentValue <= 0) currentValue = 0
   const points = []
   const now = Date.now()
-  const step = (days * 24 * 60 * 60 * 1000) / Math.min(days, 60)
-  // simulate walk ending at current value
-  let value = currentValue * (0.7 + Math.random() * 0.2)
-  const count = Math.min(days, 60)
+  const count = Math.min(days, 30)
+  const step = (days * 24 * 60 * 60 * 1000) / count
+  // start ~80-90% of current value and walk toward it
+  let value = currentValue > 0 ? currentValue * (0.8 + Math.random() * 0.1) : 0
   for (let i = count; i >= 0; i--) {
     const t = now - i * step
-    const noise = (Math.random() - 0.45) * (currentValue * 0.04)
-    value = value + noise + (currentValue - value) * (1 / (i + 1))
+    if (currentValue > 0) {
+      const drift = (currentValue - value) * (1 / (i + 2))
+      const noise = (Math.random() - 0.48) * (currentValue * 0.02)
+      value = Math.max(0, value + drift + noise)
+    }
     points.push({
       date: new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       value: Math.max(0, value),
     })
   }
-  if (points.length) points[points.length - 1].value = currentValue
+  if (points.length && currentValue > 0) points[points.length - 1].value = currentValue
   return points
+}
+
+function fmtAxisValue(v) {
+  if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`
+  if (v >= 1e3) return `$${(v / 1e3).toFixed(1)}k`
+  return `$${v.toFixed(0)}`
 }
 
 export default function PortfolioChart() {
@@ -91,7 +101,7 @@ export default function PortfolioChart() {
               tick={{ fill: '#8A919E', fontSize: 11 }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={(v) => `$${(v / 1000).toFixed(1)}k`}
+              tickFormatter={fmtAxisValue}
               width={50}
             />
             <Tooltip

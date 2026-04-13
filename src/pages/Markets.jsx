@@ -184,16 +184,14 @@ export default function Markets() {
                   return (
                     <tr
                       key={coin.id}
-                      className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors"
+                      onClick={() => navigate(`/coin/${coin.id}`)}
+                      className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors cursor-pointer"
                     >
                       <td className="py-4 px-4">
-                        <div
-                          className="flex items-center gap-3 cursor-pointer"
-                          onClick={() => navigate(`/coin/${coin.id}`)}
-                        >
+                        <div className="flex items-center gap-3">
                           <MarketLogo coin={coin} />
                           <div>
-                            <div className="text-text-primary font-semibold hover:text-primary-blue transition-colors">
+                            <div className="text-text-primary font-semibold">
                               {coin.name}
                             </div>
                             <div className="text-text-muted text-xs uppercase">
@@ -227,7 +225,7 @@ export default function Markets() {
                       </td>
                       <td className="py-4 px-4 text-right">
                         <button
-                          onClick={() => setInvestCoin(coin)}
+                          onClick={(e) => { e.stopPropagation(); setInvestCoin(coin) }}
                           className="px-4 py-1.5 rounded-lg bg-primary-blue hover:bg-primary-blue-hover text-white text-xs font-semibold border-none cursor-pointer transition-colors"
                         >
                           Invest

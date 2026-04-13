@@ -89,7 +89,7 @@ export default function SellModal({ holding, onClose }) {
 
       await refreshAll()
       setSuccess(true)
-      setTimeout(() => onClose(), 1400)
+      setTimeout(() => onClose(), 2000)
     } catch (err) {
       console.error(err)
       setError(err.message || 'Failed to sell')

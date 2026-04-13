@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -13,8 +14,10 @@ export default function Navbar() {
   const { user, logout } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   async function handleLogout() {
+    setMenuOpen(false)
     await logout()
     navigate('/')
   }
@@ -31,7 +34,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Nav links */}
+          {/* Desktop nav links */}
           {user && (
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => {
@@ -59,7 +62,7 @@ export default function Navbar() {
               <>
                 <Link
                   to="/settings"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline ${
+                  className={`hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline ${
                     location.pathname === '/settings'
                       ? 'text-text-primary bg-card-bg'
                       : 'text-text-muted hover:text-text-primary'
@@ -69,9 +72,19 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer"
+                  className="hidden md:inline-flex px-4 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer"
                 >
                   Log out
+                </button>
+                {/* Hamburger — mobile only */}
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-transparent border-none cursor-pointer gap-1.5"
+                  aria-label="Toggle menu"
+                >
+                  <span className={`block w-5 h-0.5 bg-text-primary transition-transform duration-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+                  <span className={`block w-5 h-0.5 bg-text-primary transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`} />
+                  <span className={`block w-5 h-0.5 bg-text-primary transition-transform duration-200 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
                 </button>
               </>
             ) : (
@@ -84,29 +97,49 @@ export default function Navbar() {
             )}
           </div>
         </div>
+      </div>
 
-        {/* Mobile nav */}
-        {user && (
-          <div className="flex md:hidden items-center gap-1 pb-3 overflow-x-auto">
+      {/* Mobile dropdown menu */}
+      {user && menuOpen && (
+        <div className="md:hidden bg-[#141519] border-t border-card-border">
+          <div className="px-4 py-3 space-y-1">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.to
               return (
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors no-underline ${
+                  onClick={() => setMenuOpen(false)}
+                  className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors no-underline ${
                     isActive
                       ? 'text-text-primary bg-card-bg'
-                      : 'text-text-muted hover:text-text-primary'
+                      : 'text-text-muted hover:text-text-primary hover:bg-card-bg/50'
                   }`}
                 >
                   {link.label}
                 </Link>
               )
             })}
+            <Link
+              to="/settings"
+              onClick={() => setMenuOpen(false)}
+              className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors no-underline ${
+                location.pathname === '/settings'
+                  ? 'text-text-primary bg-card-bg'
+                  : 'text-text-muted hover:text-text-primary hover:bg-card-bg/50'
+              }`}
+            >
+              Settings
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer"
+            >
+              Log out
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   )
 }

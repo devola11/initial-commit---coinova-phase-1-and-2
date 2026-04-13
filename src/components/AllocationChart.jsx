@@ -28,8 +28,8 @@ export default function AllocationChart() {
 
   if (!holdings.length) {
     return (
-      <div className="bg-card-bg border border-card-border rounded-xl p-6 h-full flex items-center justify-center">
-        <div className="text-text-muted text-sm">No holdings to allocate.</div>
+      <div className="bg-card-bg border border-card-border rounded-xl p-6 h-full flex flex-col items-center justify-center gap-2">
+        <div className="text-text-muted text-sm">No holdings yet. Buy your first coin.</div>
       </div>
     )
   }
@@ -87,9 +87,10 @@ export default function AllocationChart() {
                     style={{ backgroundColor: d.color }}
                   />
                   <div className="text-text-primary truncate">{d.fullName}</div>
+                  <div className="text-text-muted text-xs">{d.name}</div>
                 </div>
-                <div className="text-text-muted text-xs ml-2">
-                  {pct.toFixed(1)}%
+                <div className="text-text-muted text-xs ml-2 flex-shrink-0">
+                  {pct.toFixed(1)}% - {formatUSD(d.value)}
                 </div>
               </div>
             )

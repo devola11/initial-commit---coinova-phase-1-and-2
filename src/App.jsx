@@ -20,6 +20,7 @@ import Convert from './pages/Convert'
 import Trending from './pages/Trending'
 import Staking from './pages/Staking'
 import Learn from './pages/Learn'
+import Analytics from './pages/Analytics'
 import InstallBanner from './components/InstallBanner'
 
 function AppLayout() {
@@ -57,6 +58,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Portfolio />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <Analytics />
                   </ProtectedRoute>
                 }
               />

@@ -15,6 +15,7 @@ import FearGreedIndex from '../components/FearGreedIndex'
 import { TrendingWidget } from './Trending'
 import { StakingWidget } from './Staking'
 import { LearnWidget } from './Learn'
+import { AnalyticsWidget } from './Analytics'
 import { useHoldings } from '../hooks/useHoldings'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { formatUSD, formatPercent } from '../utils/formatters'
@@ -206,6 +207,10 @@ export default function Dashboard() {
 
       <div className="mb-6">
         <PortfolioChart />
+      </div>
+
+      <div className="mb-6">
+        <AnalyticsWidget />
       </div>
 
       <div className="mb-6">

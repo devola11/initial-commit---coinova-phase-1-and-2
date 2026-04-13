@@ -17,6 +17,7 @@ import Airdrops from './pages/Airdrops'
 import CoinDetail from './pages/CoinDetail'
 import Watchlist from './pages/Watchlist'
 import Convert from './pages/Convert'
+import Trending from './pages/Trending'
 
 function AppLayout() {
   return (
@@ -61,6 +62,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Convert />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/trending"
+                element={
+                  <ProtectedRoute>
+                    <Trending />
                   </ProtectedRoute>
                 }
               />

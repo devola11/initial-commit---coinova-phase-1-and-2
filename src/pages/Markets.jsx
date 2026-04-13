@@ -12,6 +12,7 @@ import CoinSearch from '../components/CoinSearch'
 import InvestModal from '../components/InvestModal'
 import { INVEST_WALLETS } from './Invest'
 import { useWatchlist } from '../hooks/useWatchlist'
+import { TrendingBanner } from './Trending'
 
 function StarIcon({ filled }) {
   return (
@@ -124,6 +125,8 @@ export default function Markets() {
           {coins.length} coins tracked
         </div>
       </div>
+
+      <TrendingBanner />
 
       {errorMsg && (
         <div className="mb-4 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-yellow-400 text-sm">

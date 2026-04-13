@@ -12,6 +12,7 @@ const navLinks = [
   { to: '/markets', label: 'Markets' },
   { to: '/invest', label: 'Invest' },
   { to: '/airdrops', label: 'Airdrops', icon: 'gift' },
+  { to: '/staking', label: 'Staking', icon: 'shield' },
   { to: '/watchlist', label: 'Watchlist', icon: 'star' },
   { to: '/alerts', label: 'Alerts' },
 ]
@@ -31,6 +32,12 @@ function FireIcon() {
 function SwapIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+  )
+}
+
+function ShieldIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
   )
 }
 
@@ -91,6 +98,7 @@ export default function Navbar() {
                       {link.icon === 'gift' && <GiftIcon />}
                       {link.icon === 'swap' && <SwapIcon />}
                       {link.icon === 'fire' && <FireIcon />}
+                      {link.icon === 'shield' && <ShieldIcon />}
                       {link.icon === 'star' && <StarNavIcon />}
                       {link.label}
                     </Link>

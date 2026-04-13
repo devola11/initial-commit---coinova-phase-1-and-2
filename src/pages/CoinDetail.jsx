@@ -15,6 +15,7 @@ import BuyModal from '../components/BuyModal'
 import { INVEST_WALLETS } from './Invest'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { FearGreedBadge } from '../components/FearGreedIndex'
+import { STAKING_APY_MAP } from './Staking'
 
 function WatchlistStarIcon({ filled }) {
   return (
@@ -159,6 +160,14 @@ function OverviewTab({ coinId, detail, onInvest, onBuy, sentimentBadge }) {
           </span>
         )}
         {sentimentBadge && <div className="mt-2">{sentimentBadge}</div>}
+        {STAKING_APY_MAP[coinId] && (
+          <div className="mt-2">
+            <a href="/staking" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#05B169]/15 text-[#05B169] text-xs font-semibold no-underline hover:bg-[#05B169]/25 transition-colors">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Earn {STAKING_APY_MAP[coinId]}% APY by staking
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Chart */}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useHoldings } from '../hooks/useHoldings'
 import { formatUSD, formatCrypto } from '../utils/formatters'
 import { getCoinImageUrl } from '../utils/coinImages'
@@ -55,6 +56,7 @@ function format2dp(value) {
 }
 
 export default function HoldingsTable({ onBuy, onSell }) {
+  const navigate = useNavigate()
   const { holdings, loading } = useHoldings()
 
   if (loading) {
@@ -168,6 +170,12 @@ export default function HoldingsTable({ onBuy, onSell }) {
                         className="px-3 py-1.5 rounded-lg bg-transparent text-text-primary border border-card-border hover:border-loss hover:text-loss text-xs font-semibold cursor-pointer transition-colors"
                       >
                         Sell
+                      </button>
+                      <button
+                        onClick={() => navigate(`/convert?from=${h.coin_id}`)}
+                        className="px-3 py-1.5 rounded-lg bg-transparent text-text-primary border border-card-border hover:border-primary-blue hover:text-primary-blue text-xs font-semibold cursor-pointer transition-colors"
+                      >
+                        Convert
                       </button>
                     </div>
                   </td>

@@ -16,6 +16,7 @@ import Admin from './pages/Admin'
 import Airdrops from './pages/Airdrops'
 import CoinDetail from './pages/CoinDetail'
 import Watchlist from './pages/Watchlist'
+import Convert from './pages/Convert'
 
 function AppLayout() {
   return (
@@ -52,6 +53,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Portfolio />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/convert"
+                element={
+                  <ProtectedRoute>
+                    <Convert />
                   </ProtectedRoute>
                 }
               />

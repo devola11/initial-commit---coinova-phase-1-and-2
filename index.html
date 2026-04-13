@@ -11,13 +11,70 @@
     <meta property="og:title" content="Coinova" />
     <meta property="og:description" content="Trade crypto. Build wealth." />
     <meta property="og:image" content="/logo.jpeg" />
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Coinova" />
+    <meta name="application-name" content="Coinova" />
+    <meta name="msapplication-TileColor" content="#0052FF" />
+    <meta name="msapplication-TileImage" content="/logo.jpeg" />
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        background: #0A0B0D;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        transition: opacity 0.5s;
+      }
+      #splash img {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+      }
+      #splash h1 {
+        color: #fff;
+        font-size: 24px;
+        font-weight: 700;
+        font-family: Inter, sans-serif;
+        margin: 0;
+      }
+      #splash p {
+        color: #8A919E;
+        font-size: 14px;
+        font-family: Inter, sans-serif;
+        margin-top: 8px;
+      }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>Coinova — Trade Crypto. Build Wealth.</title>
   </head>
   <body>
+    <div id="splash">
+      <img src="/logo.jpeg" alt="Coinova" />
+      <h1>Coinova</h1>
+      <p>Trade Crypto. Build Wealth.</p>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var splash = document.getElementById('splash');
+          if (splash) {
+            splash.style.opacity = '0';
+            setTimeout(function() { splash.remove(); }, 500);
+          }
+        }, 1500);
+      });
+    </script>
   </body>
 </html>

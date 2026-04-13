@@ -20,6 +20,7 @@ import Convert from './pages/Convert'
 import Trending from './pages/Trending'
 import Staking from './pages/Staking'
 import Learn from './pages/Learn'
+import InstallBanner from './components/InstallBanner'
 
 function AppLayout() {
   return (
@@ -157,6 +158,7 @@ export default function App() {
               />
             </Route>
           </Routes>
+          <InstallBanner />
         </PortfolioProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -380,6 +380,32 @@ export default function Settings() {
         />
       </Card>
 
+      {/* ── Install App ─────────────────────────────────────────── */}
+      <Card>
+        <SectionTitle>Install Coinova App</SectionTitle>
+        {typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches ? (
+          <div className="flex items-center gap-2 text-[#05B169] text-sm font-semibold">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+            Coinova is installed on this device
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-3">
+              <div className="text-white text-sm font-medium mb-1">Android (Chrome)</div>
+              <div className="text-[#8A919E] text-xs">Tap the menu ({'\u22EE'}) {'\u2192'} Add to Home Screen {'\u2192'} Install</div>
+            </div>
+            <div className="bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-3">
+              <div className="text-white text-sm font-medium mb-1">iPhone (Safari)</div>
+              <div className="text-[#8A919E] text-xs">Tap Share ({'\u25A1\u2191'}) {'\u2192'} Add to Home Screen {'\u2192'} Add</div>
+            </div>
+            <div className="bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-3">
+              <div className="text-white text-sm font-medium mb-1">Desktop (Chrome)</div>
+              <div className="text-[#8A919E] text-xs">Click the install icon ({'\u2295'}) in the address bar</div>
+            </div>
+          </div>
+        )}
+      </Card>
+
       {/* ── Admin ─────────────────────────────────────────────────── */}
       {user?.email?.toLowerCase() === ADMIN_EMAIL && (
         <div className="bg-[#0052FF]/10 border border-[#0052FF]/30 rounded-xl p-5 mb-5">

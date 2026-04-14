@@ -13,6 +13,7 @@ import CoinSearch from '../components/CoinSearch'
 import SavingsGoal from '../components/SavingsGoal'
 import FearGreedIndex from '../components/FearGreedIndex'
 import KYCBanner from '../components/KYCBanner'
+import PINSetup from '../components/PINSetup'
 import { TrendingWidget } from './Trending'
 import { StakingWidget } from './Staking'
 import { LearnWidget } from './Learn'
@@ -70,6 +71,54 @@ function AirdropBanner() {
         </button>
       </div>
     </div>
+  )
+}
+
+function PINPromptBanner() {
+  const [show, setShow] = useState(false)
+  const [showSetup, setShowSetup] = useState(false)
+
+  useEffect(() => {
+    const hasPIN = localStorage.getItem('coinova-pin-hash')
+    const prompted = localStorage.getItem('coinova-pin-prompted')
+    if (hasPIN || (prompted && Date.now() - Number(prompted) < 7 * 24 * 60 * 60 * 1000)) return
+    setShow(true)
+  }, [])
+
+  if (!show) return null
+
+  return (
+    <>
+      <div className="mb-6 rounded-xl p-4 flex items-center justify-between gap-3" style={{ background: '#0052FF10', border: '1px solid #0052FF30' }}>
+        <div className="flex items-center gap-3 min-w-0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0052FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div>
+            <div className="text-white text-sm font-medium">Secure your account</div>
+            <div className="text-[#8A8F98] text-xs">Set up a PIN or biometric for quick and secure access</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => setShowSetup(true)}
+            className="px-4 py-1.5 rounded-lg bg-[#0052FF] text-white text-xs font-semibold border-none cursor-pointer hover:bg-[#0046D9] transition-colors whitespace-nowrap"
+          >
+            Set up now
+          </button>
+          <button
+            onClick={() => { setShow(false); localStorage.setItem('coinova-pin-prompted', String(Date.now())) }}
+            className="text-[#8A8F98]/60 hover:text-[#8A8F98] bg-transparent border-none cursor-pointer text-lg leading-none"
+          >
+            &times;
+          </button>
+        </div>
+      </div>
+      {showSetup && (
+        <PINSetup
+          onComplete={() => { setShowSetup(false); setShow(false) }}
+          onCancel={() => setShowSetup(false)}
+        />
+      )}
+    </>
   )
 }
 
@@ -178,6 +227,7 @@ export default function Dashboard() {
 
       <AirdropBanner />
       <KYCBanner />
+      <PINPromptBanner />
 
       <div className="mb-6">
         <WalletCard />

@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { getCoinImageUrl } from '../utils/coinImages'
 import { formatUSD } from '../utils/formatters'
 import { walletForCoin } from '../utils/coinCategories'
+import PINConfirm from './PINConfirm'
 
 const QUICK_AMOUNTS = [10, 50, 100, 500, 1000]
 
@@ -48,6 +49,7 @@ export default function InvestModal({ coin, wallets, onClose }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [submittedAt, setSubmittedAt] = useState(null)
+  const [showPinConfirm, setShowPinConfirm] = useState(false)
 
   const price = coin.current_price || 0
   const usdAmount = Number(usd) || 0
@@ -290,7 +292,13 @@ export default function InvestModal({ coin, wallets, onClose }) {
                 Back
               </button>
               <button
-                onClick={handleSubmit}
+                onClick={() => {
+                  if (localStorage.getItem('coinova-pin-hash')) {
+                    setShowPinConfirm(true)
+                  } else {
+                    handleSubmit()
+                  }
+                }}
                 disabled={submitting || !txHash.trim() || !email.trim()}
                 className="flex-1 py-3 rounded-lg bg-primary-blue hover:bg-primary-blue-hover text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed border-none cursor-pointer transition-colors"
               >
@@ -356,6 +364,14 @@ export default function InvestModal({ coin, wallets, onClose }) {
           </div>
         )}
       </div>
+      {showPinConfirm && (
+        <PINConfirm
+          title="Confirm investment"
+          subtitle={`Submit ${symbol} investment with PIN`}
+          onVerified={() => { setShowPinConfirm(false); handleSubmit() }}
+          onCancel={() => setShowPinConfirm(false)}
+        />
+      )}
     </div>
   )
 }

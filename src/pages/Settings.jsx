@@ -5,6 +5,9 @@ import { useAuth } from '../context/AuthContext'
 import { ADMIN_EMAIL } from './Admin'
 import { useKycStatus } from '../components/KYCBanner'
 import { useTheme } from '../hooks/useTheme'
+import { usePIN } from '../hooks/usePIN'
+import { useBiometric } from '../hooks/useBiometric'
+import PINSetup from '../components/PINSetup'
 
 const CURRENCIES = [
   { code: 'USD', symbol: '$', label: 'US Dollar' },
@@ -150,6 +153,10 @@ export default function Settings() {
   const [pwSaving, setPwSaving] = useState(false)
   const [show2faModal, setShow2faModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showPinSetup, setShowPinSetup] = useState(false)
+  const [showDisablePinConfirm, setShowDisablePinConfirm] = useState(false)
+  const { pinEnabled, disablePIN } = usePIN()
+  const { supported: bioSupported, enabled: bioEnabled, registerBiometric, disableBiometric } = useBiometric()
 
   useEffect(() => {
     if (!user) return
@@ -410,6 +417,72 @@ export default function Settings() {
             </button>
           </div>
         </div>
+        {/* PIN Lock */}
+        <div className="flex items-center justify-between py-3.5 px-1 border-b border-[#1E2025]">
+          <div>
+            <div className="text-white text-sm font-medium">PIN Lock</div>
+            <div className="text-[#8A8F98] text-xs mt-0.5">Require PIN for transactions</div>
+          </div>
+          <div className="flex items-center gap-2">
+            {pinEnabled ? (
+              <>
+                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#05B169]/10 text-[#05B169]">Enabled</span>
+                <button
+                  onClick={() => setShowPinSetup(true)}
+                  className="px-3 py-1.5 rounded-lg border border-[#1E2025] bg-transparent text-[#8A8F98] hover:text-white text-xs font-semibold cursor-pointer transition-colors"
+                >
+                  Change
+                </button>
+                <button
+                  onClick={() => setShowDisablePinConfirm(true)}
+                  className="px-3 py-1.5 rounded-lg border border-[#F6465D]/30 bg-transparent text-[#F6465D] hover:bg-[#F6465D]/10 text-xs font-semibold cursor-pointer transition-colors"
+                >
+                  Disable
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#8A8F98]/10 text-[#8A8F98]">Not set</span>
+                <button
+                  onClick={() => setShowPinSetup(true)}
+                  className="px-3 py-1.5 rounded-lg bg-[#0052FF] text-white text-xs font-semibold border-none cursor-pointer transition-colors hover:bg-[#0046D9]"
+                >
+                  Set up PIN
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+        {/* Biometric */}
+        <div className="flex items-center justify-between py-3.5 px-1 border-b border-[#1E2025]">
+          <div>
+            <div className="text-white text-sm font-medium">Fingerprint / Face ID</div>
+            {!bioSupported && (
+              <div className="text-[#8A8F98] text-xs mt-0.5">Not available on this device</div>
+            )}
+          </div>
+          {bioSupported ? (
+            <button
+              onClick={async () => {
+                if (bioEnabled) {
+                  disableBiometric()
+                } else {
+                  await registerBiometric(user.id, user.email || 'user')
+                }
+              }}
+              className={`w-11 h-6 rounded-full border-none cursor-pointer transition-colors relative ${
+                bioEnabled ? 'bg-[#0052FF]' : 'bg-[#2C2F36]'
+              }`}
+            >
+              <div
+                className="w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all"
+                style={{ left: bioEnabled ? '22px' : '2px' }}
+              />
+            </button>
+          ) : (
+            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#8A8F98]/10 text-[#8A8F98]">Unavailable</span>
+          )}
+        </div>
         {/* Active sessions */}
         <div className="py-3.5 px-1">
           <div className="text-white text-sm font-medium mb-2">Active Sessions</div>
@@ -564,6 +637,38 @@ export default function Settings() {
                 className="flex-1 py-2.5 rounded-lg bg-[#F6465D] text-white text-sm font-semibold border-none cursor-pointer"
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── PIN Setup Modal ──────────────────────────────────────── */}
+      {showPinSetup && (
+        <PINSetup
+          onComplete={() => setShowPinSetup(false)}
+          onCancel={() => setShowPinSetup(false)}
+        />
+      )}
+
+      {/* ── Disable PIN Confirm ──────────────────────────────────── */}
+      {showDisablePinConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setShowDisablePinConfirm(false)}>
+          <div className="bg-[#141519] border border-[#1E2025] rounded-xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="text-[#F6465D] font-semibold mb-3">Disable PIN</div>
+            <p className="text-[#8A8F98] text-sm mb-5">This will remove your PIN lock and biometric authentication. Transactions will no longer require PIN confirmation.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDisablePinConfirm(false)}
+                className="flex-1 py-2.5 rounded-lg border border-[#1E2025] bg-transparent text-white text-sm font-semibold cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { disablePIN(); disableBiometric(); setShowDisablePinConfirm(false) }}
+                className="flex-1 py-2.5 rounded-lg bg-[#F6465D] text-white text-sm font-semibold border-none cursor-pointer"
+              >
+                Disable
               </button>
             </div>
           </div>

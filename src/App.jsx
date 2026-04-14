@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { PortfolioProvider } from './context/PortfolioContext'
 import { useTheme } from './hooks/useTheme'
+import AppLock from './components/AppLock'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import LandingPage from './pages/LandingPage'
@@ -48,6 +49,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <PortfolioProvider>
+          <AppLock>
           <Routes>
             {/* Public */}
             <Route path="/" element={<LandingPage />} />
@@ -191,6 +193,7 @@ export default function App() {
             </Route>
           </Routes>
           <InstallBanner />
+          </AppLock>
         </PortfolioProvider>
       </AuthProvider>
     </BrowserRouter>

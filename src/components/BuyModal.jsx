@@ -5,6 +5,7 @@ import { usePortfolio } from '../context/PortfolioContext'
 import { getCoinPrice } from '../lib/coingecko'
 import { calculateBuy } from '../utils/calculations'
 import { formatUSD, formatCrypto } from '../utils/formatters'
+import PINConfirm from './PINConfirm'
 
 const QUICK_AMOUNTS = [100, 500, 1000, 5000]
 
@@ -17,6 +18,7 @@ export default function BuyModal({ coin, onClose }) {
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  const [showPinConfirm, setShowPinConfirm] = useState(false)
 
   useEffect(() => {
     if (!coin?.id) return
@@ -226,7 +228,13 @@ export default function BuyModal({ coin, onClose }) {
             )}
 
             <button
-              onClick={handleConfirm}
+              onClick={() => {
+                if (localStorage.getItem('coinova-pin-hash')) {
+                  setShowPinConfirm(true)
+                } else {
+                  handleConfirm()
+                }
+              }}
               disabled={!canSubmit}
               className="w-full mt-5 py-3 rounded-lg bg-primary-blue hover:bg-primary-blue-hover text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed border-none cursor-pointer transition-colors"
             >
@@ -235,6 +243,14 @@ export default function BuyModal({ coin, onClose }) {
           </>
         )}
       </div>
+      {showPinConfirm && (
+        <PINConfirm
+          title="Confirm purchase"
+          subtitle={`Buy ${coin.symbol?.toUpperCase()} with PIN`}
+          onVerified={() => { setShowPinConfirm(false); handleConfirm() }}
+          onCancel={() => setShowPinConfirm(false)}
+        />
+      )}
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { ADMIN_EMAIL } from './Admin'
 import { useKycStatus } from '../components/KYCBanner'
+import { useTheme } from '../hooks/useTheme'
 
 const CURRENCIES = [
   { code: 'USD', symbol: '$', label: 'US Dollar' },
@@ -140,7 +141,7 @@ export default function Settings() {
   const [displayName, setDisplayName] = useState('')
   const [editingName, setEditingName] = useState(false)
   const [currency, setCurrency] = useState(() => localStorage.getItem('coinova_currency') || 'USD')
-  const [theme, setTheme] = useState(() => localStorage.getItem('coinova_theme') || 'dark')
+  const { theme, changeTheme } = useTheme()
   const [notifications, setNotifications] = useState(() => localStorage.getItem('coinova_notifications') !== 'off')
   const [saving, setSaving] = useState(false)
   const [showPwForm, setShowPwForm] = useState(false)
@@ -189,8 +190,7 @@ export default function Settings() {
   }
 
   function handleThemeChange(val) {
-    setTheme(val)
-    localStorage.setItem('coinova_theme', val)
+    changeTheme(val)
   }
 
   function handleNotifToggle() {
@@ -297,20 +297,39 @@ export default function Settings() {
           </select>
         </div>
         {/* Theme */}
-        <div className="flex items-center justify-between py-3.5 px-1 border-b border-[#1E2025]">
-          <div className="text-white text-sm font-medium">Theme</div>
-          <div className="flex gap-1 bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-0.5">
-            {['dark', 'light', 'system'].map((t) => (
-              <button
-                key={t}
-                onClick={() => handleThemeChange(t)}
-                className={`px-3 py-1.5 rounded text-xs font-semibold border-none cursor-pointer capitalize transition-colors ${
-                  theme === t ? 'bg-[#0052FF] text-white' : 'bg-transparent text-[#8A8F98] hover:text-white'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
+        <div className="py-3.5 px-1 border-b border-[#1E2025]">
+          <div className="text-white text-sm font-medium mb-3">Theme</div>
+          <div className="grid grid-cols-3 gap-3">
+            {/* Dark */}
+            <button
+              onClick={() => handleThemeChange('dark')}
+              className={`bg-[#0A0B0D] rounded-xl p-4 text-center cursor-pointer transition-colors ${
+                theme === 'dark' ? 'border-2 border-[#0052FF]' : 'border border-[#1E2025]'
+              }`}
+            >
+              <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={theme === 'dark' ? '#0052FF' : '#8A8F98'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              <div className={`text-xs font-semibold ${theme === 'dark' ? 'text-[#0052FF]' : 'text-[#8A8F98]'}`}>Dark</div>
+            </button>
+            {/* Light */}
+            <button
+              onClick={() => handleThemeChange('light')}
+              className={`bg-[#0A0B0D] rounded-xl p-4 text-center cursor-pointer transition-colors ${
+                theme === 'light' ? 'border-2 border-[#0052FF]' : 'border border-[#1E2025]'
+              }`}
+            >
+              <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={theme === 'light' ? '#0052FF' : '#8A8F98'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              <div className={`text-xs font-semibold ${theme === 'light' ? 'text-[#0052FF]' : 'text-[#8A8F98]'}`}>Light</div>
+            </button>
+            {/* System */}
+            <button
+              onClick={() => handleThemeChange('system')}
+              className={`bg-[#0A0B0D] rounded-xl p-4 text-center cursor-pointer transition-colors ${
+                theme === 'system' ? 'border-2 border-[#0052FF]' : 'border border-[#1E2025]'
+              }`}
+            >
+              <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={theme === 'system' ? '#0052FF' : '#8A8F98'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <div className={`text-xs font-semibold ${theme === 'system' ? 'text-[#0052FF]' : 'text-[#8A8F98]'}`}>System</div>
+            </button>
           </div>
         </div>
         {/* Notifications */}

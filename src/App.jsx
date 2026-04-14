@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { PortfolioProvider } from './context/PortfolioContext'
+import { useTheme } from './hooks/useTheme'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import LandingPage from './pages/LandingPage'
@@ -42,6 +43,7 @@ function AppLayout() {
 }
 
 export default function App() {
+  useTheme()
   return (
     <BrowserRouter>
       <AuthProvider>

@@ -61,7 +61,7 @@ export default function Contact() {
         <p className="text-gray-500 text-sm mb-10">We're here to help</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Left — Info cards */}
+          {/* Left - Info cards */}
           <div className="space-y-4">
             <InfoCard title="General Support" email="support@coinova.app"
               description="For general questions and account help" responseTime="Within 24 hours" />
@@ -88,7 +88,7 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Right — Contact form */}
+          {/* Right - Contact form */}
           <div className="border border-gray-200 rounded-xl p-6">
             <h3 className="text-black font-semibold mb-4">Send us a message</h3>
             <form onSubmit={handleSubmit} className="space-y-4">

@@ -11,7 +11,7 @@ import {
 import InvestModal from '../components/InvestModal'
 import KYCBanner, { useKycStatus } from '../components/KYCBanner'
 
-// Treasury addresses — hardcoded. BTC and ETH have their own wallets; all
+// Treasury addresses - hardcoded. BTC and ETH have their own wallets; all
 // other coins (memes, alts, DeFi, L2, AI, stables) settle via USDT TRC-20 so
 // deposits consolidate on one chain for treasury ops.
 export const INVEST_WALLETS = {
@@ -36,7 +36,7 @@ export const INVEST_WALLETS = {
 }
 
 function ChangePill({ value }) {
-  if (value == null) return <span className="text-text-muted text-xs">—</span>
+  if (value == null) return <span className="text-text-muted text-xs">-</span>
   const positive = value >= 0
   return (
     <span
@@ -85,7 +85,7 @@ function CoinCard({ coin, onInvest, onNavigate }) {
             Price
           </div>
           <div className="text-text-primary text-base font-semibold">
-            {price != null ? formatUSD(price) : '—'}
+            {price != null ? formatUSD(price) : '-'}
           </div>
         </div>
         <ChangePill value={change} />

@@ -196,7 +196,7 @@ export default function Airdrops() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white tracking-tight">Airdrops</h1>
-        <p className="text-[#8A8F98] text-sm mt-1">Claim free crypto — one time per coin per account</p>
+        <p className="text-[#8A8F98] text-sm mt-1">Claim free crypto - one time per coin per account</p>
       </div>
 
       {error && (
@@ -367,7 +367,7 @@ export default function Airdrops() {
           <span>|</span>
           <span>$0.00 earned</span>
         </div>
-        <div className="text-[#8A8F98] text-xs">Referral rewards coming soon — track your invites now!</div>
+        <div className="text-[#8A8F98] text-xs">Referral rewards coming soon - track your invites now!</div>
       </div>
 
       {/* Success modal */}

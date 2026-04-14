@@ -132,7 +132,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right column — hero image */}
+          {/* Right column - hero image */}
           <div className="relative flex justify-center lg:justify-end">
             <img
               src={hero1}
@@ -247,7 +247,7 @@ export default function LandingPage() {
             <p className="mt-3 text-gray-500 leading-relaxed">Trade at live prices with zero delays. Execute orders in milliseconds.</p>
           </div>
 
-          {/* Card 2 — with Hero2 illustration */}
+          {/* Card 2 - with Hero2 illustration */}
           <div className="p-8 rounded-2xl bg-white border border-gray-100 overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
             <img src={hero2} alt="Portfolio tracking" className="w-full rounded-xl mb-5 object-cover" style={{ maxHeight: '160px' }} />
             <h3 className="text-xl font-extrabold text-black tracking-tight">Track your portfolio</h3>

@@ -9,7 +9,7 @@ function buildFallback(coinIds) {
   return out
 }
 
-// Poll every 3 minutes by default — CoinGecko's free tier will 429 faster than
+// Poll every 3 minutes by default - CoinGecko's free tier will 429 faster than
 // that when many tabs hit it at once.
 export function useLivePrices(coinIds, intervalMs = 180000) {
   const [prices, setPrices] = useState(() => buildFallback(coinIds || []))

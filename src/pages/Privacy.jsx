@@ -67,10 +67,10 @@ export default function Privacy() {
         <Section title="4. Third Party Services">
           <p>We use the following third-party services:</p>
           <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Supabase</strong> — database and authentication</li>
-            <li><strong>CoinGecko</strong> — cryptocurrency price data</li>
-            <li><strong>Vercel</strong> — hosting and deployment</li>
-            <li><strong>Alternative.me</strong> — market sentiment data</li>
+            <li><strong>Supabase</strong> - database and authentication</li>
+            <li><strong>CoinGecko</strong> - cryptocurrency price data</li>
+            <li><strong>Vercel</strong> - hosting and deployment</li>
+            <li><strong>Alternative.me</strong> - market sentiment data</li>
           </ul>
           <p>These services have their own privacy policies.</p>
         </Section>

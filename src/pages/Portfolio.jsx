@@ -93,7 +93,7 @@ export default function Portfolio() {
                   </div>
                   <div className="text-text-muted text-xs">
                     ${Number(r.amount_usd).toLocaleString()} · {r.frequency} · next{' '}
-                    {r.next_run ? new Date(r.next_run).toLocaleDateString() : '—'}
+                    {r.next_run ? new Date(r.next_run).toLocaleDateString() : '-'}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

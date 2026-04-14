@@ -24,7 +24,7 @@ function explorerUrl(walletUsed, hash) {
 }
 
 function truncate(hash) {
-  if (!hash) return '—'
+  if (!hash) return '-'
   if (hash.length <= 14) return hash
   return `${hash.slice(0, 8)}...${hash.slice(-6)}`
 }
@@ -214,7 +214,7 @@ export default function Admin() {
     try {
       const price = Number(row.coin_price_at_submission) || 0
       if (price <= 0) {
-        throw new Error('Missing reference price on request — cannot credit holdings')
+        throw new Error('Missing reference price on request - cannot credit holdings')
       }
       const quantity = Number(row.amount_usd) / price
 
@@ -243,7 +243,7 @@ export default function Admin() {
           coin_id: row.coin_id,
           symbol: (row.coin_symbol || '').toLowerCase(),
           name: row.coin_name,
-          image: row.coin_image || null,
+          coin_image: row.coin_image || null,
           quantity,
           buy_price_usd: price,
         })
@@ -444,7 +444,7 @@ export default function Admin() {
                       <td className="py-4 px-4 text-text-muted text-xs">
                         {r.created_at
                           ? new Date(r.created_at).toLocaleDateString()
-                          : '—'}
+                          : '-'}
                       </td>
                       <td className="py-4 px-4">
                         <span
@@ -473,7 +473,7 @@ export default function Admin() {
                           </div>
                         ) : (
                           <div className="text-right text-text-muted text-xs italic">
-                            {r.admin_note || '—'}
+                            {r.admin_note || '-'}
                           </div>
                         )}
                       </td>

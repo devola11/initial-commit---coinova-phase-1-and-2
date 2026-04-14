@@ -34,7 +34,7 @@ function Gauge({ value }) {
   const v = Number(value) || 0
   const { color } = classify(v)
 
-  // Arc from 180° (left) to 0° (right) — a top semicircle
+  // Arc from 180° (left) to 0° (right) - a top semicircle
   const cx = 120, cy = 110, r = 90
   const startAngle = 180
   const endAngle = 0
@@ -120,7 +120,7 @@ function FGTooltip({ active, payload }) {
   const { label, color } = classify(d.value)
   return (
     <div className="bg-[#1E2025] border border-[#2A2D35] rounded-lg px-3 py-2 text-xs">
-      <div className="text-white font-semibold">{d.value} — <span style={{ color }}>{label}</span></div>
+      <div className="text-white font-semibold">{d.value} - <span style={{ color }}>{label}</span></div>
       <div className="text-[#8A919E]">{d.dateLabel}</div>
     </div>
   )
@@ -161,7 +161,7 @@ export function FearGreedBadge() {
   return (
     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ backgroundColor: color + '18' }}>
       <span className="text-xs" style={{ color }}>
-        {dotForValue(v)} Market Sentiment: {v} — {label}
+        {dotForValue(v)} Market Sentiment: {v} - {label}
       </span>
     </div>
   )
@@ -202,14 +202,14 @@ export function FearGreedLanding() {
           </div>
           <p className="text-sm max-w-xs" style={{ color: '#8A919E' }}>
             {v <= 25
-              ? 'Markets are extremely fearful — historically a buying opportunity.'
+              ? 'Markets are extremely fearful - historically a buying opportunity.'
               : v <= 45
                 ? 'Investors are cautious. Fear often precedes rebounds.'
                 : v <= 55
                   ? 'The market is undecided right now.'
                   : v <= 75
                     ? 'Optimism is rising. Stay alert for corrections.'
-                    : 'Extreme greed detected — the market may correct soon.'}
+                    : 'Extreme greed detected - the market may correct soon.'}
           </p>
         </div>
       </div>

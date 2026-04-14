@@ -150,7 +150,7 @@ export default function Navbar() {
                   >
                     Log out
                   </button>
-                  {/* Hamburger — mobile only */}
+                  {/* Hamburger - mobile only */}
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
                     className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-transparent border-none cursor-pointer gap-1.5"

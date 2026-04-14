@@ -152,7 +152,7 @@ function OverviewTab({ coinId, detail, onInvest, onBuy, sentimentBadge }) {
       {/* Price header */}
       <div>
         <div className="text-white text-3xl font-bold">
-          {price != null ? formatUSD(price) : '—'}
+          {price != null ? formatUSD(price) : '-'}
         </div>
         {change24h != null && (
           <span className={`text-sm font-semibold ${changePositive ? 'text-[#05B169]' : 'text-[#F6465D]'}`}>
@@ -309,22 +309,22 @@ function StatsTab({ detail }) {
       {/* Market Metrics */}
       <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-5">
         <h3 className="text-white font-semibold text-sm mb-4">Market Metrics</h3>
-        <StatRow label="Market Cap Rank" value={md.market_cap_rank ? `#${md.market_cap_rank}` : '—'} />
-        <StatRow label="Market Cap" value={md.market_cap?.usd ? `$${formatNumber(md.market_cap.usd)}` : '—'} />
-        <StatRow label="Fully Diluted Valuation" value={md.fully_diluted_valuation?.usd ? `$${formatNumber(md.fully_diluted_valuation.usd)}` : '—'} />
+        <StatRow label="Market Cap Rank" value={md.market_cap_rank ? `#${md.market_cap_rank}` : '-'} />
+        <StatRow label="Market Cap" value={md.market_cap?.usd ? `$${formatNumber(md.market_cap.usd)}` : '-'} />
+        <StatRow label="Fully Diluted Valuation" value={md.fully_diluted_valuation?.usd ? `$${formatNumber(md.fully_diluted_valuation.usd)}` : '-'} />
         {tvl != null && <StatRow label="Total Value Locked" value={`$${formatNumber(tvl)}`} />}
         {tvl != null && md.market_cap?.usd && (
           <StatRow label="Market Cap / TVL" value={(md.market_cap.usd / tvl).toFixed(2)} />
         )}
-        <StatRow label="Total Volume (24h)" value={md.total_volume?.usd ? `$${formatNumber(md.total_volume.usd)}` : '—'} />
+        <StatRow label="Total Volume (24h)" value={md.total_volume?.usd ? `$${formatNumber(md.total_volume.usd)}` : '-'} />
       </div>
 
       {/* Supply Metrics */}
       <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-5">
         <h3 className="text-white font-semibold text-sm mb-4">Supply Metrics</h3>
-        <StatRow label="Circulating Supply" value={circ ? formatNumber(circ, 0) : '—'} />
-        <StatRow label="Total Supply" value={total ? formatNumber(total, 0) : '—'} />
-        <StatRow label="Max Supply" value={max ? formatNumber(max, 0) : '—'} />
+        <StatRow label="Circulating Supply" value={circ ? formatNumber(circ, 0) : '-'} />
+        <StatRow label="Total Supply" value={total ? formatNumber(total, 0) : '-'} />
+        <StatRow label="Max Supply" value={max ? formatNumber(max, 0) : '-'} />
         {max && circ && (
           <div className="pt-3">
             <div className="flex justify-between text-xs mb-2">

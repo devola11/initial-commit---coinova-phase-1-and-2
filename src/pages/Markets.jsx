@@ -53,7 +53,7 @@ function MarketLogo({ coin }) {
 }
 
 function fmtPct(value) {
-  if (value == null || Number.isNaN(value)) return '—'
+  if (value == null || Number.isNaN(value)) return '-'
   const sign = value >= 0 ? '+' : ''
   return `${sign}${Number(value).toFixed(2)}%`
 }

@@ -530,7 +530,7 @@ export default function Convert() {
                 </div>
               </div>
               <div className="text-[#8A919E] text-xs">
-                {toPrice > 0 ? `1 ${toCoin?.symbol?.toUpperCase() || ''} = ${formatUSD(toPrice)}` : '—'}
+                {toPrice > 0 ? `1 ${toCoin?.symbol?.toUpperCase() || ''} = ${formatUSD(toPrice)}` : '-'}
               </div>
             </div>
           </div>

@@ -10,7 +10,7 @@ const STATUS_STYLES = {
 }
 
 function truncateHash(hash) {
-  if (!hash) return '—'
+  if (!hash) return '-'
   if (hash.length <= 14) return hash
   return `${hash.slice(0, 8)}...${hash.slice(-6)}`
 }
@@ -96,7 +96,7 @@ export default function InvestmentHistory() {
                     <td className="py-4 px-4 text-right text-text-muted text-xs">
                       {r.created_at
                         ? new Date(r.created_at).toLocaleDateString()
-                        : '—'}
+                        : '-'}
                     </td>
                   </tr>
                 )

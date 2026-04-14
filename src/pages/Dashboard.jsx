@@ -136,7 +136,7 @@ function WatchlistWidget() {
                 </div>
                 <div className="text-right flex-shrink-0">
                   <div className="text-text-primary text-sm font-medium">
-                    {price != null ? formatUSD(price) : '—'}
+                    {price != null ? formatUSD(price) : '-'}
                   </div>
                   {change != null && (
                     <div className={`text-xs font-medium ${change >= 0 ? 'text-profit' : 'text-loss'}`}>

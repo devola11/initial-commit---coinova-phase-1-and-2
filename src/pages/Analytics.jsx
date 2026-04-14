@@ -405,7 +405,7 @@ export default function Analytics() {
                     <div className="text-[#05B169] text-xs font-semibold">{formatPercent(analytics.best.pnlPercent)}</div>
                   </div>
                 </div>
-              ) : <div className="text-[#5B616E] text-sm">—</div>}
+              ) : <div className="text-[#5B616E] text-sm">-</div>}
             </div>
             <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-4">
               <div className="text-[#8A919E] text-xs uppercase tracking-wider font-semibold mb-2">Worst Performer</div>
@@ -417,7 +417,7 @@ export default function Analytics() {
                     <div className="text-[#F6465D] text-xs font-semibold">{formatPercent(analytics.worst.pnlPercent)}</div>
                   </div>
                 </div>
-              ) : <div className="text-[#5B616E] text-sm">—</div>}
+              ) : <div className="text-[#5B616E] text-sm">-</div>}
             </div>
             <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-4">
               <div className="text-[#8A919E] text-xs uppercase tracking-wider font-semibold mb-2">Most Valuable</div>
@@ -429,7 +429,7 @@ export default function Analytics() {
                     <div className="text-[#8A919E] text-xs">{formatUSD(analytics.mostValuable.currentValue)} ({analytics.mostValuable.pct.toFixed(1)}%)</div>
                   </div>
                 </div>
-              ) : <div className="text-[#5B616E] text-sm">—</div>}
+              ) : <div className="text-[#5B616E] text-sm">-</div>}
             </div>
             <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-4">
               <div className="text-[#8A919E] text-xs uppercase tracking-wider font-semibold mb-2">Highest Risk</div>

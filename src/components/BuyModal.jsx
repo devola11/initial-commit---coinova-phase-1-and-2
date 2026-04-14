@@ -77,7 +77,7 @@ export default function BuyModal({ coin, onClose }) {
           coin_id: coin.id,
           symbol: (coin.symbol || '').toLowerCase(),
           name: coin.name,
-          image: coin.image || coin.large || coin.thumb || null,
+          coin_image: coin.image || coin.large || coin.thumb || null,
           quantity: calc.quantity,
           buy_price_usd: price,
         })

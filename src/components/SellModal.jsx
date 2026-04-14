@@ -109,9 +109,9 @@ export default function SellModal({ holding, onClose }) {
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            {holding.image && (
+            {holding.coin_image && (
               <img
-                src={holding.image}
+                src={holding.coin_image}
                 alt={holding.symbol}
                 className="w-10 h-10 rounded-full"
               />

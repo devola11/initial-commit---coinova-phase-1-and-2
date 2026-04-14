@@ -8,7 +8,7 @@ import { INVEST_WALLETS } from './Invest'
 const TABS = ['Trending', 'Top Gainers', 'Top Losers']
 
 function fmtPct(v) {
-  if (v == null || Number.isNaN(v)) return '—'
+  if (v == null || Number.isNaN(v)) return '-'
   const sign = v >= 0 ? '+' : ''
   return `${sign}${Number(v).toFixed(2)}%`
 }
@@ -68,7 +68,7 @@ function TrendingTab({ coins, onInvest, navigate }) {
         const price = coin.data?.price ?? coin.current_price
         const priceStr = typeof price === 'string'
           ? price
-          : price != null ? formatUSD(price) : '—'
+          : price != null ? formatUSD(price) : '-'
         const change = coin.data?.price_change_percentage_24h?.usd ?? coin.price_change_percentage_24h
         const id = coin.id
         const symbol = coin.symbol
@@ -366,7 +366,7 @@ export function TrendingWidget() {
               <span className="text-white text-xs font-semibold uppercase truncate">{coin.symbol}</span>
             </div>
             <div className="text-white text-sm font-medium">
-              {typeof coin.price === 'string' ? coin.price : coin.price != null ? formatUSD(coin.price) : '—'}
+              {typeof coin.price === 'string' ? coin.price : coin.price != null ? formatUSD(coin.price) : '-'}
             </div>
             {coin.change != null && (
               <div className={`text-xs font-medium mt-0.5 ${coin.change >= 0 ? 'text-[#05B169]' : 'text-[#F6465D]'}`}>

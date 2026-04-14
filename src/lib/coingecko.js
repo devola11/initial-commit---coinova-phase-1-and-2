@@ -36,7 +36,7 @@ export async function getTopCoins() {
   }
 }
 
-// Fetch /coins/markets filtered by specific CoinGecko IDs — used when we
+// Fetch /coins/markets filtered by specific CoinGecko IDs - used when we
 // only care about a known subset of coins.
 export async function getCoinsByIds(ids) {
   const idList = Array.isArray(ids) ? ids.join(',') : ids
@@ -61,7 +61,7 @@ export async function getMarketsPage(page = 1, perPage = 50) {
   }
 }
 
-// Fetch multiple pages in parallel and concatenate — used by Markets and
+// Fetch multiple pages in parallel and concatenate - used by Markets and
 // Invest pages to show a ~250-coin catalog.
 export async function getTopMarkets(pages = 5, perPage = 50) {
   const results = await Promise.all(

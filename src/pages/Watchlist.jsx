@@ -8,7 +8,7 @@ import InvestModal from '../components/InvestModal'
 import { INVEST_WALLETS } from './Invest'
 
 function fmtPct(value) {
-  if (value == null || Number.isNaN(value)) return '—'
+  if (value == null || Number.isNaN(value)) return '-'
   const sign = value >= 0 ? '+' : ''
   return `${sign}${Number(value).toFixed(2)}%`
 }
@@ -183,7 +183,7 @@ export default function Watchlist() {
                       <td className="py-4 px-4 text-text-primary">
                         {coin.current_price != null
                           ? formatUSD(coin.current_price)
-                          : '—'}
+                          : '-'}
                       </td>
                       <td
                         className={`py-4 px-4 font-medium ${
@@ -202,7 +202,7 @@ export default function Watchlist() {
                       <td className="py-4 px-4 text-text-primary hidden lg:table-cell">
                         {coin.market_cap != null
                           ? `$${formatNumber(coin.market_cap)}`
-                          : '—'}
+                          : '-'}
                       </td>
                       <td className="py-4 px-4 text-right">
                         <button

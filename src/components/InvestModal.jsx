@@ -185,7 +185,7 @@ export default function InvestModal({ coin, wallets, onClose }) {
               <div className="flex justify-between">
                 <span className="text-text-muted">You will receive</span>
                 <span className="text-text-primary font-semibold">
-                  {receiveQty > 0 ? receiveQty.toFixed(8) : '—'} {symbol}
+                  {receiveQty > 0 ? receiveQty.toFixed(8) : '-'} {symbol}
                 </span>
               </div>
               <div className="flex justify-between">

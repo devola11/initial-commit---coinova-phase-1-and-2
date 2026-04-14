@@ -372,7 +372,7 @@ export default function KYC() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* STEP 1 — Personal Information */}
+      {/* STEP 1 - Personal Information */}
       {step === 1 && (
         <>
           <StepIndicator current={1} total={4} />
@@ -454,7 +454,7 @@ export default function KYC() {
         </>
       )}
 
-      {/* STEP 2 — Document Upload */}
+      {/* STEP 2 - Document Upload */}
       {step === 2 && (
         <>
           <StepIndicator current={2} total={4} />
@@ -522,7 +522,7 @@ export default function KYC() {
         </>
       )}
 
-      {/* STEP 3 — Selfie */}
+      {/* STEP 3 - Selfie */}
       {step === 3 && (
         <>
           <StepIndicator current={3} total={4} />
@@ -565,7 +565,7 @@ export default function KYC() {
         </>
       )}
 
-      {/* STEP 4 — Review & Submit */}
+      {/* STEP 4 - Review & Submit */}
       {step === 4 && (
         <>
           <StepIndicator current={4} total={4} />

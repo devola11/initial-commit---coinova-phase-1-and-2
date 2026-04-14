@@ -241,8 +241,8 @@ export default function Admin() {
         const { error: insErr } = await supabase.from('holdings').insert({
           user_id: row.user_id,
           coin_id: row.coin_id,
-          symbol: (row.coin_symbol || '').toLowerCase(),
-          name: row.coin_name,
+          coin_symbol: (row.coin_symbol || '').toUpperCase(),
+          coin_name: row.coin_name,
           coin_image: row.coin_image || null,
           quantity,
           buy_price_usd: price,

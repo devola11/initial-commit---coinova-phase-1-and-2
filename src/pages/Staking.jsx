@@ -486,7 +486,7 @@ export default function Staking() {
     } else {
       await supabase.from('holdings').insert({
         user_id: user.id, coin_id: pos.coin_id, coin_symbol: pos.coin_symbol,
-        coin_name: pos.coin_name, image: pos.coin_image, quantity: totalReturn, buy_price_usd: price,
+        coin_name: pos.coin_name, coin_image: pos.coin_image, quantity: totalReturn, buy_price_usd: price,
       })
     }
 
@@ -517,7 +517,7 @@ export default function Staking() {
     } else {
       await supabase.from('holdings').insert({
         user_id: user.id, coin_id: pos.coin_id, coin_symbol: pos.coin_symbol,
-        coin_name: pos.coin_name, image: pos.coin_image, quantity: returnAmt, buy_price_usd: price,
+        coin_name: pos.coin_name, coin_image: pos.coin_image, quantity: returnAmt, buy_price_usd: price,
       })
     }
 

@@ -146,9 +146,9 @@ export default function Airdrops() {
         await supabase.from('holdings').insert({
           user_id: user.id,
           coin_id: airdrop.coin_id,
-          symbol: airdrop.coin_symbol.toLowerCase(),
-          name: airdrop.coin_name,
-          image: airdrop.coin_image || null,
+          coin_symbol: airdrop.coin_symbol.toUpperCase(),
+          coin_name: airdrop.coin_name,
+          coin_image: airdrop.coin_image || null,
           quantity: airdrop.amount,
           buy_price_usd: 0,
         })

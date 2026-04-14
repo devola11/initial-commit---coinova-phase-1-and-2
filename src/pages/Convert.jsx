@@ -383,7 +383,7 @@ export default function Convert() {
           coin_id: toCoin.id,
           coin_symbol: toCoin.symbol.toUpperCase(),
           coin_name: toCoin.name,
-          image: toCoin.image || null,
+          coin_image: toCoin.image || null,
           quantity: toAmount,
           buy_price_usd: toPrice,
         })

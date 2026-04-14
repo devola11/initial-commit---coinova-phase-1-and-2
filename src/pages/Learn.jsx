@@ -375,7 +375,7 @@ export default function Learn() {
       await supabase.from('holdings').insert({
         user_id: user.id, coin_id: course.coin_id,
         coin_symbol: course.coin_symbol, coin_name: course.coin_name,
-        image: course.coin_image, quantity: course.reward_amount,
+        coin_image: course.coin_image, quantity: course.reward_amount,
         buy_price_usd: course.reward_usd_value / course.reward_amount,
       })
     }

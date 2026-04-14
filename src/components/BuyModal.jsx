@@ -75,8 +75,8 @@ export default function BuyModal({ coin, onClose }) {
         const { error: hErr } = await supabase.from('holdings').insert({
           user_id: user.id,
           coin_id: coin.id,
-          symbol: (coin.symbol || '').toLowerCase(),
-          name: coin.name,
+          coin_symbol: (coin.symbol || '').toUpperCase(),
+          coin_name: coin.name,
           coin_image: coin.image || coin.large || coin.thumb || null,
           quantity: calc.quantity,
           buy_price_usd: price,

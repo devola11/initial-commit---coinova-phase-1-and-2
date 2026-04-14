@@ -1,24 +1,60 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
 const COUNTRIES = [
-  'United States', 'United Kingdom', 'Canada', 'Australia', 'Germany',
-  'France', 'Italy', 'Spain', 'Netherlands', 'Belgium', 'Austria',
-  'Switzerland', 'Sweden', 'Norway', 'Denmark', 'Finland', 'Ireland',
-  'Portugal', 'Japan', 'South Korea', 'Singapore', 'UAE',
-  'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain', 'Oman', 'India',
-  'Pakistan', 'Bangladesh', 'Indonesia', 'Malaysia', 'Thailand',
-  'Philippines', 'Vietnam', 'Turkey', 'Egypt', 'South Africa',
-  'Nigeria', 'Ghana', 'Kenya', 'Tanzania', 'Ethiopia', 'Morocco',
-  'Tunisia', 'Algeria', 'Mexico', 'Brazil', 'Argentina', 'Colombia',
-  'Chile', 'Peru', 'Venezuela', 'Ecuador', 'Uruguay', 'Paraguay',
-  'Bolivia', 'Costa Rica', 'Panama', 'Dominican Republic', 'Jamaica',
-  'Trinidad and Tobago', 'New Zealand', 'Poland', 'Czech Republic',
-  'Hungary', 'Romania', 'Bulgaria', 'Croatia', 'Serbia', 'Greece',
-  'Ukraine', 'Russia', 'Israel', 'Lebanon', 'Jordan', 'Iraq',
-  'China', 'Taiwan', 'Hong Kong', 'Macau',
+  'Afghanistan', 'Albania', 'Algeria', 'Andorra',
+  'Angola', 'Antigua and Barbuda', 'Argentina',
+  'Armenia', 'Australia', 'Austria', 'Azerbaijan',
+  'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados',
+  'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan',
+  'Bolivia', 'Bosnia and Herzegovina', 'Botswana',
+  'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso',
+  'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon',
+  'Canada', 'Central African Republic', 'Chad',
+  'Chile', 'China', 'Colombia', 'Comoros',
+  'Congo', 'Costa Rica', 'Croatia', 'Cuba',
+  'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti',
+  'Dominica', 'Dominican Republic', 'Ecuador',
+  'Egypt', 'El Salvador', 'Equatorial Guinea',
+  'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia',
+  'Fiji', 'Finland', 'France', 'Gabon', 'Gambia',
+  'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada',
+  'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana',
+  'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India',
+  'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel',
+  'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan',
+  'Kenya', 'Kiribati', 'Kuwait', 'Kyrgyzstan', 'Laos',
+  'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya',
+  'Liechtenstein', 'Lithuania', 'Luxembourg',
+  'Madagascar', 'Malawi', 'Malaysia', 'Maldives',
+  'Mali', 'Malta', 'Marshall Islands', 'Mauritania',
+  'Mauritius', 'Mexico', 'Micronesia', 'Moldova',
+  'Monaco', 'Mongolia', 'Montenegro', 'Morocco',
+  'Mozambique', 'Myanmar', 'Namibia', 'Nauru',
+  'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua',
+  'Niger', 'Nigeria', 'North Korea', 'North Macedonia',
+  'Norway', 'Oman', 'Pakistan', 'Palau', 'Palestine',
+  'Panama', 'Papua New Guinea', 'Paraguay', 'Peru',
+  'Philippines', 'Poland', 'Portugal', 'Qatar',
+  'Romania', 'Russia', 'Rwanda',
+  'Saint Kitts and Nevis', 'Saint Lucia',
+  'Saint Vincent and the Grenadines', 'Samoa',
+  'San Marino', 'Sao Tome and Principe',
+  'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles',
+  'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia',
+  'Solomon Islands', 'Somalia', 'South Africa',
+  'South Korea', 'South Sudan', 'Spain', 'Sri Lanka',
+  'Sudan', 'Suriname', 'Sweden', 'Switzerland',
+  'Syria', 'Taiwan', 'Tajikistan', 'Tanzania',
+  'Thailand', 'Timor-Leste', 'Togo', 'Tonga',
+  'Trinidad and Tobago', 'Tunisia', 'Turkey',
+  'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine',
+  'United Arab Emirates', 'United Kingdom',
+  'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu',
+  'Vatican City', 'Venezuela', 'Vietnam', 'Yemen',
+  'Zambia', 'Zimbabwe',
 ]
 
 const DOC_TYPES = [
@@ -161,6 +197,13 @@ export default function KYC() {
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
   const [step1Error, setStep1Error] = useState('')
+  const [countrySearch, setCountrySearch] = useState('')
+
+  const filteredCountries = useMemo(() => {
+    if (!countrySearch) return COUNTRIES
+    const q = countrySearch.toLowerCase()
+    return COUNTRIES.filter((c) => c.toLowerCase().includes(q))
+  }, [countrySearch])
 
   // Step 2 - Document
   const [docType, setDocType] = useState('')
@@ -363,13 +406,20 @@ export default function KYC() {
             </div>
             <div>
               <label className="block text-xs uppercase tracking-widest text-[#8A8F98] mb-2 font-medium">Country of Residence</label>
+              <input
+                type="text"
+                value={countrySearch}
+                onChange={(e) => { setCountrySearch(e.target.value); if (country) setCountry('') }}
+                placeholder="Search country..."
+                className="w-full bg-[#0A0B0D] border border-[#1E2025] rounded-lg px-4 py-2 text-xs text-[#8A8F98] placeholder-[#5E6168] focus:outline-none focus:border-[#0052FF] transition-colors mb-1.5"
+              />
               <select
                 value={country}
-                onChange={(e) => setCountry(e.target.value)}
+                onChange={(e) => { setCountry(e.target.value); setCountrySearch('') }}
                 className="w-full bg-[#0A0B0D] border border-[#1E2025] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#0052FF] cursor-pointer transition-colors"
               >
                 <option value="">Select country</option>
-                {COUNTRIES.map((c) => (
+                {filteredCountries.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>

@@ -204,7 +204,7 @@ export default function Invest() {
         />
       </div>
 
-      <div className="flex items-center gap-2 mb-6 overflow-x-auto">
+      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
         {CATEGORY_TABS.map((tab) => {
           const active = tab === category
           return (

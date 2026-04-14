@@ -154,7 +154,7 @@ export default function Markets() {
       </div>
 
       {/* Category tabs */}
-      <div className="flex items-center gap-2 mb-5 overflow-x-auto">
+      <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
         {CATEGORY_TABS.map((tab) => {
           const active = tab === category
           return (

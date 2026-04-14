@@ -85,25 +85,25 @@ export default function Navbar() {
     <>
       <nav className="sticky top-0 z-50 bg-root-bg/80 backdrop-blur-xl border-b border-card-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center h-16 gap-4">
             {/* Logo */}
-            <Link to="/dashboard" className="flex items-center gap-2 no-underline">
+            <Link to="/dashboard" className="flex items-center gap-2 no-underline flex-shrink-0">
               <img src={logo} alt="Coinova" className="h-7 rounded" />
-              <span className="text-lg font-bold text-text-primary tracking-tight">
+              <span className="text-lg font-bold text-text-primary tracking-tight whitespace-nowrap">
                 Coinova
               </span>
             </Link>
 
             {/* Desktop nav links */}
             {user && (
-              <div className="hidden md:flex items-center gap-1">
+              <div className="hidden md:flex items-center gap-1 flex-1 min-w-0 overflow-x-auto justify-center">
                 {navLinks.map((link) => {
                   const isActive = location.pathname === link.to
                   return (
                     <Link
                       key={link.to}
                       to={link.to}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors no-underline flex items-center gap-1.5 ${
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline flex items-center gap-1.5 whitespace-nowrap ${
                         isActive
                           ? 'text-text-primary bg-card-bg'
                           : 'text-text-muted hover:text-text-primary hover:bg-card-bg/50'
@@ -123,13 +123,16 @@ export default function Navbar() {
               </div>
             )}
 
+            {/* Spacer for non-auth */}
+            {!user && <div className="flex-1" />}
+
             {/* Right side */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {user ? (
                 <>
                   <Link
                     to="/settings"
-                    className={`hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline ${
+                    className={`hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap ${
                       location.pathname === '/settings'
                         ? 'text-text-primary bg-card-bg'
                         : 'text-text-muted hover:text-text-primary'
@@ -146,7 +149,7 @@ export default function Navbar() {
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="hidden md:inline-flex px-4 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer"
+                    className="hidden md:inline-flex px-4 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap"
                   >
                     Log out
                   </button>

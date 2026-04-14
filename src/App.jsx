@@ -21,6 +21,7 @@ import Trending from './pages/Trending'
 import Staking from './pages/Staking'
 import Learn from './pages/Learn'
 import Analytics from './pages/Analytics'
+import KYC from './pages/KYC'
 import InstallBanner from './components/InstallBanner'
 import Footer from './components/Footer'
 import Terms from './pages/Terms'
@@ -158,6 +159,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/kyc"
+                element={
+                  <ProtectedRoute>
+                    <KYC />
                   </ProtectedRoute>
                 }
               />

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { getTopMarkets } from '../lib/coingecko'
 import { getCoinImageUrl } from '../utils/coinImages'
 import { formatUSD } from '../utils/formatters'
@@ -9,6 +9,7 @@ import {
   filterBySearch,
 } from '../utils/coinCategories'
 import InvestModal from '../components/InvestModal'
+import KYCBanner, { useKycStatus } from '../components/KYCBanner'
 
 // Treasury addresses — hardcoded. BTC and ETH have their own wallets; all
 // other coins (memes, alts, DeFi, L2, AI, stables) settle via USDT TRC-20 so
@@ -116,13 +117,46 @@ function CardSkeleton() {
   )
 }
 
+function KYCGateModal({ kycStatus, onClose }) {
+  const navigate = useNavigate()
+  if (kycStatus === 'pending') {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+        <div className="bg-[#141519] border border-[#1E2025] rounded-xl w-full max-w-sm p-6 text-center" onClick={(e) => e.stopPropagation()}>
+          <div className="w-12 h-12 rounded-full bg-[#0052FF]/20 flex items-center justify-center mx-auto mb-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0052FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div className="text-white font-semibold mb-2">KYC Under Review</div>
+          <p className="text-[#8A8F98] text-sm mb-5">Your verification is being processed. We will notify you within 24-48 hours.</p>
+          <button onClick={onClose} className="w-full py-2.5 rounded-lg bg-[#0052FF] text-white text-sm font-semibold border-none cursor-pointer">OK</button>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+      <div className="bg-[#141519] border border-[#1E2025] rounded-xl w-full max-w-sm p-6 text-center" onClick={(e) => e.stopPropagation()}>
+        <div className="w-12 h-12 rounded-full bg-[#F59E0B]/20 flex items-center justify-center mx-auto mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div className="text-white font-semibold mb-2">KYC Verification Required</div>
+        <p className="text-[#8A8F98] text-sm mb-5">Verify your identity to invest real cryptocurrency on Coinova</p>
+        <button onClick={() => navigate('/kyc')} className="w-full py-2.5 rounded-lg bg-[#0052FF] text-white text-sm font-semibold border-none cursor-pointer mb-2">Complete KYC</button>
+        <button onClick={onClose} className="text-[#8A8F98] hover:text-white text-sm bg-transparent border-none cursor-pointer transition-colors">Maybe later</button>
+      </div>
+    </div>
+  )
+}
+
 export default function Invest() {
   const navigate = useNavigate()
+  const { kycStatus } = useKycStatus()
   const [coins, setCoins] = useState([])
   const [loading, setLoading] = useState(true)
   const [category, setCategory] = useState('ALL')
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState(null)
+  const [showKycGate, setShowKycGate] = useState(false)
 
   async function load() {
     try {
@@ -157,6 +191,8 @@ export default function Invest() {
           within 24 hours after we verify your transaction.
         </p>
       </div>
+
+      <KYCBanner />
 
       <div className="mb-4">
         <input
@@ -200,7 +236,13 @@ export default function Invest() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {visibleCoins.map((coin) => (
-            <CoinCard key={coin.id} coin={coin} onInvest={setSelected} onNavigate={(id) => navigate(`/coin/${id}`)} />
+            <CoinCard key={coin.id} coin={coin} onInvest={(c) => {
+              if (kycStatus === 'approved') {
+                setSelected(c)
+              } else {
+                setShowKycGate(true)
+              }
+            }} onNavigate={(id) => navigate(`/coin/${id}`)} />
           ))}
         </div>
       )}
@@ -211,6 +253,10 @@ export default function Invest() {
           wallets={INVEST_WALLETS}
           onClose={() => setSelected(null)}
         />
+      )}
+
+      {showKycGate && (
+        <KYCGateModal kycStatus={kycStatus} onClose={() => setShowKycGate(false)} />
       )}
     </div>
   )

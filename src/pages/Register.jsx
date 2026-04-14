@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { detectAndSaveLocation } from '../hooks/useGeoLocation'
 
 export default function Register() {
   const [searchParams] = useSearchParams()
@@ -23,7 +24,11 @@ export default function Register() {
 
     setLoading(true)
     try {
-      await register(email, password, displayName)
+      const regData = await register(email, password, displayName)
+      // Auto-detect location after registration
+      if (regData?.user) {
+        detectAndSaveLocation(regData.user.id).catch(() => {})
+      }
       navigate('/dashboard')
     } catch (err) {
       setError(err.message)

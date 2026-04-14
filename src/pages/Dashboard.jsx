@@ -12,6 +12,7 @@ import SellModal from '../components/SellModal'
 import CoinSearch from '../components/CoinSearch'
 import SavingsGoal from '../components/SavingsGoal'
 import FearGreedIndex from '../components/FearGreedIndex'
+import KYCBanner from '../components/KYCBanner'
 import { TrendingWidget } from './Trending'
 import { StakingWidget } from './Staking'
 import { LearnWidget } from './Learn'
@@ -176,6 +177,7 @@ export default function Dashboard() {
       </h1>
 
       <AirdropBanner />
+      <KYCBanner />
 
       <div className="mb-6">
         <WalletCard />

@@ -3,15 +3,20 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { ADMIN_EMAIL } from './Admin'
+import { useKycStatus } from '../components/KYCBanner'
 
 const CURRENCIES = [
-  { code: 'USD', symbol: '$' },
-  { code: 'EUR', symbol: '\u20AC' },
-  { code: 'GBP', symbol: '\u00A3' },
-  { code: 'NGN', symbol: '\u20A6' },
-  { code: 'AED', symbol: 'AED' },
-  { code: 'CAD', symbol: 'C$' },
-  { code: 'AUD', symbol: 'A$' },
+  { code: 'USD', symbol: '$', label: 'US Dollar' },
+  { code: 'EUR', symbol: '\u20AC', label: 'Euro' },
+  { code: 'GBP', symbol: '\u00A3', label: 'British Pound' },
+  { code: 'AED', symbol: '\u062F.\u0625', label: 'UAE Dirham' },
+  { code: 'CAD', symbol: 'C$', label: 'Canadian Dollar' },
+  { code: 'AUD', symbol: 'A$', label: 'Australian Dollar' },
+  { code: 'SGD', symbol: 'S$', label: 'Singapore Dollar' },
+  { code: 'CHF', symbol: '\u20A3', label: 'Swiss Franc' },
+  { code: 'JPY', symbol: '\u00A5', label: 'Japanese Yen' },
+  { code: 'BTC', symbol: '\u20BF', label: 'Bitcoin' },
+  { code: 'ETH', symbol: '\u039E', label: 'Ethereum' },
 ]
 
 const WALLETS = [
@@ -73,6 +78,58 @@ function Card({ children }) {
     <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-5 mb-5">
       {children}
     </div>
+  )
+}
+
+function KYCCard() {
+  const { kycStatus, rejectionReason } = useKycStatus()
+  const statusConfig = {
+    unverified: { label: 'Unverified', color: '#F59E0B', bg: '#F59E0B' },
+    pending: { label: 'Under Review', color: '#0052FF', bg: '#0052FF' },
+    approved: { label: 'Verified', color: '#05B169', bg: '#05B169' },
+    rejected: { label: 'Rejected', color: '#F6465D', bg: '#F6465D' },
+  }
+  const cfg = statusConfig[kycStatus] || statusConfig.unverified
+
+  return (
+    <Card>
+      <SectionTitle>KYC Verification</SectionTitle>
+      <div className="flex items-center justify-between py-3.5 px-1">
+        <div>
+          <div className="text-white text-sm font-medium">Verification Status</div>
+          {kycStatus === 'rejected' && rejectionReason && (
+            <div className="text-[#F6465D] text-xs mt-0.5">Reason: {rejectionReason}</div>
+          )}
+          {kycStatus === 'pending' && (
+            <div className="text-[#8A8F98] text-xs mt-0.5">Your documents are being reviewed</div>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          <span
+            className="px-2.5 py-1 rounded text-[11px] font-semibold"
+            style={{ background: `${cfg.bg}15`, color: cfg.color }}
+          >
+            {cfg.label}
+          </span>
+          {(kycStatus === 'unverified' || !kycStatus) && (
+            <Link
+              to="/kyc"
+              className="px-3 py-1.5 rounded-lg bg-[#0052FF] text-white text-xs font-semibold no-underline transition-colors hover:bg-[#0046D9]"
+            >
+              Complete verification
+            </Link>
+          )}
+          {kycStatus === 'rejected' && (
+            <Link
+              to="/kyc"
+              className="px-3 py-1.5 rounded-lg bg-[#F6465D] text-white text-xs font-semibold no-underline transition-opacity hover:opacity-90"
+            >
+              Resubmit
+            </Link>
+          )}
+        </div>
+      </div>
+    </Card>
   )
 }
 
@@ -379,6 +436,9 @@ export default function Settings() {
           }
         />
       </Card>
+
+      {/* ── KYC Verification ──────────────────────────────────────── */}
+      <KYCCard />
 
       {/* ── Install App ─────────────────────────────────────────── */}
       <Card>

@@ -322,11 +322,29 @@ export default function LandingPage() {
                 {prefs.country} &middot; {prefs.language}
               </button>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm font-medium text-gray-600">
-              <Link to="/markets" className="hover:text-black no-underline text-gray-600">Markets</Link>
-              <Link to="/portfolio" className="hover:text-black no-underline text-gray-600">Portfolio</Link>
-              <Link to="/alerts" className="hover:text-black no-underline text-gray-600">Alerts</Link>
-              <Link to="/login" className="hover:text-black no-underline text-gray-600">Sign in</Link>
+            <div className="grid grid-cols-3 gap-6 text-sm">
+              <div>
+                <div className="font-semibold text-gray-800 mb-2">Product</div>
+                <div className="flex flex-col gap-1.5">
+                  <Link to="/markets" className="hover:text-black no-underline text-gray-500">Markets</Link>
+                  <Link to="/login" className="hover:text-black no-underline text-gray-500">Sign in</Link>
+                  <Link to="/register" className="hover:text-black no-underline text-gray-500">Get started</Link>
+                </div>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-800 mb-2">Legal</div>
+                <div className="flex flex-col gap-1.5">
+                  <Link to="/terms" className="hover:text-black no-underline text-gray-500">Terms of Service</Link>
+                  <Link to="/privacy" className="hover:text-black no-underline text-gray-500">Privacy Policy</Link>
+                </div>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-800 mb-2">Support</div>
+                <div className="flex flex-col gap-1.5">
+                  <Link to="/faq" className="hover:text-black no-underline text-gray-500">FAQ</Link>
+                  <Link to="/contact" className="hover:text-black no-underline text-gray-500">Contact</Link>
+                </div>
+              </div>
             </div>
             <div className="text-sm text-gray-500">&copy; 2026 Coinova</div>
           </div>

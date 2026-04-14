@@ -22,12 +22,20 @@ import Staking from './pages/Staking'
 import Learn from './pages/Learn'
 import Analytics from './pages/Analytics'
 import InstallBanner from './components/InstallBanner'
+import Footer from './components/Footer'
+import Terms from './pages/Terms'
+import Privacy from './pages/Privacy'
+import FAQ from './pages/FAQ'
+import Contact from './pages/Contact'
 
 function AppLayout() {
   return (
-    <div className="min-h-screen bg-root-bg">
+    <div className="min-h-screen bg-root-bg flex flex-col">
       <Navbar />
-      <Outlet />
+      <div className="flex-1">
+        <Outlet />
+      </div>
+      <Footer />
     </div>
   )
 }
@@ -42,6 +50,10 @@ export default function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/contact" element={<Contact />} />
 
             {/* Protected (with dark navbar layout) */}
             <Route element={<AppLayout />}>

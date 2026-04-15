@@ -507,7 +507,7 @@ export default function Learn() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="animate-pulse space-y-4">
           <div className="h-8 w-48 bg-[#1E2025] rounded" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -519,7 +519,7 @@ export default function Learn() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {activeCourse ? (
         <LessonView
           course={activeCourse}
@@ -535,7 +535,7 @@ export default function Learn() {
           {/* ── Section 1: Header ──────────────────────────────── */}
           <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
             <div>
-              <h1 className="text-2xl font-bold text-text-primary tracking-tight">Learn & Earn</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">Learn & Earn</h1>
               <p className="text-text-muted text-sm mt-1">Learn about any cryptocurrency and earn free tokens</p>
             </div>
             <div className="flex items-center gap-3">
@@ -560,7 +560,7 @@ export default function Learn() {
               </svg>
               <h2 className="text-white text-lg font-bold">Featured Courses</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {courses.map((course) => (
                 <CourseCard
                   key={course.id}
@@ -583,7 +583,7 @@ export default function Learn() {
               </span>
             </div>
             <p className="text-[#8A919E] text-sm mb-5">
-              Powered by AI &mdash; lessons generated instantly for any of our 250+ coins
+              Powered by AI - lessons generated instantly for any of our 250+ coins
             </p>
 
             {/* Search */}
@@ -602,13 +602,13 @@ export default function Learn() {
             </div>
 
             {coinsLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
                   <div key={i} className="h-44 bg-[#1E2025] rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 {filteredCoins.slice(0, 40).map((coin) => {
                   const isLearned = aiCompletedCoins.has(coin.id)
                   return (

@@ -376,7 +376,7 @@ export default function KYC() {
       {step === 1 && (
         <>
           <StepIndicator current={1} total={4} />
-          <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Verify your identity</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">Verify your identity</h1>
           <p className="text-[#8A8F98] text-sm mb-6">Required to unlock investment features</p>
 
           <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-6 space-y-4">
@@ -458,7 +458,7 @@ export default function KYC() {
       {step === 2 && (
         <>
           <StepIndicator current={2} total={4} />
-          <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Upload your ID document</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">Upload your ID document</h1>
           <p className="text-[#8A8F98] text-sm mb-6">Select your document type and upload both sides</p>
 
           <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-6">
@@ -526,7 +526,7 @@ export default function KYC() {
       {step === 3 && (
         <>
           <StepIndicator current={3} total={4} />
-          <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Take a selfie with your ID</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">Take a selfie with your ID</h1>
           <p className="text-[#8A8F98] text-sm mb-6">Hold your ID next to your face and take a clear photo</p>
 
           <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-6">
@@ -569,7 +569,7 @@ export default function KYC() {
       {step === 4 && (
         <>
           <StepIndicator current={4} total={4} />
-          <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Review and submit</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">Review and submit</h1>
           <p className="text-[#8A8F98] text-sm mb-6">Please verify all information is correct before submitting</p>
 
           <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-6 space-y-5">

@@ -71,7 +71,7 @@ export default function PINPad({ title, subtitle, onSuccess, onCancel, showBiome
   const dotColor = status === 'wrong' ? '#F6465D' : status === 'correct' ? '#05B169' : '#0052FF'
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center max-w-xs mx-auto">
       {title && <div className="text-white text-lg font-semibold mb-1">{title}</div>}
       {subtitle && <div className="text-[#8A8F98] text-sm mb-6">{subtitle}</div>}
 

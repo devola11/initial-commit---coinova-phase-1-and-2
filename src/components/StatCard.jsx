@@ -11,7 +11,7 @@ export default function StatCard({ label, value, subtext, tone = 'neutral' }) {
       <div className="text-xs uppercase tracking-widest text-text-muted font-medium mb-2">
         {label}
       </div>
-      <div className={`text-2xl font-bold tracking-tight ${toneColor}`}>
+      <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${toneColor}`}>
         {value}
       </div>
       {subtext != null && (

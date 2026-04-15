@@ -58,7 +58,7 @@ export default function KYCBanner() {
 
   if (kycStatus === 'unverified' || !kycStatus) {
     return (
-      <div className="rounded-xl p-4 mb-6 flex items-center justify-between gap-3" style={{ background: '#F59E0B20', border: '1px solid #F59E0B' }}>
+      <div className="rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" style={{ background: '#F59E0B20', border: '1px solid #F59E0B' }}>
         <div className="min-w-0">
           <div className="text-[#F59E0B] font-semibold text-sm">Complete KYC to unlock investing</div>
           <div className="text-[#8A8F98] text-xs mt-0.5">Verify your identity to invest real crypto</div>
@@ -84,7 +84,7 @@ export default function KYCBanner() {
 
   if (kycStatus === 'approved') {
     return (
-      <div className="rounded-xl p-4 mb-6 flex items-center justify-between" style={{ background: '#05B16920', border: '1px solid #05B169' }}>
+      <div className="rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" style={{ background: '#05B16920', border: '1px solid #05B169' }}>
         <div>
           <div className="text-[#05B169] font-semibold text-sm">KYC Approved!</div>
           <div className="text-[#8A8F98] text-xs mt-0.5">You can now invest real crypto</div>
@@ -104,7 +104,7 @@ export default function KYCBanner() {
 
   if (kycStatus === 'rejected') {
     return (
-      <div className="rounded-xl p-4 mb-6 flex items-center justify-between gap-3" style={{ background: '#F6465D20', border: '1px solid #F6465D' }}>
+      <div className="rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" style={{ background: '#F6465D20', border: '1px solid #F6465D' }}>
         <div className="min-w-0">
           <div className="text-[#F6465D] font-semibold text-sm">KYC Rejected{rejectionReason ? `: ${rejectionReason}` : ''}</div>
           <div className="text-[#8A8F98] text-xs mt-0.5">Please resubmit your verification</div>

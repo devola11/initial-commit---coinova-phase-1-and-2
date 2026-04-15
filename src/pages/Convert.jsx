@@ -433,11 +433,11 @@ export default function Convert() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text-primary tracking-tight">Convert</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">Convert</h1>
         <p className="text-text-muted text-sm mt-1">Swap one crypto for another instantly</p>
       </div>
 
-      <div className="max-w-[480px] mx-auto">
+      <div className="max-w-lg mx-auto">
         {/* Convert card */}
         <div className="bg-[#141519] border border-[#1E2025] rounded-2xl p-5">
 

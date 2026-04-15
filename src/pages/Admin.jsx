@@ -311,7 +311,7 @@ export default function Admin() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text-primary tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
           Admin Dashboard
         </h1>
       </div>
@@ -340,7 +340,7 @@ export default function Admin() {
       </p>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <StatCard label="Total requests" value={stats.total} />
         <StatCard label="Pending" value={stats.pending} tone="yellow" />
         <StatCard label="Approved" value={stats.approved} tone="green" />

@@ -183,7 +183,7 @@ export default function Invest() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text-primary tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
           Invest
         </h1>
         <p className="text-text-muted text-sm mt-1">
@@ -224,7 +224,7 @@ export default function Invest() {
       </div>
 
       {loading && coins.length === 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
           {Array.from({ length: 8 }).map((_, i) => (
             <CardSkeleton key={i} />
           ))}
@@ -234,7 +234,7 @@ export default function Invest() {
           No coins match this filter.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
           {visibleCoins.map((coin) => (
             <CoinCard key={coin.id} coin={coin} onInvest={(c) => {
               if (kycStatus === 'approved') {

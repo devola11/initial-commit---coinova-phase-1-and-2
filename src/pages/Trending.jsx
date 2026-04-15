@@ -37,7 +37,7 @@ function rankColor(i) {
 
 function Skeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="bg-[#141519] border border-[#1E2025] rounded-xl p-4 animate-pulse">
           <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ function TrendingTab({ coins, onInvest, navigate }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {coins.map((entry, i) => {
         const coin = entry.item || entry
         const price = coin.data?.price ?? coin.current_price
@@ -128,7 +128,7 @@ function MoversTab({ coins, type, onInvest, navigate }) {
   const isGainer = type === 'gainers'
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {coins.map((coin) => {
         const change = coin.price_change_percentage_24h
         return (
@@ -199,7 +199,7 @@ function RecentlyAdded() {
   }
 
   return (
-    <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-5">
+    <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-5 max-w-4xl">
       <h3 className="text-white font-semibold text-sm mb-4">Recently Added</h3>
       <div className="divide-y divide-[#1E2025]">
         {coins.map((coin) => (
@@ -254,7 +254,7 @@ export default function Trending() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between flex-wrap gap-3 mb-1">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Trending</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">Trending</h1>
           <p className="text-text-muted text-sm mt-1">What's hot in crypto right now</p>
         </div>
         <div className="flex items-center gap-3">

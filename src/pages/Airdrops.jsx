@@ -193,9 +193,9 @@ export default function Airdrops() {
   const refLink = user ? `coinova.app/ref/${user.id.slice(0, 8)}` : ''
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white tracking-tight">Airdrops</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Airdrops</h1>
         <p className="text-[#8A8F98] text-sm mt-1">Claim free crypto - one time per coin per account</p>
       </div>
 
@@ -222,7 +222,7 @@ export default function Airdrops() {
 
       {/* Airdrop grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="bg-[#141519] border border-[#1E2025] rounded-xl p-5 animate-pulse">
               <div className="flex items-center gap-3 mb-4">
@@ -239,7 +239,7 @@ export default function Airdrops() {
           No airdrops available right now. Check back soon!
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
           {airdrops.map((a) => {
             const claimed = hasClaimed(a.id)
             const full = isFull(a)
@@ -317,7 +317,7 @@ export default function Airdrops() {
       )}
 
       {/* Referral section */}
-      <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-6">
+      <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-4 sm:p-6 max-w-2xl mx-auto">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 rounded-xl bg-[#0052FF]/10 flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0052FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>

@@ -132,7 +132,7 @@ export default function Navbar() {
 
             {/* CENTER - Primary nav (desktop) */}
             {user && (
-              <div className="hidden md:flex items-center gap-1 flex-shrink-0">
+              <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
                 {primaryLinks.map((link) => {
                   const isActive = location.pathname === link.to
                   return (
@@ -160,7 +160,7 @@ export default function Navbar() {
               {user ? (
                 <>
                   {/* More dropdown */}
-                  <div ref={moreRef} className="relative hidden md:block">
+                  <div ref={moreRef} className="relative hidden lg:block">
                     <button
                       onClick={() => setMoreOpen(!moreOpen)}
                       className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap ${
@@ -199,7 +199,7 @@ export default function Navbar() {
                   {/* Globe / preferences */}
                   <button
                     onClick={() => setPrefsOpen(true)}
-                    className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg text-text-muted hover:text-text-primary hover:bg-card-border/50 bg-transparent border-none cursor-pointer transition-colors"
+                    className="hidden lg:inline-flex items-center justify-center w-9 h-9 rounded-lg text-text-muted hover:text-text-primary hover:bg-card-border/50 bg-transparent border-none cursor-pointer transition-colors"
                     title="Global preferences"
                   >
                     <GlobeIcon />
@@ -208,7 +208,7 @@ export default function Navbar() {
                   {/* Settings */}
                   <Link
                     to="/settings"
-                    className={`hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap ${
+                    className={`hidden lg:inline-flex px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap ${
                       location.pathname === '/settings'
                         ? 'text-text-primary bg-card-border'
                         : 'text-text-muted hover:text-text-primary'
@@ -220,7 +220,7 @@ export default function Navbar() {
                   {/* Log out */}
                   <button
                     onClick={handleLogout}
-                    className="hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap"
+                    className="hidden lg:inline-flex px-3 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap"
                   >
                     Log out
                   </button>
@@ -228,7 +228,7 @@ export default function Navbar() {
                   {/* Hamburger - mobile only */}
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
-                    className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-transparent border-none cursor-pointer gap-1.5"
+                    className="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-transparent border-none cursor-pointer gap-1.5"
                     aria-label="Toggle menu"
                   >
                     <span className={`block w-5 h-0.5 bg-text-primary transition-transform duration-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
@@ -250,7 +250,7 @@ export default function Navbar() {
 
         {/* Mobile dropdown menu */}
         {user && menuOpen && (
-          <div className="md:hidden bg-card-bg border-t border-card-border max-h-[calc(100vh-64px)] overflow-y-auto">
+          <div className="lg:hidden bg-card-bg border-t border-card-border max-h-[calc(100vh-64px)] overflow-y-auto">
             <div className="px-4 py-3 space-y-1">
               {allLinks.map((link) => {
                 const isActive = location.pathname === link.to

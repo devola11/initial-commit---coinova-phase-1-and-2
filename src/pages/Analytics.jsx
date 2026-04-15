@@ -343,7 +343,7 @@ export default function Analytics() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Portfolio Analytics</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">Portfolio Analytics</h1>
           <p className="text-text-muted text-sm mt-1">Deep insights into your crypto portfolio</p>
         </div>
         <span className="text-[#5B616E] text-xs">
@@ -600,7 +600,7 @@ export default function Analytics() {
           {analytics.insights.length > 0 && (
             <div className="mb-6">
               <h3 className="text-white font-semibold text-sm mb-4">Portfolio Insights</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {analytics.insights.map((ins, i) => (
                   <InsightCard key={i} {...ins} />
                 ))}

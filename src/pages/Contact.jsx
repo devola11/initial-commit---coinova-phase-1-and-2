@@ -56,7 +56,7 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-white text-black font-sans">
       <Nav />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">Contact Us</h1>
         <p className="text-gray-500 text-sm mb-10">We're here to help</p>
 

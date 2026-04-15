@@ -186,7 +186,7 @@ export default function Markets() {
                   <th className="py-3 px-4 font-medium">Price</th>
                   <th className="py-3 px-4 font-medium">24h</th>
                   <th className="py-3 px-4 font-medium hidden md:table-cell">7d</th>
-                  <th className="py-3 px-4 font-medium hidden lg:table-cell">Market cap</th>
+                  <th className="py-3 px-4 font-medium hidden sm:table-cell">Market cap</th>
                   <th className="py-3 px-4 font-medium hidden lg:table-cell">Volume</th>
                   <th className="py-3 px-4 font-medium text-right">Action</th>
                 </tr>
@@ -257,7 +257,7 @@ export default function Markets() {
                       >
                         {fmtPct(c7d)}
                       </td>
-                      <td className="py-4 px-4 text-text-primary hidden lg:table-cell">
+                      <td className="py-4 px-4 text-text-primary hidden sm:table-cell">
                         ${formatNumber(coin.market_cap)}
                       </td>
                       <td className="py-4 px-4 text-text-muted hidden lg:table-cell">

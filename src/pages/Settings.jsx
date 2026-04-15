@@ -231,7 +231,7 @@ export default function Settings() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-text-primary mb-6 tracking-tight">Settings</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-6 tracking-tight">Settings</h1>
 
       {/* ── Profile card ──────────────────────────────────────────── */}
       <Card>

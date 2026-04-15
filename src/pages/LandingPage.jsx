@@ -95,7 +95,7 @@ export default function LandingPage() {
             >
               The future of crypto is here
             </span>
-            <h1 className="text-[36px] sm:text-5xl lg:text-[56px] leading-[1.05] font-extrabold text-black tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-[1.05] font-extrabold text-black tracking-tight">
               Trade crypto.<br />Build wealth.
             </h1>
             <p className="mt-6 text-lg text-gray-500 max-w-xl leading-relaxed">
@@ -237,7 +237,7 @@ export default function LandingPage() {
 
       {/* ── Features ───────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {/* Card 1 */}
           <div className="p-8 rounded-2xl bg-white border border-gray-100" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: '#EBF0FF' }}>
@@ -268,7 +268,7 @@ export default function LandingPage() {
       {/* ── Stats Banner ───────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="rounded-2xl py-10 px-6 sm:px-10" style={{ backgroundColor: '#0052FF' }}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x lg:divide-white/20">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-0 sm:divide-x sm:divide-white/20">
             {[
               ['250+', 'Cryptocurrencies'],
               ['Live', 'Market Data'],
@@ -286,7 +286,7 @@ export default function LandingPage() {
 
       {/* ── CTA Section ────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="text-center py-16">
+        <div className="max-w-2xl mx-auto text-center py-16">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-black tracking-tight">
             Start trading in minutes.
           </h2>
@@ -308,7 +308,7 @@ export default function LandingPage() {
       {/* ── Footer ─────────────────────────────────────────────────── */}
       <footer style={{ backgroundColor: '#F8F9FA' }} className="border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-start">
             <div className="flex flex-col gap-3">
               <Link to="/" className="flex items-center gap-2 no-underline">
                 <img src={logo} alt="Coinova" className="h-7 rounded" />

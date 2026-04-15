@@ -119,7 +119,7 @@ export default function InvestModal({ coin, wallets, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-card-bg border border-card-border rounded-xl w-full max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto"
+        className="bg-card-bg border border-card-border rounded-xl w-full sm:max-w-lg p-4 sm:p-6 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">

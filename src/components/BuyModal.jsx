@@ -116,7 +116,7 @@ export default function BuyModal({ coin, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-card-bg border border-card-border rounded-xl w-full max-w-md p-4 sm:p-6"
+        className="bg-card-bg border border-card-border rounded-xl w-full sm:max-w-md p-4 sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">

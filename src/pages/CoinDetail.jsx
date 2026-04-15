@@ -547,7 +547,7 @@ export default function CoinDetail() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="animate-pulse space-y-4">
           <div className="h-6 w-24 bg-[#1E2025] rounded" />
           <div className="flex items-center gap-4">
@@ -562,7 +562,7 @@ export default function CoinDetail() {
 
   if (!detail || !detail.id) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
         <div className="text-[#8A8F98] text-sm py-20">Coin not found.</div>
         <button
           onClick={() => navigate('/markets')}
@@ -575,7 +575,7 @@ export default function CoinDetail() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back button */}
       <button
         onClick={() => navigate('/markets')}

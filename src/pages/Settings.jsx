@@ -41,7 +41,7 @@ function CopyBtn({ text }) {
   return (
     <button
       onClick={copy}
-      className="px-2 py-1 rounded text-[11px] font-medium border border-[#1E2025] bg-transparent text-[#8A8F98] hover:text-white hover:border-[#2C2F36] cursor-pointer transition-colors"
+      className="px-2 py-1 rounded text-[11px] font-medium border border-card-border bg-transparent text-text-muted hover:text-text-primary hover:border-elevated-border cursor-pointer transition-colors"
     >
       {copied ? 'Copied' : 'Copy'}
     </button>
@@ -50,7 +50,7 @@ function CopyBtn({ text }) {
 
 function SectionTitle({ children }) {
   return (
-    <div className="text-[11px] uppercase tracking-[0.06em] text-[#8A8F98] font-medium mb-3">
+    <div className="text-[11px] uppercase tracking-[0.06em] text-text-muted font-medium mb-3">
       {children}
     </div>
   )
@@ -60,14 +60,14 @@ function Row({ label, value, sub, right, onClick, noBorder }) {
   return (
     <div
       onClick={onClick}
-      className={`flex items-center justify-between py-3.5 px-1 ${onClick ? 'cursor-pointer hover:bg-[#1a1d23] -mx-1 px-2 rounded-lg' : ''} ${noBorder ? '' : 'border-b border-[#1E2025]'}`}
+      className={`flex items-center justify-between py-3.5 px-1 ${onClick ? 'cursor-pointer hover:bg-[#1a1d23] -mx-1 px-2 rounded-lg' : ''} ${noBorder ? '' : 'border-b border-card-border'}`}
     >
       <div className="min-w-0">
-        <div className="text-white text-sm font-medium">{label}</div>
-        {sub && <div className="text-[#8A8F98] text-xs mt-0.5">{sub}</div>}
+        <div className="text-text-primary text-sm font-medium">{label}</div>
+        {sub && <div className="text-text-muted text-xs mt-0.5">{sub}</div>}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        {value && <span className="text-[#8A8F98] text-sm">{value}</span>}
+        {value && <span className="text-text-muted text-sm">{value}</span>}
         {right}
         {onClick && (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8F98" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -79,7 +79,7 @@ function Row({ label, value, sub, right, onClick, noBorder }) {
 
 function Card({ children }) {
   return (
-    <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-5 mb-5">
+    <div className="bg-card-bg border border-card-border rounded-xl p-5 mb-5">
       {children}
     </div>
   )
@@ -100,12 +100,12 @@ function KYCCard() {
       <SectionTitle>KYC Verification</SectionTitle>
       <div className="flex items-center justify-between py-3.5 px-1">
         <div>
-          <div className="text-white text-sm font-medium">Verification Status</div>
+          <div className="text-text-primary text-sm font-medium">Verification Status</div>
           {kycStatus === 'rejected' && rejectionReason && (
             <div className="text-[#F6465D] text-xs mt-0.5">Reason: {rejectionReason}</div>
           )}
           {kycStatus === 'pending' && (
-            <div className="text-[#8A8F98] text-xs mt-0.5">Your documents are being reviewed</div>
+            <div className="text-text-muted text-xs mt-0.5">Your documents are being reviewed</div>
           )}
         </div>
         <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ function KYCCard() {
           {(kycStatus === 'unverified' || !kycStatus) && (
             <Link
               to="/kyc"
-              className="px-3 py-1.5 rounded-lg bg-[#0052FF] text-white text-xs font-semibold no-underline transition-colors hover:bg-[#0046D9]"
+              className="px-3 py-1.5 rounded-lg bg-primary-blue text-white text-xs font-semibold no-underline transition-colors hover:bg-primary-blue-hover"
             >
               Complete verification
             </Link>
@@ -175,7 +175,7 @@ export default function Settings() {
     load()
   }, [user])
 
-  const walletId = user?.id ? user.id.slice(0, 8).toUpperCase() : '--------'
+  const walletId = user?.id || '--------'
   const initials = (displayName || user?.email || '?').charAt(0).toUpperCase()
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -231,13 +231,13 @@ export default function Settings() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-white mb-6 tracking-tight">Settings</h1>
+      <h1 className="text-2xl font-bold text-text-primary mb-6 tracking-tight">Settings</h1>
 
       {/* ── Profile card ──────────────────────────────────────────── */}
       <Card>
         <SectionTitle>Profile</SectionTitle>
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-14 h-14 rounded-full bg-[#0052FF] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+          <div className="w-14 h-14 rounded-full bg-primary-blue flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
@@ -247,28 +247,28 @@ export default function Settings() {
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="flex-1 bg-[#0A0B0D] border border-[#1E2025] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#0052FF]"
+                  className="flex-1 bg-root-bg border border-card-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary-blue"
                   autoFocus
                 />
-                <button onClick={saveName} disabled={saving} className="px-3 py-2 rounded-lg bg-[#0052FF] text-white text-xs font-semibold border-none cursor-pointer">
+                <button onClick={saveName} disabled={saving} className="px-3 py-2 rounded-lg bg-primary-blue text-white text-xs font-semibold border-none cursor-pointer">
                   {saving ? '...' : 'Save'}
                 </button>
-                <button onClick={() => setEditingName(false)} className="px-3 py-2 rounded-lg border border-[#1E2025] bg-transparent text-[#8A8F98] text-xs font-semibold cursor-pointer">
+                <button onClick={() => setEditingName(false)} className="px-3 py-2 rounded-lg border border-card-border bg-transparent text-text-muted text-xs font-semibold cursor-pointer">
                   Cancel
                 </button>
               </div>
             ) : (
               <>
-                <div className="text-white font-semibold text-base">{displayName || 'Set display name'}</div>
-                <div className="text-[#8A8F98] text-xs">{user?.email}</div>
-                <div className="text-[#8A8F98] text-[11px] mt-0.5">Member since {memberSince}</div>
+                <div className="text-text-primary font-semibold text-base">{displayName || 'Set display name'}</div>
+                <div className="text-text-muted text-xs">{user?.email}</div>
+                <div className="text-text-muted text-[11px] mt-0.5">Member since {memberSince}</div>
               </>
             )}
           </div>
           {!editingName && (
             <button
               onClick={() => setEditingName(true)}
-              className="px-3 py-2 rounded-lg border border-[#1E2025] bg-transparent text-[#8A8F98] hover:text-white text-xs font-semibold cursor-pointer transition-colors flex-shrink-0"
+              className="px-3 py-2 rounded-lg border border-card-border bg-transparent text-text-muted hover:text-text-primary text-xs font-semibold cursor-pointer transition-colors flex-shrink-0"
             >
               Edit profile
             </button>
@@ -280,23 +280,23 @@ export default function Settings() {
       <Card>
         <SectionTitle>General</SectionTitle>
         {/* Wallet ID */}
-        <div className="flex items-center justify-between py-3.5 px-1 border-b border-[#1E2025]">
+        <div className="flex items-center justify-between py-3.5 px-1 border-b border-card-border">
           <div>
-            <div className="text-white text-sm font-medium">Wallet ID</div>
+            <div className="text-text-primary text-sm font-medium">Wallet ID</div>
             <div className="text-[#F6465D] text-[11px] mt-0.5">Do not share publicly</div>
           </div>
           <div className="flex items-center gap-2">
-            <code className="text-[#8A8F98] text-sm font-mono">{walletId}</code>
+            <code style={{ fontFamily: 'monospace', fontSize: '13px', color: 'var(--text-secondary)', letterSpacing: '0.02em' }}>{walletId}</code>
             <CopyBtn text={walletId} />
           </div>
         </div>
         {/* Currency */}
-        <div className="flex items-center justify-between py-3.5 px-1 border-b border-[#1E2025]">
-          <div className="text-white text-sm font-medium">Local Currency</div>
+        <div className="flex items-center justify-between py-3.5 px-1 border-b border-card-border">
+          <div className="text-text-primary text-sm font-medium">Local Currency</div>
           <select
             value={currency}
             onChange={(e) => handleCurrencyChange(e.target.value)}
-            className="bg-[#0A0B0D] border border-[#1E2025] rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#0052FF] cursor-pointer"
+            className="bg-root-bg border border-card-border rounded-lg px-3 py-1.5 text-sm text-text-primary focus:outline-none focus:border-primary-blue cursor-pointer"
           >
             {CURRENCIES.map((c) => (
               <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
@@ -304,48 +304,48 @@ export default function Settings() {
           </select>
         </div>
         {/* Theme */}
-        <div className="py-3.5 px-1 border-b border-[#1E2025]">
-          <div className="text-white text-sm font-medium mb-3">Theme</div>
+        <div className="py-3.5 px-1 border-b border-card-border">
+          <div className="text-text-primary text-sm font-medium mb-3">Theme</div>
           <div className="grid grid-cols-3 gap-3">
             {/* Dark */}
             <button
               onClick={() => handleThemeChange('dark')}
-              className={`bg-[#0A0B0D] rounded-xl p-4 text-center cursor-pointer transition-colors ${
-                theme === 'dark' ? 'border-2 border-[#0052FF]' : 'border border-[#1E2025]'
+              className={`bg-root-bg rounded-xl p-4 text-center cursor-pointer transition-colors ${
+                theme === 'dark' ? 'border-2 border-[#0052FF]' : 'border border-card-border'
               }`}
             >
               <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={theme === 'dark' ? '#0052FF' : '#8A8F98'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-              <div className={`text-xs font-semibold ${theme === 'dark' ? 'text-[#0052FF]' : 'text-[#8A8F98]'}`}>Dark</div>
+              <div className={`text-xs font-semibold ${theme === 'dark' ? 'text-[#0052FF]' : 'text-text-muted'}`}>Dark</div>
             </button>
             {/* Light */}
             <button
               onClick={() => handleThemeChange('light')}
-              className={`bg-[#0A0B0D] rounded-xl p-4 text-center cursor-pointer transition-colors ${
-                theme === 'light' ? 'border-2 border-[#0052FF]' : 'border border-[#1E2025]'
+              className={`bg-root-bg rounded-xl p-4 text-center cursor-pointer transition-colors ${
+                theme === 'light' ? 'border-2 border-[#0052FF]' : 'border border-card-border'
               }`}
             >
               <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={theme === 'light' ? '#0052FF' : '#8A8F98'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-              <div className={`text-xs font-semibold ${theme === 'light' ? 'text-[#0052FF]' : 'text-[#8A8F98]'}`}>Light</div>
+              <div className={`text-xs font-semibold ${theme === 'light' ? 'text-[#0052FF]' : 'text-text-muted'}`}>Light</div>
             </button>
             {/* System */}
             <button
               onClick={() => handleThemeChange('system')}
-              className={`bg-[#0A0B0D] rounded-xl p-4 text-center cursor-pointer transition-colors ${
-                theme === 'system' ? 'border-2 border-[#0052FF]' : 'border border-[#1E2025]'
+              className={`bg-root-bg rounded-xl p-4 text-center cursor-pointer transition-colors ${
+                theme === 'system' ? 'border-2 border-[#0052FF]' : 'border border-card-border'
               }`}
             >
               <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={theme === 'system' ? '#0052FF' : '#8A8F98'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-              <div className={`text-xs font-semibold ${theme === 'system' ? 'text-[#0052FF]' : 'text-[#8A8F98]'}`}>System</div>
+              <div className={`text-xs font-semibold ${theme === 'system' ? 'text-[#0052FF]' : 'text-text-muted'}`}>System</div>
             </button>
           </div>
         </div>
         {/* Notifications */}
         <div className="flex items-center justify-between py-3.5 px-1">
-          <div className="text-white text-sm font-medium">Notifications</div>
+          <div className="text-text-primary text-sm font-medium">Notifications</div>
           <button
             onClick={handleNotifToggle}
             className={`w-11 h-6 rounded-full border-none cursor-pointer transition-colors relative ${
-              notifications ? 'bg-[#0052FF]' : 'bg-[#2C2F36]'
+              notifications ? 'bg-primary-blue' : 'bg-elevated-border'
             }`}
           >
             <div
@@ -360,7 +360,7 @@ export default function Settings() {
       <Card>
         <SectionTitle>Security</SectionTitle>
         {/* Change password */}
-        <div className="border-b border-[#1E2025]">
+        <div className="border-b border-card-border">
           <Row
             label="Change Password"
             onClick={() => setShowPwForm(!showPwForm)}
@@ -373,21 +373,21 @@ export default function Settings() {
                 placeholder="Current password"
                 value={pw.current}
                 onChange={(e) => setPw({ ...pw, current: e.target.value })}
-                className="w-full bg-[#0A0B0D] border border-[#1E2025] rounded-lg px-3 py-2.5 text-sm text-white placeholder-[#8A8F98] focus:outline-none focus:border-[#0052FF]"
+                className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary-blue"
               />
               <input
                 type="password"
                 placeholder="New password"
                 value={pw.next}
                 onChange={(e) => setPw({ ...pw, next: e.target.value })}
-                className="w-full bg-[#0A0B0D] border border-[#1E2025] rounded-lg px-3 py-2.5 text-sm text-white placeholder-[#8A8F98] focus:outline-none focus:border-[#0052FF]"
+                className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary-blue"
               />
               <input
                 type="password"
                 placeholder="Confirm new password"
                 value={pw.confirm}
                 onChange={(e) => setPw({ ...pw, confirm: e.target.value })}
-                className="w-full bg-[#0A0B0D] border border-[#1E2025] rounded-lg px-3 py-2.5 text-sm text-white placeholder-[#8A8F98] focus:outline-none focus:border-[#0052FF]"
+                className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary-blue"
               />
               {pwMsg && (
                 <div className={`text-xs ${pwMsg.includes('success') ? 'text-[#05B169]' : 'text-[#F6465D]'}`}>{pwMsg}</div>
@@ -395,7 +395,7 @@ export default function Settings() {
               <button
                 onClick={handlePasswordChange}
                 disabled={pwSaving}
-                className="px-5 py-2.5 rounded-lg bg-[#0052FF] text-white text-sm font-semibold border-none cursor-pointer disabled:opacity-50"
+                className="px-5 py-2.5 rounded-lg bg-primary-blue text-white text-sm font-semibold border-none cursor-pointer disabled:opacity-50"
               >
                 {pwSaving ? 'Saving...' : 'Update password'}
               </button>
@@ -403,25 +403,25 @@ export default function Settings() {
           )}
         </div>
         {/* 2FA */}
-        <div className="flex items-center justify-between py-3.5 px-1 border-b border-[#1E2025]">
+        <div className="flex items-center justify-between py-3.5 px-1 border-b border-card-border">
           <div>
-            <div className="text-white text-sm font-medium">2-Step Verification</div>
+            <div className="text-text-primary text-sm font-medium">2-Step Verification</div>
           </div>
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#F6465D]/10 text-[#F6465D]">Not enabled</span>
             <button
               onClick={() => setShow2faModal(true)}
-              className="px-3 py-1.5 rounded-lg border border-[#1E2025] bg-transparent text-[#8A8F98] hover:text-white text-xs font-semibold cursor-pointer transition-colors"
+              className="px-3 py-1.5 rounded-lg border border-card-border bg-transparent text-text-muted hover:text-text-primary text-xs font-semibold cursor-pointer transition-colors"
             >
               Enable
             </button>
           </div>
         </div>
         {/* PIN Lock */}
-        <div className="flex items-center justify-between py-3.5 px-1 border-b border-[#1E2025]">
+        <div className="flex items-center justify-between py-3.5 px-1 border-b border-card-border">
           <div>
-            <div className="text-white text-sm font-medium">PIN Lock</div>
-            <div className="text-[#8A8F98] text-xs mt-0.5">Require PIN for transactions</div>
+            <div className="text-text-primary text-sm font-medium">PIN Lock</div>
+            <div className="text-text-muted text-xs mt-0.5">Require PIN for transactions</div>
           </div>
           <div className="flex items-center gap-2">
             {pinEnabled ? (
@@ -429,7 +429,7 @@ export default function Settings() {
                 <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#05B169]/10 text-[#05B169]">Enabled</span>
                 <button
                   onClick={() => setShowPinSetup(true)}
-                  className="px-3 py-1.5 rounded-lg border border-[#1E2025] bg-transparent text-[#8A8F98] hover:text-white text-xs font-semibold cursor-pointer transition-colors"
+                  className="px-3 py-1.5 rounded-lg border border-card-border bg-transparent text-text-muted hover:text-text-primary text-xs font-semibold cursor-pointer transition-colors"
                 >
                   Change
                 </button>
@@ -442,10 +442,10 @@ export default function Settings() {
               </>
             ) : (
               <>
-                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#8A8F98]/10 text-[#8A8F98]">Not set</span>
+                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#8A8F98]/10 text-text-muted">Not set</span>
                 <button
                   onClick={() => setShowPinSetup(true)}
-                  className="px-3 py-1.5 rounded-lg bg-[#0052FF] text-white text-xs font-semibold border-none cursor-pointer transition-colors hover:bg-[#0046D9]"
+                  className="px-3 py-1.5 rounded-lg bg-primary-blue text-white text-xs font-semibold border-none cursor-pointer transition-colors hover:bg-primary-blue-hover"
                 >
                   Set up PIN
                 </button>
@@ -454,11 +454,11 @@ export default function Settings() {
           </div>
         </div>
         {/* Biometric */}
-        <div className="flex items-center justify-between py-3.5 px-1 border-b border-[#1E2025]">
+        <div className="flex items-center justify-between py-3.5 px-1 border-b border-card-border">
           <div>
-            <div className="text-white text-sm font-medium">Fingerprint / Face ID</div>
+            <div className="text-text-primary text-sm font-medium">Fingerprint / Face ID</div>
             {!bioSupported && (
-              <div className="text-[#8A8F98] text-xs mt-0.5">Not available on this device</div>
+              <div className="text-text-muted text-xs mt-0.5">Not available on this device</div>
             )}
           </div>
           {bioSupported ? (
@@ -471,7 +471,7 @@ export default function Settings() {
                 }
               }}
               className={`w-11 h-6 rounded-full border-none cursor-pointer transition-colors relative ${
-                bioEnabled ? 'bg-[#0052FF]' : 'bg-[#2C2F36]'
+                bioEnabled ? 'bg-primary-blue' : 'bg-elevated-border'
               }`}
             >
               <div
@@ -480,13 +480,13 @@ export default function Settings() {
               />
             </button>
           ) : (
-            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#8A8F98]/10 text-[#8A8F98]">Unavailable</span>
+            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#8A8F98]/10 text-text-muted">Unavailable</span>
           )}
         </div>
         {/* Active sessions */}
         <div className="py-3.5 px-1">
-          <div className="text-white text-sm font-medium mb-2">Active Sessions</div>
-          <div className="bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-3 text-xs text-[#8A8F98] mb-3">
+          <div className="text-text-primary text-sm font-medium mb-2">Active Sessions</div>
+          <div className="bg-root-bg border border-card-border rounded-lg p-3 text-xs text-text-muted mb-3">
             <div className="flex items-center justify-between">
               <span>Current browser session</span>
               <span className="text-[#05B169]">Active now</span>
@@ -494,7 +494,7 @@ export default function Settings() {
           </div>
           <button
             onClick={handleSignOut}
-            className="px-3 py-1.5 rounded-lg border border-[#1E2025] bg-transparent text-[#8A8F98] hover:text-[#F6465D] hover:border-[#F6465D]/30 text-xs font-semibold cursor-pointer transition-colors"
+            className="px-3 py-1.5 rounded-lg border border-card-border bg-transparent text-text-muted hover:text-[#F6465D] hover:border-[#F6465D]/30 text-xs font-semibold cursor-pointer transition-colors"
           >
             Sign out all devices
           </button>
@@ -506,14 +506,14 @@ export default function Settings() {
         <SectionTitle>Trading Account</SectionTitle>
         <Row label="Investment History" onClick={() => navigate('/portfolio')} />
         {/* Wallets */}
-        <div className="py-3.5 px-1 border-b border-[#1E2025]">
-          <div className="text-white text-sm font-medium mb-3">Your Wallets</div>
+        <div className="py-3.5 px-1 border-b border-card-border">
+          <div className="text-text-primary text-sm font-medium mb-3">Your Wallets</div>
           <div className="space-y-2">
             {WALLETS.map((w) => (
-              <div key={w.label} className="flex items-center justify-between bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-3">
+              <div key={w.label} className="flex items-center justify-between bg-root-bg border border-card-border rounded-lg p-3">
                 <div className="min-w-0">
-                  <div className="text-[#8A8F98] text-[11px] font-medium mb-0.5">{w.label}</div>
-                  <div className="text-white text-xs font-mono truncate">{w.address}</div>
+                  <div className="text-text-muted text-[11px] font-medium mb-0.5">{w.label}</div>
+                  <div className="text-text-primary text-xs font-mono truncate">{w.address}</div>
                 </div>
                 <CopyBtn text={w.address} />
               </div>
@@ -542,17 +542,17 @@ export default function Settings() {
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-3">
-              <div className="text-white text-sm font-medium mb-1">Android (Chrome)</div>
-              <div className="text-[#8A919E] text-xs">Tap the menu ({'\u22EE'}) {'\u2192'} Add to Home Screen {'\u2192'} Install</div>
+            <div className="bg-root-bg border border-card-border rounded-lg p-3">
+              <div className="text-text-primary text-sm font-medium mb-1">Android (Chrome)</div>
+              <div className="text-text-muted text-xs">Tap the menu ({'\u22EE'}) {'\u2192'} Add to Home Screen {'\u2192'} Install</div>
             </div>
-            <div className="bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-3">
-              <div className="text-white text-sm font-medium mb-1">iPhone (Safari)</div>
-              <div className="text-[#8A919E] text-xs">Tap Share ({'\u25A1\u2191'}) {'\u2192'} Add to Home Screen {'\u2192'} Add</div>
+            <div className="bg-root-bg border border-card-border rounded-lg p-3">
+              <div className="text-text-primary text-sm font-medium mb-1">iPhone (Safari)</div>
+              <div className="text-text-muted text-xs">Tap Share ({'\u25A1\u2191'}) {'\u2192'} Add to Home Screen {'\u2192'} Add</div>
             </div>
-            <div className="bg-[#0A0B0D] border border-[#1E2025] rounded-lg p-3">
-              <div className="text-white text-sm font-medium mb-1">Desktop (Chrome)</div>
-              <div className="text-[#8A919E] text-xs">Click the install icon ({'\u2295'}) in the address bar</div>
+            <div className="bg-root-bg border border-card-border rounded-lg p-3">
+              <div className="text-text-primary text-sm font-medium mb-1">Desktop (Chrome)</div>
+              <div className="text-text-muted text-xs">Click the install icon ({'\u2295'}) in the address bar</div>
             </div>
           </div>
         )}
@@ -560,12 +560,12 @@ export default function Settings() {
 
       {/* ── Admin ─────────────────────────────────────────────────── */}
       {user?.email?.toLowerCase() === ADMIN_EMAIL && (
-        <div className="bg-[#0052FF]/10 border border-[#0052FF]/30 rounded-xl p-5 mb-5">
+        <div className="bg-primary-blue/10 border border-[#0052FF]/30 rounded-xl p-5 mb-5">
           <div className="text-[#0052FF] font-semibold mb-1">Administrator</div>
-          <div className="text-[#8A8F98] text-sm mb-4">You have administrator access.</div>
+          <div className="text-text-muted text-sm mb-4">You have administrator access.</div>
           <Link
             to="/admin"
-            className="inline-block px-5 py-2.5 rounded-lg bg-[#0052FF] hover:bg-[#0046D9] text-white text-sm font-semibold no-underline transition-colors"
+            className="inline-block px-5 py-2.5 rounded-lg bg-primary-blue hover:bg-primary-blue-hover text-white text-sm font-semibold no-underline transition-colors"
           >
             Open admin dashboard
           </Link>
@@ -573,10 +573,10 @@ export default function Settings() {
       )}
 
       {/* ── Danger zone ───────────────────────────────────────────── */}
-      <div className="bg-[#141519] border border-[#F6465D]/30 rounded-xl p-5 mb-5">
+      <div className="bg-card-bg border border-[#F6465D]/30 rounded-xl p-5 mb-5">
         <SectionTitle>Danger Zone</SectionTitle>
-        <div className="text-[#8A8F98] text-sm mb-4">
-          Account: <span className="text-white">{user?.email}</span>
+        <div className="text-text-muted text-sm mb-4">
+          Account: <span className="text-text-primary">{user?.email}</span>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -587,7 +587,7 @@ export default function Settings() {
           </button>
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="px-5 py-2.5 rounded-lg border border-[#2C2F36] bg-transparent text-[#8A8F98] hover:text-[#F6465D] hover:border-[#F6465D]/30 text-sm font-semibold cursor-pointer transition-colors"
+            className="px-5 py-2.5 rounded-lg border border-elevated-border bg-transparent text-text-muted hover:text-[#F6465D] hover:border-[#F6465D]/30 text-sm font-semibold cursor-pointer transition-colors"
           >
             Delete account
           </button>
@@ -597,14 +597,14 @@ export default function Settings() {
       {/* ── 2FA Modal ─────────────────────────────────────────────── */}
       {show2faModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setShow2faModal(false)}>
-          <div className="bg-[#141519] border border-[#1E2025] rounded-xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="text-white font-semibold mb-3">2-Step Verification</div>
-            <p className="text-[#8A8F98] text-sm mb-5 leading-relaxed">
+          <div className="bg-card-bg border border-card-border rounded-xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="text-text-primary font-semibold mb-3">2-Step Verification</div>
+            <p className="text-text-muted text-sm mb-5 leading-relaxed">
               Two-factor authentication adds an extra layer of security to your account. This feature will be available in a future update.
             </p>
             <button
               onClick={() => setShow2faModal(false)}
-              className="w-full py-2.5 rounded-lg bg-[#0052FF] text-white text-sm font-semibold border-none cursor-pointer"
+              className="w-full py-2.5 rounded-lg bg-primary-blue text-white text-sm font-semibold border-none cursor-pointer"
             >
               Got it
             </button>
@@ -615,16 +615,16 @@ export default function Settings() {
       {/* ── Delete Account Modal ──────────────────────────────────── */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}>
-          <div className="bg-[#141519] border border-[#1E2025] rounded-xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-card-bg border border-card-border rounded-xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
             <div className="text-[#F6465D] font-semibold mb-3">Delete Account</div>
-            <p className="text-[#8A8F98] text-sm mb-2 leading-relaxed">
+            <p className="text-text-muted text-sm mb-2 leading-relaxed">
               Are you sure you want to delete your account? This action cannot be undone. All your data, holdings, and transaction history will be permanently removed.
             </p>
-            <p className="text-white text-sm mb-5">{user?.email}</p>
+            <p className="text-text-primary text-sm mb-5">{user?.email}</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 py-2.5 rounded-lg border border-[#1E2025] bg-transparent text-white text-sm font-semibold cursor-pointer"
+                className="flex-1 py-2.5 rounded-lg border border-card-border bg-transparent text-white text-sm font-semibold cursor-pointer"
               >
                 Cancel
               </button>
@@ -654,13 +654,13 @@ export default function Settings() {
       {/* ── Disable PIN Confirm ──────────────────────────────────── */}
       {showDisablePinConfirm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setShowDisablePinConfirm(false)}>
-          <div className="bg-[#141519] border border-[#1E2025] rounded-xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-card-bg border border-card-border rounded-xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
             <div className="text-[#F6465D] font-semibold mb-3">Disable PIN</div>
-            <p className="text-[#8A8F98] text-sm mb-5">This will remove your PIN lock and biometric authentication. Transactions will no longer require PIN confirmation.</p>
+            <p className="text-text-muted text-sm mb-5">This will remove your PIN lock and biometric authentication. Transactions will no longer require PIN confirmation.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDisablePinConfirm(false)}
-                className="flex-1 py-2.5 rounded-lg border border-[#1E2025] bg-transparent text-white text-sm font-semibold cursor-pointer"
+                className="flex-1 py-2.5 rounded-lg border border-card-border bg-transparent text-white text-sm font-semibold cursor-pointer"
               >
                 Cancel
               </button>

@@ -141,8 +141,8 @@ export default function Navbar() {
                       to={link.to}
                       className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap ${
                         isActive
-                          ? 'text-white bg-[#1E2025]'
-                          : 'text-[#8A919E] hover:text-white hover:bg-[#1E2025]/50'
+                          ? 'text-text-primary bg-card-border'
+                          : 'text-text-muted hover:text-text-primary hover:bg-card-border/50'
                       }`}
                     >
                       {link.label}
@@ -165,15 +165,15 @@ export default function Navbar() {
                       onClick={() => setMoreOpen(!moreOpen)}
                       className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap ${
                         moreHasActive || moreOpen
-                          ? 'text-white bg-[#1E2025]'
-                          : 'text-[#8A919E] hover:text-white hover:bg-[#1E2025]/50'
+                          ? 'text-text-primary bg-card-border'
+                          : 'text-text-muted hover:text-text-primary hover:bg-card-border/50'
                       }`}
                     >
                       More
                       <ChevronDownIcon />
                     </button>
                     {moreOpen && (
-                      <div className="absolute top-full right-0 mt-2 bg-[#141519] border border-[#1E2025] rounded-xl p-2 min-w-[180px] shadow-xl">
+                      <div className="absolute top-full right-0 mt-2 bg-card-bg border border-card-border rounded-xl p-2 min-w-[180px] shadow-xl">
                         {moreLinks.map((link) => {
                           const isActive = location.pathname === link.to
                           return (
@@ -183,8 +183,8 @@ export default function Navbar() {
                               onClick={() => setMoreOpen(false)}
                               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm no-underline transition-colors ${
                                 isActive
-                                  ? 'text-[#0052FF] font-medium'
-                                  : 'text-[#8A919E] hover:text-white hover:bg-[#1E2025]'
+                                  ? 'text-primary-blue font-medium'
+                                  : 'text-text-muted hover:text-text-primary hover:bg-card-border'
                               }`}
                             >
                               <DropdownIcon icon={link.icon} />
@@ -199,7 +199,7 @@ export default function Navbar() {
                   {/* Globe / preferences */}
                   <button
                     onClick={() => setPrefsOpen(true)}
-                    className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg text-[#8A919E] hover:text-white hover:bg-[#1E2025]/50 bg-transparent border-none cursor-pointer transition-colors"
+                    className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg text-text-muted hover:text-text-primary hover:bg-card-border/50 bg-transparent border-none cursor-pointer transition-colors"
                     title="Global preferences"
                   >
                     <GlobeIcon />
@@ -210,8 +210,8 @@ export default function Navbar() {
                     to="/settings"
                     className={`hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap ${
                       location.pathname === '/settings'
-                        ? 'text-white bg-[#1E2025]'
-                        : 'text-[#8A919E] hover:text-white'
+                        ? 'text-text-primary bg-card-border'
+                        : 'text-text-muted hover:text-text-primary'
                     }`}
                   >
                     Settings
@@ -220,7 +220,7 @@ export default function Navbar() {
                   {/* Log out */}
                   <button
                     onClick={handleLogout}
-                    className="hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium text-[#8A919E] hover:text-[#F6465D] transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap"
+                    className="hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap"
                   >
                     Log out
                   </button>
@@ -250,7 +250,7 @@ export default function Navbar() {
 
         {/* Mobile dropdown menu */}
         {user && menuOpen && (
-          <div className="md:hidden bg-[#141519] border-t border-card-border">
+          <div className="md:hidden bg-card-bg border-t border-card-border">
             <div className="px-4 py-3 space-y-1">
               {allLinks.map((link) => {
                 const isActive = location.pathname === link.to

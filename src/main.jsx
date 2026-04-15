@@ -4,14 +4,12 @@ import './index.css'
 import App from './App.jsx'
 
 const savedTheme = localStorage.getItem('coinova-theme') || 'dark'
-if (savedTheme === 'light') {
-  document.body.style.background = '#FFFFFF'
-  document.body.style.color = '#000000'
-  document.documentElement.setAttribute('data-theme', 'light')
+const root = document.documentElement
+if (savedTheme === 'system') {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+  root.setAttribute('data-theme', prefersDark ? 'dark' : 'light')
 } else {
-  document.body.style.background = '#0A0B0D'
-  document.body.style.color = '#FFFFFF'
-  document.documentElement.setAttribute('data-theme', 'dark')
+  root.setAttribute('data-theme', savedTheme)
 }
 
 createRoot(document.getElementById('root')).render(

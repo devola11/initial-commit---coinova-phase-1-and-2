@@ -1,27 +1,65 @@
 @import "tailwindcss";
 
+/* Theme CSS variables - dark is default */
+:root {
+  --bg-primary: #0A0B0D;
+  --bg-secondary: #141519;
+  --bg-tertiary: #1E2025;
+  --bg-elevated: #2C2F36;
+  --text-primary: #FFFFFF;
+  --text-secondary: #8A919E;
+  --text-tertiary: #5B616E;
+  --border-color: #1E2025;
+  --card-bg: #141519;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0A0B0D;
+  --bg-secondary: #141519;
+  --bg-tertiary: #1E2025;
+  --bg-elevated: #2C2F36;
+  --text-primary: #FFFFFF;
+  --text-secondary: #8A919E;
+  --text-tertiary: #5B616E;
+  --border-color: #1E2025;
+  --card-bg: #141519;
+}
+
+[data-theme="light"] {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8F9FA;
+  --bg-tertiary: #F1F3F5;
+  --bg-elevated: #E9ECEF;
+  --text-primary: #000000;
+  --text-secondary: #495057;
+  --text-tertiary: #868E96;
+  --border-color: #DEE2E6;
+  --card-bg: #FFFFFF;
+}
+
 @theme {
-  --color-root-bg: #0A0B0D;
-  --color-card-bg: #141519;
-  --color-card-border: #1E2025;
-  --color-elevated-border: #2C2F36;
+  --color-root-bg: var(--bg-primary);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--border-color);
+  --color-elevated-border: var(--bg-elevated);
   --color-primary-blue: #0052FF;
   --color-primary-blue-hover: #0040CC;
   --color-profit: #05B169;
   --color-loss: #F6465D;
-  --color-text-primary: #FFFFFF;
-  --color-text-muted: #8A919E;
-  --color-text-subtle: #5B616E;
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-secondary);
+  --color-text-subtle: var(--text-tertiary);
   --font-family-sans: 'Inter', system-ui, sans-serif;
 }
 
 body {
   margin: 0;
-  background-color: #0A0B0D;
-  color: #FFFFFF;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -33,10 +71,10 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0B0D;
+  background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #2C2F36;
+  background: var(--bg-elevated);
   border-radius: 3px;
 }
 

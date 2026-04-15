@@ -11,23 +11,21 @@ export function useTheme() {
 
   function applyTheme(t) {
     const root = document.documentElement
-    if (t === 'dark') {
-      root.setAttribute('data-theme', 'dark')
-      root.style.colorScheme = 'dark'
-      document.body.style.background = '#0A0B0D'
-      document.body.style.color = '#FFFFFF'
-    } else if (t === 'light') {
-      root.setAttribute('data-theme', 'light')
-      root.style.colorScheme = 'light'
-      document.body.style.background = '#FFFFFF'
-      document.body.style.color = '#000000'
-    } else {
+
+    if (t === 'system') {
       const prefersDark = window.matchMedia(
         '(prefers-color-scheme: dark)'
       ).matches
-      applyTheme(prefersDark ? 'dark' : 'light')
-      return
+      const systemTheme = prefersDark ? 'dark' : 'light'
+      root.setAttribute('data-theme', systemTheme)
+      document.body.setAttribute('data-theme', systemTheme)
+      root.style.colorScheme = systemTheme
+    } else {
+      root.setAttribute('data-theme', t)
+      document.body.setAttribute('data-theme', t)
+      root.style.colorScheme = t
     }
+
     localStorage.setItem('coinova-theme', t)
   }
 

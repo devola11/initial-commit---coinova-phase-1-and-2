@@ -1,23 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import GlobalPreferences, { useGlobalPrefs } from './GlobalPreferences'
 import logo from '../assets/logo.jpeg'
 
-const navLinks = [
+const primaryLinks = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/portfolio', label: 'Portfolio' },
-  { to: '/analytics', label: 'Analytics', icon: 'chart' },
-  { to: '/learn', label: 'Learn', icon: 'book' },
-  { to: '/convert', label: 'Convert', icon: 'swap' },
-  { to: '/trending', label: 'Trending', icon: 'fire' },
   { to: '/markets', label: 'Markets' },
   { to: '/invest', label: 'Invest' },
-  { to: '/airdrops', label: 'Airdrops', icon: 'gift' },
-  { to: '/staking', label: 'Staking', icon: 'shield' },
-  { to: '/watchlist', label: 'Watchlist', icon: 'star' },
-  { to: '/alerts', label: 'Alerts' },
+  { to: '/trending', label: 'Trending' },
+  { to: '/convert', label: 'Convert' },
 ]
+
+const moreLinks = [
+  { to: '/analytics', label: 'Analytics', icon: 'chart' },
+  { to: '/learn', label: 'Learn', icon: 'book' },
+  { to: '/staking', label: 'Staking', icon: 'shield' },
+  { to: '/airdrops', label: 'Airdrops', icon: 'gift' },
+  { to: '/watchlist', label: 'Watchlist', icon: 'star' },
+  { to: '/alerts', label: 'Alerts', icon: 'bell' },
+]
+
+const allLinks = [...primaryLinks, ...moreLinks]
 
 function GiftIcon() {
   return (
@@ -37,18 +42,6 @@ function BookIcon() {
   )
 }
 
-function FireIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-  )
-}
-
-function SwapIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
-  )
-}
-
 function ShieldIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -61,10 +54,32 @@ function StarNavIcon() {
   )
 }
 
+function BellIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+  )
+}
+
 function GlobeIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   )
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  )
+}
+
+function DropdownIcon({ icon }) {
+  if (icon === 'chart') return <ChartIcon />
+  if (icon === 'book') return <BookIcon />
+  if (icon === 'shield') return <ShieldIcon />
+  if (icon === 'gift') return <GiftIcon />
+  if (icon === 'star') return <StarNavIcon />
+  if (icon === 'bell') return <BellIcon />
+  return null
 }
 
 export default function Navbar() {
@@ -72,21 +87,42 @@ export default function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
   const [prefsOpen, setPrefsOpen] = useState(false)
   const prefs = useGlobalPrefs()
+  const moreRef = useRef(null)
+
+  // Close "More" dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (moreRef.current && !moreRef.current.contains(e.target)) {
+        setMoreOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Close "More" on route change
+  useEffect(() => {
+    setMoreOpen(false)
+  }, [location.pathname])
 
   async function handleLogout() {
     setMenuOpen(false)
+    setMoreOpen(false)
     await logout()
     navigate('/')
   }
+
+  const moreHasActive = moreLinks.some((l) => location.pathname === l.to)
 
   return (
     <>
       <nav className="sticky top-0 z-50 bg-root-bg/80 backdrop-blur-xl border-b border-card-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16 gap-4">
-            {/* Logo */}
+          <div className="flex items-center h-16 gap-6">
+            {/* LEFT - Logo */}
             <Link to="/dashboard" className="flex items-center gap-2 no-underline flex-shrink-0">
               <img src={logo} alt="Coinova" className="h-7 rounded" />
               <span className="text-lg font-bold text-text-primary tracking-tight whitespace-nowrap">
@@ -94,28 +130,21 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Desktop nav links */}
+            {/* CENTER - Primary nav (desktop) */}
             {user && (
-              <div className="hidden md:flex items-center gap-1 flex-1 min-w-0 overflow-x-auto justify-center">
-                {navLinks.map((link) => {
+              <div className="hidden md:flex items-center gap-1 flex-shrink-0">
+                {primaryLinks.map((link) => {
                   const isActive = location.pathname === link.to
                   return (
                     <Link
                       key={link.to}
                       to={link.to}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline flex items-center gap-1.5 whitespace-nowrap ${
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap ${
                         isActive
-                          ? 'text-text-primary bg-card-bg'
-                          : 'text-text-muted hover:text-text-primary hover:bg-card-bg/50'
+                          ? 'text-white bg-[#1E2025]'
+                          : 'text-[#8A919E] hover:text-white hover:bg-[#1E2025]/50'
                       }`}
                     >
-                      {link.icon === 'gift' && <GiftIcon />}
-                      {link.icon === 'chart' && <ChartIcon />}
-                      {link.icon === 'book' && <BookIcon />}
-                      {link.icon === 'swap' && <SwapIcon />}
-                      {link.icon === 'fire' && <FireIcon />}
-                      {link.icon === 'shield' && <ShieldIcon />}
-                      {link.icon === 'star' && <StarNavIcon />}
                       {link.label}
                     </Link>
                   )
@@ -123,36 +152,79 @@ export default function Navbar() {
               </div>
             )}
 
-            {/* Spacer for non-auth */}
-            {!user && <div className="flex-1" />}
+            {/* Spacer */}
+            <div className="flex-1" />
 
-            {/* Right side */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            {/* RIGHT - Secondary actions (desktop) */}
+            <div className="flex items-center gap-1 flex-shrink-0">
               {user ? (
                 <>
-                  <Link
-                    to="/settings"
-                    className={`hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap ${
-                      location.pathname === '/settings'
-                        ? 'text-text-primary bg-card-bg'
-                        : 'text-text-muted hover:text-text-primary'
-                    }`}
-                  >
-                    Settings
-                  </Link>
+                  {/* More dropdown */}
+                  <div ref={moreRef} className="relative hidden md:block">
+                    <button
+                      onClick={() => setMoreOpen(!moreOpen)}
+                      className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap ${
+                        moreHasActive || moreOpen
+                          ? 'text-white bg-[#1E2025]'
+                          : 'text-[#8A919E] hover:text-white hover:bg-[#1E2025]/50'
+                      }`}
+                    >
+                      More
+                      <ChevronDownIcon />
+                    </button>
+                    {moreOpen && (
+                      <div className="absolute top-full right-0 mt-2 bg-[#141519] border border-[#1E2025] rounded-xl p-2 min-w-[180px] shadow-xl">
+                        {moreLinks.map((link) => {
+                          const isActive = location.pathname === link.to
+                          return (
+                            <Link
+                              key={link.to}
+                              to={link.to}
+                              onClick={() => setMoreOpen(false)}
+                              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm no-underline transition-colors ${
+                                isActive
+                                  ? 'text-[#0052FF] font-medium'
+                                  : 'text-[#8A919E] hover:text-white hover:bg-[#1E2025]'
+                              }`}
+                            >
+                              <DropdownIcon icon={link.icon} />
+                              {link.label}
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Globe / preferences */}
                   <button
                     onClick={() => setPrefsOpen(true)}
-                    className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg text-text-muted hover:text-text-primary hover:bg-card-bg/50 bg-transparent border-none cursor-pointer transition-colors"
+                    className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg text-[#8A919E] hover:text-white hover:bg-[#1E2025]/50 bg-transparent border-none cursor-pointer transition-colors"
                     title="Global preferences"
                   >
                     <GlobeIcon />
                   </button>
+
+                  {/* Settings */}
+                  <Link
+                    to="/settings"
+                    className={`hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap ${
+                      location.pathname === '/settings'
+                        ? 'text-white bg-[#1E2025]'
+                        : 'text-[#8A919E] hover:text-white'
+                    }`}
+                  >
+                    Settings
+                  </Link>
+
+                  {/* Log out */}
                   <button
                     onClick={handleLogout}
-                    className="hidden md:inline-flex px-4 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap"
+                    className="hidden md:inline-flex px-3 py-2 rounded-lg text-sm font-medium text-[#8A919E] hover:text-[#F6465D] transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap"
                   >
                     Log out
                   </button>
+
                   {/* Hamburger - mobile only */}
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
@@ -180,7 +252,7 @@ export default function Navbar() {
         {user && menuOpen && (
           <div className="md:hidden bg-[#141519] border-t border-card-border">
             <div className="px-4 py-3 space-y-1">
-              {navLinks.map((link) => {
+              {allLinks.map((link) => {
                 const isActive = location.pathname === link.to
                 return (
                   <Link

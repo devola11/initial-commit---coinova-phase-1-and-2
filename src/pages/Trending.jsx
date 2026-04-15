@@ -99,7 +99,7 @@ function TrendingTab({ coins, onInvest, navigate }) {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+              <div className="flex items-center gap-2 flex-shrink-0 ml-2 hidden sm:flex">
                 <span className="px-2 py-1 rounded-full text-[10px] font-semibold bg-[#0052FF]/20 text-[#0052FF]">Trending</span>
                 <button
                   onClick={(e) => {

@@ -58,8 +58,8 @@ export default function PortfolioChart() {
   }, [range, totalValue])
 
   return (
-    <div className="bg-card-bg border border-card-border rounded-xl p-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-card-bg border border-card-border rounded-xl p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div>
           <div className="text-xs uppercase tracking-widest text-text-muted font-medium">
             Portfolio value
@@ -84,7 +84,7 @@ export default function PortfolioChart() {
           ))}
         </div>
       </div>
-      <div className="h-64">
+      <div className="h-48 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1E2025" vertical={false} />

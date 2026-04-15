@@ -93,12 +93,12 @@ export default function PINPad({ title, subtitle, onSuccess, onCancel, showBiome
       </div>
 
       {/* Number pad */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
           <button
             key={n}
             onClick={() => handleNumber(String(n))}
-            className="w-[72px] h-[72px] rounded-full bg-[#141519] border border-[#1E2025] text-white text-2xl font-medium flex items-center justify-center cursor-pointer transition-transform active:scale-95 active:bg-[#1E2025] hover:border-[#2C2F36]"
+            className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full bg-[#141519] border border-[#1E2025] text-white text-xl sm:text-2xl font-medium flex items-center justify-center cursor-pointer transition-transform active:scale-95 active:bg-[#1E2025] hover:border-[#2C2F36]"
           >
             {n}
           </button>
@@ -106,7 +106,7 @@ export default function PINPad({ title, subtitle, onSuccess, onCancel, showBiome
         {/* Bottom row */}
         <button
           onClick={() => showBiometric && onBiometric ? onBiometric() : null}
-          className={`w-[72px] h-[72px] rounded-full flex items-center justify-center border-none cursor-pointer transition-transform active:scale-95 ${
+          className={`w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full flex items-center justify-center border-none cursor-pointer transition-transform active:scale-95 ${
             showBiometric ? 'bg-[#141519] border border-[#1E2025]' : 'bg-transparent'
           }`}
           style={!showBiometric ? { visibility: 'hidden' } : {}}
@@ -115,13 +115,13 @@ export default function PINPad({ title, subtitle, onSuccess, onCancel, showBiome
         </button>
         <button
           onClick={() => handleNumber('0')}
-          className="w-[72px] h-[72px] rounded-full bg-[#141519] border border-[#1E2025] text-white text-2xl font-medium flex items-center justify-center cursor-pointer transition-transform active:scale-95 active:bg-[#1E2025] hover:border-[#2C2F36]"
+          className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full bg-[#141519] border border-[#1E2025] text-white text-xl sm:text-2xl font-medium flex items-center justify-center cursor-pointer transition-transform active:scale-95 active:bg-[#1E2025] hover:border-[#2C2F36]"
         >
           0
         </button>
         <button
           onClick={() => setPin(p => p.slice(0, -1))}
-          className="w-[72px] h-[72px] rounded-full bg-[#141519] border border-[#1E2025] flex items-center justify-center cursor-pointer transition-transform active:scale-95 active:bg-[#1E2025] hover:border-[#2C2F36]"
+          className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full bg-[#141519] border border-[#1E2025] flex items-center justify-center cursor-pointer transition-transform active:scale-95 active:bg-[#1E2025] hover:border-[#2C2F36]"
         >
           <BackspaceIcon />
         </button>

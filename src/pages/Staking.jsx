@@ -83,7 +83,7 @@ function StakeModal({ plan, balance, onConfirm, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-md bg-[#141519] border border-[#1E2025] rounded-2xl p-6" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-md bg-[#141519] border border-[#1E2025] rounded-2xl p-4 sm:p-6" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 mb-5">
           <CoinLogo id={plan.id} image={plan.image} symbol={plan.symbol} size={40} />
           <div>
@@ -298,9 +298,9 @@ function PositionsTable({ positions, prices, onClaim, onEarlyUnstake }) {
             <tr className="border-b border-[#1E2025] text-left text-xs uppercase tracking-widest text-[#8A919E]">
               <th className="py-3 px-4 font-medium">Coin</th>
               <th className="py-3 px-4 font-medium">Staked</th>
-              <th className="py-3 px-4 font-medium">APY</th>
-              <th className="py-3 px-4 font-medium">Rewards</th>
-              <th className="py-3 px-4 font-medium">Progress</th>
+              <th className="py-3 px-4 font-medium hidden sm:table-cell">APY</th>
+              <th className="py-3 px-4 font-medium hidden md:table-cell">Rewards</th>
+              <th className="py-3 px-4 font-medium hidden lg:table-cell">Progress</th>
               <th className="py-3 px-4 font-medium">Status</th>
               <th className="py-3 px-4 font-medium text-right">Actions</th>
             </tr>
@@ -330,12 +330,12 @@ function PositionsTable({ positions, prices, onClaim, onEarlyUnstake }) {
                     <div className="text-white text-sm font-medium">{formatCrypto(pos.amount_staked)} {pos.coin_symbol}</div>
                     <div className="text-[#8A919E] text-xs">{formatUSD(pos.amount_staked * price)}</div>
                   </td>
-                  <td className="py-4 px-4 text-[#05B169] font-semibold">{pos.apy}%</td>
-                  <td className="py-4 px-4">
+                  <td className="py-4 px-4 text-[#05B169] font-semibold hidden sm:table-cell">{pos.apy}%</td>
+                  <td className="py-4 px-4 hidden md:table-cell">
                     <div className="text-[#05B169] font-medium text-sm">{formatCrypto(liveRewards)} {pos.coin_symbol}</div>
                     <div className="text-[#8A919E] text-xs">{formatUSD(rewardsUsd)}</div>
                   </td>
-                  <td className="py-4 px-4">
+                  <td className="py-4 px-4 hidden lg:table-cell">
                     <div className="w-24">
                       <div className="flex justify-between text-[10px] text-[#8A919E] mb-1">
                         <span>{Math.round(pct)}%</span>
@@ -538,7 +538,7 @@ export default function Staking() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
         {[
           { label: 'Total Staked', value: formatUSD(stats.totalStakedUsd) },
           { label: 'Rewards Earned', value: formatUSD(stats.totalRewardsUsd), green: true },

@@ -463,7 +463,7 @@ export default function KYC() {
 
           <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-6">
             {/* Document type selector */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
               {DOC_TYPES.map((dt) => (
                 <button
                   key={dt.id}
@@ -486,7 +486,7 @@ export default function KYC() {
 
             {docType && (
               <>
-                <div className="flex gap-4 mb-6">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <FileUploadZone
                     label="Front of document"
                     file={frontFile}

@@ -331,7 +331,7 @@ export default function Analytics() {
         <div className="animate-pulse space-y-4">
           <div className="h-8 w-56 bg-[#1E2025] rounded" />
           <div className="h-64 bg-[#1E2025] rounded-xl" />
-          <div className="grid grid-cols-4 gap-4">{[0,1,2,3].map(i=><div key={i} className="h-28 bg-[#1E2025] rounded-xl" />)}</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[0,1,2,3].map(i=><div key={i} className="h-28 bg-[#1E2025] rounded-xl" />)}</div>
         </div>
       </div>
     )
@@ -365,8 +365,8 @@ export default function Analytics() {
       ) : (
         <>
           {/* ── Section 1: Portfolio Score ───────────────────────── */}
-          <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-6 mb-6">
-            <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-4 sm:p-6 mb-6">
+            <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6">
               <ScoreGauge value={analytics.score} />
               <div className="flex-1">
                 <h3 className="text-white font-semibold mb-3">Portfolio Health Score</h3>
@@ -394,7 +394,7 @@ export default function Analytics() {
           </div>
 
           {/* ── Section 2: Performance Stats ─────────────────────── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
             <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-4">
               <div className="text-[#8A919E] text-xs uppercase tracking-wider font-semibold mb-2">Best Performer</div>
               {analytics.best ? (
@@ -540,15 +540,15 @@ export default function Analytics() {
                 <thead>
                   <tr className="border-b border-[#1E2025] text-left text-xs uppercase tracking-widest text-[#8A919E]">
                     <th className="py-3 px-4 font-medium">Coin</th>
-                    <th className="py-3 px-4 font-medium">Alloc</th>
-                    <th className="py-3 px-4 font-medium">Qty</th>
-                    <th className="py-3 px-4 font-medium">Avg Buy</th>
-                    <th className="py-3 px-4 font-medium">Price</th>
-                    <th className="py-3 px-4 font-medium">Invested</th>
+                    <th className="py-3 px-4 font-medium hidden sm:table-cell">Alloc</th>
+                    <th className="py-3 px-4 font-medium hidden lg:table-cell">Qty</th>
+                    <th className="py-3 px-4 font-medium hidden lg:table-cell">Avg Buy</th>
+                    <th className="py-3 px-4 font-medium hidden sm:table-cell">Price</th>
+                    <th className="py-3 px-4 font-medium hidden md:table-cell">Invested</th>
                     <th className="py-3 px-4 font-medium">Value</th>
                     <th className="py-3 px-4 font-medium">P&L</th>
-                    <th className="py-3 px-4 font-medium">Risk</th>
-                    <th className="py-3 px-4 font-medium">7d</th>
+                    <th className="py-3 px-4 font-medium hidden md:table-cell">Risk</th>
+                    <th className="py-3 px-4 font-medium hidden lg:table-cell">7d</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -565,7 +565,7 @@ export default function Analytics() {
                             </div>
                           </div>
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="py-3 px-4 hidden sm:table-cell">
                           <div className="flex items-center gap-1.5">
                             <div className="w-10 h-1.5 rounded-full bg-[#1E2025]">
                               <div className="h-1.5 rounded-full bg-[#0052FF]" style={{ width: `${a.pct}%` }} />
@@ -573,10 +573,10 @@ export default function Analytics() {
                             <span className="text-white text-xs">{a.pct.toFixed(1)}%</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-white text-xs">{formatCrypto(a.quantity)}</td>
-                        <td className="py-3 px-4 text-[#8A919E] text-xs">{formatUSD(a.buy_price_usd)}</td>
-                        <td className="py-3 px-4 text-white text-xs">{formatUSD(a.currentPrice)}</td>
-                        <td className="py-3 px-4 text-[#8A919E] text-xs">{formatUSD(a.costBasis)}</td>
+                        <td className="py-3 px-4 text-white text-xs hidden lg:table-cell">{formatCrypto(a.quantity)}</td>
+                        <td className="py-3 px-4 text-[#8A919E] text-xs hidden lg:table-cell">{formatUSD(a.buy_price_usd)}</td>
+                        <td className="py-3 px-4 text-white text-xs hidden sm:table-cell">{formatUSD(a.currentPrice)}</td>
+                        <td className="py-3 px-4 text-[#8A919E] text-xs hidden md:table-cell">{formatUSD(a.costBasis)}</td>
                         <td className="py-3 px-4 text-white text-xs font-medium">{formatUSD(a.currentValue)}</td>
                         <td className="py-3 px-4">
                           <div className={`text-xs font-medium ${a.pnl >= 0 ? 'text-[#05B169]' : 'text-[#F6465D]'}`}>
@@ -586,8 +586,8 @@ export default function Analytics() {
                             {formatPercent(a.pnlPercent)}
                           </div>
                         </td>
-                        <td className="py-3 px-4"><RiskBadge level={a.risk} /></td>
-                        <td className="py-3 px-4"><Sparkline positive={a.pnlPercent >= 0} /></td>
+                        <td className="py-3 px-4 hidden md:table-cell"><RiskBadge level={a.risk} /></td>
+                        <td className="py-3 px-4 hidden lg:table-cell"><Sparkline positive={a.pnlPercent >= 0} /></td>
                       </tr>
                     )
                   })}
@@ -611,7 +611,7 @@ export default function Analytics() {
           {/* ── Section 7: Investment Summary ────────────────────── */}
           <div className="bg-[#141519] border border-[#1E2025] rounded-xl p-5">
             <h3 className="text-white font-semibold text-sm mb-4">Investment Summary</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               {[
                 { label: 'Total Invested', value: formatUSD(analytics.totalInvested) },
                 { label: 'Current Value', value: formatUSD(totalValue) },

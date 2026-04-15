@@ -250,7 +250,7 @@ export default function Navbar() {
 
         {/* Mobile dropdown menu */}
         {user && menuOpen && (
-          <div className="md:hidden bg-card-bg border-t border-card-border">
+          <div className="md:hidden bg-card-bg border-t border-card-border max-h-[calc(100vh-64px)] overflow-y-auto">
             <div className="px-4 py-3 space-y-1">
               {allLinks.map((link) => {
                 const isActive = location.pathname === link.to

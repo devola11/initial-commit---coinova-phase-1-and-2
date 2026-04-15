@@ -116,7 +116,7 @@ export default function BuyModal({ coin, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-card-bg border border-card-border rounded-xl w-full max-w-md p-6"
+        className="bg-card-bg border border-card-border rounded-xl w-full max-w-md p-4 sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">
@@ -183,12 +183,12 @@ export default function BuyModal({ coin, onClose }) {
               placeholder="0.00"
               className="w-full bg-root-bg border border-card-border rounded-lg px-4 py-3 text-lg text-text-primary placeholder-text-subtle focus:outline-none focus:border-primary-blue transition-colors"
             />
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-1.5 sm:gap-2 mt-3">
               {QUICK_AMOUNTS.map((amt) => (
                 <button
                   key={amt}
                   onClick={() => setUsd(String(amt))}
-                  className="flex-1 px-2 py-2 rounded-lg border border-card-border text-text-primary text-xs font-semibold bg-transparent hover:border-primary-blue cursor-pointer transition-colors"
+                  className="flex-1 px-1 sm:px-2 py-2 rounded-lg border border-card-border text-text-primary text-[10px] sm:text-xs font-semibold bg-transparent hover:border-primary-blue cursor-pointer transition-colors"
                 >
                   ${amt.toLocaleString()}
                 </button>

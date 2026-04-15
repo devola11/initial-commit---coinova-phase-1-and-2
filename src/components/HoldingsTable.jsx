@@ -92,10 +92,10 @@ export default function HoldingsTable({ onBuy, onSell }) {
             <tr className="border-b border-card-border text-left text-xs uppercase tracking-widest text-text-muted">
               <th className="py-3 px-4 font-medium">Asset</th>
               <th className="py-3 px-4 font-medium">Price</th>
-              <th className="py-3 px-4 font-medium">24h</th>
-              <th className="py-3 px-4 font-medium">Holdings</th>
+              <th className="py-3 px-4 font-medium hidden sm:table-cell">24h</th>
+              <th className="py-3 px-4 font-medium hidden lg:table-cell">Holdings</th>
               <th className="py-3 px-4 font-medium">Value</th>
-              <th className="py-3 px-4 font-medium">P&amp;L</th>
+              <th className="py-3 px-4 font-medium hidden md:table-cell">P&amp;L</th>
               <th className="py-3 px-4 font-medium text-right">Actions</th>
             </tr>
           </thead>
@@ -130,20 +130,20 @@ export default function HoldingsTable({ onBuy, onSell }) {
                     {formatUSD(h.currentPrice)}
                   </td>
                   <td
-                    className={`py-4 px-4 font-medium ${
+                    className={`py-4 px-4 font-medium hidden sm:table-cell ${
                       h.change24h >= 0 ? 'text-profit' : 'text-loss'
                     }`}
                   >
                     {format2dp(h.change24h)}
                   </td>
-                  <td className="py-4 px-4 text-text-primary">
+                  <td className="py-4 px-4 text-text-primary hidden lg:table-cell">
                     {formatCrypto(h.quantity)}
                   </td>
                   <td className="py-4 px-4 text-text-primary font-medium">
                     {formatUSD(h.currentValue)}
                   </td>
                   <td
-                    className={`py-4 px-4 font-medium ${
+                    className={`py-4 px-4 font-medium hidden md:table-cell ${
                       h.pnl >= 0 ? 'text-profit' : 'text-loss'
                     }`}
                   >

@@ -119,7 +119,7 @@ export default function InvestModal({ coin, wallets, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-card-bg border border-card-border rounded-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto"
+        className="bg-card-bg border border-card-border rounded-xl w-full max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
@@ -225,7 +225,7 @@ export default function InvestModal({ coin, wallets, onClose }) {
 
             <div className="flex flex-col items-center bg-root-bg border border-card-border rounded-lg p-5 mb-4">
               <div className="bg-white p-3 rounded-lg mb-4">
-                <QRCodeSVG value={wallet.address} size={172} level="M" />
+                <QRCodeSVG value={wallet.address} size={150} level="M" className="sm:w-[172px] sm:h-[172px]" />
               </div>
               <div className="text-text-muted text-[10px] uppercase tracking-widest mb-1">
                 {wallet.label} Address

@@ -188,43 +188,45 @@ function OverviewTab({ coinId, detail, onInvest, onBuy, sentimentBadge }) {
           ))}
         </div>
         {chartLoading ? (
-          <div className="h-[300px] flex items-center justify-center text-[#8A8F98] text-sm">
+          <div className="h-[200px] sm:h-[300px] flex items-center justify-center text-[#8A8F98] text-sm">
             Loading chart...
           </div>
         ) : chartData.length === 0 ? (
-          <div className="h-[300px] flex items-center justify-center text-[#8A8F98] text-sm">
+          <div className="h-[200px] sm:h-[300px] flex items-center justify-center text-[#8A8F98] text-sm">
             No chart data available
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <XAxis
-                dataKey="time"
-                tickFormatter={(t) => fmtChartDate(t, days)}
-                tick={{ fill: '#8A8F98', fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                minTickGap={40}
-              />
-              <YAxis
-                domain={['auto', 'auto']}
-                tickFormatter={(v) => formatUSD(v)}
-                tick={{ fill: '#8A8F98', fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                width={80}
-              />
-              <Tooltip content={<ChartTooltip days={days} />} />
-              <Line
-                type="monotone"
-                dataKey="price"
-                stroke="#0052FF"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 4, fill: '#0052FF' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[200px] sm:h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <XAxis
+                  dataKey="time"
+                  tickFormatter={(t) => fmtChartDate(t, days)}
+                  tick={{ fill: '#8A8F98', fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  minTickGap={40}
+                />
+                <YAxis
+                  domain={['auto', 'auto']}
+                  tickFormatter={(v) => formatUSD(v)}
+                  tick={{ fill: '#8A8F98', fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={60}
+                />
+                <Tooltip content={<ChartTooltip days={days} />} />
+                <Line
+                  type="monotone"
+                  dataKey="price"
+                  stroke="#0052FF"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4, fill: '#0052FF' }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         )}
       </div>
 

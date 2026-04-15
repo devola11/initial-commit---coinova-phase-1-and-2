@@ -91,6 +91,7 @@ export default function GlobalPreferences({ onClose, country, language, setCount
     if (user) {
       supabase.from('profiles').update({ country: name }).eq('id', user.id).then(() => {})
     }
+    window.dispatchEvent(new Event('languageChange'))
     setStep('main')
     setSearch('')
   }
@@ -100,6 +101,7 @@ export default function GlobalPreferences({ onClose, country, language, setCount
     if (user) {
       supabase.from('profiles').update({ language: name }).eq('id', user.id).then(() => {})
     }
+    window.dispatchEvent(new Event('languageChange'))
     setStep('main')
   }
 

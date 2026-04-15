@@ -2,27 +2,26 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import GlobalPreferences, { useGlobalPrefs } from './GlobalPreferences'
+import { useLanguage } from '../hooks/useLanguage'
 import logo from '../assets/logo.jpeg'
 
-const primaryLinks = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/portfolio', label: 'Portfolio' },
-  { to: '/markets', label: 'Markets' },
-  { to: '/invest', label: 'Invest' },
-  { to: '/trending', label: 'Trending' },
-  { to: '/convert', label: 'Convert' },
+const primaryLinkKeys = [
+  { to: '/dashboard', key: 'dashboard' },
+  { to: '/portfolio', key: 'portfolio' },
+  { to: '/markets', key: 'markets' },
+  { to: '/invest', key: 'invest' },
+  { to: '/trending', key: 'trending' },
+  { to: '/convert', key: 'convert' },
 ]
 
-const moreLinks = [
-  { to: '/analytics', label: 'Analytics', icon: 'chart' },
-  { to: '/learn', label: 'Learn', icon: 'book' },
-  { to: '/staking', label: 'Staking', icon: 'shield' },
-  { to: '/airdrops', label: 'Airdrops', icon: 'gift' },
-  { to: '/watchlist', label: 'Watchlist', icon: 'star' },
-  { to: '/alerts', label: 'Alerts', icon: 'bell' },
+const moreLinkKeys = [
+  { to: '/analytics', key: 'analytics', icon: 'chart' },
+  { to: '/learn', key: 'learn', icon: 'book' },
+  { to: '/staking', key: 'staking', icon: 'shield' },
+  { to: '/airdrops', key: 'airdrops', icon: 'gift' },
+  { to: '/watchlist', key: 'watchlist', icon: 'star' },
+  { to: '/alerts', key: 'alerts', icon: 'bell' },
 ]
-
-const allLinks = [...primaryLinks, ...moreLinks]
 
 function GiftIcon() {
   return (
@@ -90,7 +89,13 @@ export default function Navbar() {
   const [moreOpen, setMoreOpen] = useState(false)
   const [prefsOpen, setPrefsOpen] = useState(false)
   const prefs = useGlobalPrefs()
+  const { t } = useLanguage()
   const moreRef = useRef(null)
+
+  // Build translated link arrays
+  const primaryLinks = primaryLinkKeys.map((l) => ({ ...l, label: t[l.key] || l.key }))
+  const moreLinks = moreLinkKeys.map((l) => ({ ...l, label: t[l.key] || l.key }))
+  const allLinks = [...primaryLinks, ...moreLinks]
 
   // Close "More" dropdown on outside click
   useEffect(() => {
@@ -169,7 +174,7 @@ export default function Navbar() {
                           : 'text-text-muted hover:text-text-primary hover:bg-card-border/50'
                       }`}
                     >
-                      More
+                      {t.more}
                       <ChevronDownIcon />
                     </button>
                     {moreOpen && (
@@ -214,7 +219,7 @@ export default function Navbar() {
                         : 'text-text-muted hover:text-text-primary'
                     }`}
                   >
-                    Settings
+                    {t.settings}
                   </Link>
 
                   {/* Log out */}
@@ -222,7 +227,7 @@ export default function Navbar() {
                     onClick={handleLogout}
                     className="hidden lg:inline-flex px-3 py-2 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer whitespace-nowrap"
                   >
-                    Log out
+                    {t.logout}
                   </button>
 
                   {/* Hamburger - mobile only */}
@@ -278,7 +283,7 @@ export default function Navbar() {
                     : 'text-text-muted hover:text-text-primary hover:bg-card-bg/50'
                 }`}
               >
-                Settings
+                {t.settings}
               </Link>
               <button
                 onClick={() => { setMenuOpen(false); setPrefsOpen(true) }}
@@ -290,7 +295,7 @@ export default function Navbar() {
                 onClick={handleLogout}
                 className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-text-muted hover:text-loss transition-colors bg-transparent border-none cursor-pointer"
               >
-                Log out
+                {t.logout}
               </button>
             </div>
           </div>

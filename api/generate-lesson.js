@@ -11,74 +11,92 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { coinName, coinSymbol, coinId, lessonNumber } = req.body
+  const { coinName, coinSymbol, lessonNumber = 1 } = req.body
 
   if (!coinName || !coinSymbol) {
     return res.status(400).json({ error: 'Missing coin data' })
   }
 
   const lessonTopics = {
-    1: 'basics and history',
+    1: 'basics, history and purpose',
     2: 'technology and how it works',
-    3: 'investment and future potential'
+    3: 'investment potential and risks',
   }
 
-  const topic = lessonTopics[lessonNumber] || 'basics'
+  const topic = lessonTopics[lessonNumber] || 'basics and overview'
 
   const prompt = `You are a crypto education expert.
-Create a beginner-friendly lesson about ${coinName} (${coinSymbol}).
-
+Create a beginner lesson about ${coinName} (${coinSymbol}).
 Topic: ${topic}
 
-Return ONLY a valid JSON object with this exact structure:
+Respond with ONLY this JSON (no markdown, no extra text):
 {
-  "title": "lesson title (max 50 chars)",
-  "content": "educational content (200-300 words, engaging and clear, no markdown)",
-  "keyFact": "one interesting key fact about ${coinName} (max 100 chars)",
+  "title": "short lesson title",
+  "content": "150-200 word educational content for beginners",
+  "keyFact": "one interesting fact about ${coinName}",
   "quiz": {
-    "question": "a clear quiz question about ${coinName}",
+    "question": "quiz question about ${coinName}",
     "options": ["option A", "option B", "option C", "option D"],
     "correctIndex": 0,
-    "explanation": "brief explanation of the correct answer"
+    "explanation": "why this answer is correct"
   }
-}
-
-Make the content accurate, educational and engaging for beginners.
-The quiz should test understanding of the lesson content.
-Return ONLY the JSON, no other text.`
+}`
 
   try {
-    const response = await fetch(
-      'https://api.anthropic.com/v1/messages',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1024,
-          messages: [{
-            role: 'user',
-            content: prompt
-          }]
-        })
-      }
-    )
+    const apiKey = process.env.ANTHROPIC_API_KEY
+
+    if (!apiKey) {
+      return res.status(500).json({ error: 'API key not configured' })
+    }
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    })
+
+    if (!response.ok) {
+      const errData = await response.text()
+      console.error('Anthropic API error:', errData)
+      return res.status(500).json({ error: 'AI service error' })
+    }
 
     const data = await response.json()
-    const text = data.content[0].text
-    const clean = text.replace(/```json|```/g, '').trim()
-    const lesson = JSON.parse(clean)
 
-    res.status(200).json(lesson)
+    if (!data.content || !data.content[0]) {
+      return res.status(500).json({ error: 'Empty response from AI' })
+    }
+
+    const text = data.content[0].text
+    const clean = text.replace(/```json/g, '').replace(/```/g, '').trim()
+
+    let lesson
+    try {
+      lesson = JSON.parse(clean)
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError)
+      console.error('Raw text:', text)
+      return res.status(500).json({ error: 'Failed to parse AI response' })
+    }
+
+    if (!lesson.title || !lesson.content || !lesson.quiz) {
+      return res.status(500).json({ error: 'Invalid lesson structure' })
+    }
+
+    res.setHeader('Cache-Control', 's-maxage=3600')
+    return res.status(200).json(lesson)
   } catch (e) {
-    console.error('Claude API error:', e)
-    res.status(500).json({
-      error: 'Failed to generate lesson',
-      fallback: true
+    console.error('Generate lesson error:', e)
+    return res.status(500).json({
+      error: e.message || 'Failed to generate lesson',
     })
   }
 }

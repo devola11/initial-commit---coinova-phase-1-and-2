@@ -20,6 +20,7 @@ import { LearnWidget } from './Learn'
 import { AnalyticsWidget } from './Analytics'
 import { useHoldings } from '../hooks/useHoldings'
 import { useWatchlist } from '../hooks/useWatchlist'
+import { useLanguage } from '../hooks/useLanguage'
 import { formatUSD, formatPercent } from '../utils/formatters'
 import { getCoinImageUrl } from '../utils/coinImages'
 import { getTopMarkets } from '../lib/coingecko'
@@ -204,6 +205,7 @@ function WatchlistWidget() {
 
 export default function Dashboard() {
   const { holdings, totalValue, totalPnl, totalPnlPercent } = useHoldings()
+  const { t } = useLanguage()
   const [buyCoin, setBuyCoin] = useState(null)
   const [sellHolding, setSellHolding] = useState(null)
   const [showSearch, setShowSearch] = useState(false)
@@ -235,7 +237,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <StatCard
-          label="Total Portfolio Value"
+          label={t.totalPortfolio}
           value={formatUSD(totalValue)}
         />
         <StatCard

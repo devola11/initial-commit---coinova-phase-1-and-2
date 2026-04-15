@@ -3,10 +3,12 @@ import { supabase } from '../lib/supabase'
 import { usePortfolio } from '../context/PortfolioContext'
 import { useAuth } from '../context/AuthContext'
 import { formatUSD } from '../utils/formatters'
+import { useLanguage } from '../hooks/useLanguage'
 
 export default function WalletCard() {
   const { user } = useAuth()
   const { wallet, fetchWallet } = usePortfolio()
+  const { t } = useLanguage()
   const [loading, setLoading] = useState(false)
 
   async function handleAddFunds() {
@@ -32,7 +34,7 @@ export default function WalletCard() {
     <div className="bg-card-bg border border-card-border rounded-xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <div className="text-xs uppercase tracking-widest text-text-muted font-medium mb-2">
-          Wallet Balance
+          {t.walletBalance}
         </div>
         <div className="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
           {formatUSD(wallet?.balance_usd || 0)}

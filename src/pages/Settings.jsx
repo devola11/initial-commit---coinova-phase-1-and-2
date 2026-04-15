@@ -36,7 +36,7 @@ function CopyBtn({ text }) {
       await navigator.clipboard.writeText(text)
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
-    } catch {}
+    } catch { /* ignored */ }
   }
   return (
     <button
@@ -140,7 +140,7 @@ function KYCCard() {
 export default function Settings() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const [profile, setProfile] = useState(null)
+  const [, setProfile] = useState(null)
   const [displayName, setDisplayName] = useState('')
   const [editingName, setEditingName] = useState(false)
   const [currency, setCurrency] = useState(() => localStorage.getItem('coinova_currency') || 'USD')
@@ -185,7 +185,7 @@ export default function Settings() {
     setSaving(true)
     try {
       await supabase.from('profiles').update({ display_name: displayName }).eq('id', user.id)
-    } catch {}
+    } catch { /* ignored */ }
     setSaving(false)
     setEditingName(false)
   }

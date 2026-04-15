@@ -54,7 +54,7 @@ export default function Watchlist() {
   const navigate = useNavigate()
   const { watchlist, loading: wlLoading, toggle } = useWatchlist()
   const [prices, setPrices] = useState({})
-  const [pricesLoading, setPricesLoading] = useState(true)
+  const [, setPricesLoading] = useState(true)
   const [investCoin, setInvestCoin] = useState(null)
 
   // Fetch live market data to get prices for watched coins

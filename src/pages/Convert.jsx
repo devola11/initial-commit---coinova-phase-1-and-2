@@ -248,7 +248,7 @@ export default function Convert() {
     try {
       const data = await getLivePrices(ids)
       setPrices((prev) => ({ ...prev, ...data }))
-    } catch {}
+    } catch { /* ignored */ }
     setRateLoading(false)
     setCountdown(RATE_TTL)
   }, [fromCoin?.id, toCoin?.id])

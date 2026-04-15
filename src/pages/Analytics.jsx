@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useHoldings } from '../hooks/useHoldings'
 import { usePortfolio } from '../context/PortfolioContext'

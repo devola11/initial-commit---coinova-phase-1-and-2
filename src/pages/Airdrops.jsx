@@ -92,7 +92,7 @@ export default function Airdrops() {
       ])
       setAirdrops(aData || [])
       setClaims(cData || [])
-    } catch {
+    } catch { /* ignored */
     } finally {
       setLoading(false)
     }

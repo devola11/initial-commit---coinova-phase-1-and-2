@@ -8,7 +8,7 @@ const LOCK_TIMEOUT = 5 * 60 * 1000 // 5 minutes
 
 export default function AppLock({ children }) {
   const { user, logout } = useAuth()
-  const { pinEnabled, verifyPIN } = usePIN()
+  const { verifyPIN } = usePIN()
   const { enabled: bioEnabled, verifyBiometric } = useBiometric()
   const [locked, setLocked] = useState(false)
   const [wrongPin, setWrongPin] = useState(false)
@@ -42,9 +42,16 @@ export default function AppLock({ children }) {
   // Auto-trigger biometric on lock
   useEffect(() => {
     if (locked && bioEnabled) {
-      handleBiometric()
+      triggerBiometric()
     }
-  }, [locked, bioEnabled])
+    async function triggerBiometric() {
+      const ok = await verifyBiometric()
+      if (ok) {
+        setLocked(false)
+        localStorage.setItem('coinova-last-active', String(Date.now()))
+      }
+    }
+  }, [locked, bioEnabled, verifyBiometric])
 
   async function handlePinEntry(pin) {
     if (!user) return

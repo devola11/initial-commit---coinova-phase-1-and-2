@@ -65,7 +65,6 @@ function Gauge({ value }) {
 
   // Needle
   const needleAngle = startAngle - (v / 100) * sweep
-  const needleTip = arcPoint(needleAngle)
   const needleLen = r - 14
   const needleEnd = {
     x: cx + needleLen * Math.cos((needleAngle * Math.PI) / 180),

@@ -406,7 +406,7 @@ function NewsTab({ coinName, coinSymbol }) {
               day: 'numeric',
               year: 'numeric',
             })
-          } catch (e) {
+          } catch {
             dateStr = null
           }
         }

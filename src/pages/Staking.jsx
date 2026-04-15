@@ -219,7 +219,7 @@ function EarlyUnstakeModal({ position, onConfirm, onClose }) {
 
 function PlanCard({ plan, balance, onStake }) {
   const [dur, setDur] = useState(30)
-  const [previewAmt, setPreviewAmt] = useState(plan.minStake)
+  const [previewAmt] = useState(plan.minStake)
   const estRewards = calcRewards(previewAmt, plan.apy, dur)
   const hasBalance = balance >= plan.minStake
 

@@ -2,13 +2,10 @@ import { useState, useEffect } from 'react'
 
 export function usePIN() {
   const [pinEnabled, setPinEnabled] = useState(false)
-  const [pinHash, setPinHash] = useState(null)
-
   useEffect(() => {
     const stored = localStorage.getItem('coinova-pin-hash')
     if (stored) {
       setPinEnabled(true)
-      setPinHash(stored)
     }
   }, [])
 
@@ -24,7 +21,6 @@ export function usePIN() {
     localStorage.setItem('coinova-pin-hash', hash)
     localStorage.setItem('coinova-pin-enabled', 'true')
     setPinEnabled(true)
-    setPinHash(hash)
     return true
   }
 
@@ -40,7 +36,6 @@ export function usePIN() {
     localStorage.removeItem('coinova-pin-enabled')
     localStorage.removeItem('coinova-biometric-enabled')
     setPinEnabled(false)
-    setPinHash(null)
   }
 
   function isPINEnabled() {

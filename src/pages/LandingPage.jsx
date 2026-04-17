@@ -21,6 +21,7 @@ export default function LandingPage() {
   const [coins, setCoins] = useState([])
   const [loadingCoins, setLoadingCoins] = useState(true)
   const [prefsOpen, setPrefsOpen] = useState(false)
+  const [cncBarOpen, setCncBarOpen] = useState(() => localStorage.getItem('coinova_cnc_bar_dismissed') !== '1')
   const prefs = useGlobalPrefs()
   const navigate = useNavigate()
 
@@ -53,6 +54,41 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white text-black font-sans">
+      <style>{`
+        @keyframes cnc-bar-ping {
+          0% { transform: scale(1); opacity: 0.75; }
+          100% { transform: scale(2.4); opacity: 0; }
+        }
+      `}</style>
+      {/* ── CNC Announcement bar ─────────────────────────────────── */}
+      {cncBarOpen && (
+        <div className="relative" style={{ background: '#FFD700' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-center gap-3 flex-wrap">
+            <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75" style={{ animation: 'cnc-bar-ping 1.5s infinite' }} />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-600" />
+            </span>
+            <span className="text-xs sm:text-sm font-semibold" style={{ color: '#0A0B0D' }}>
+              CNC Presale is LIVE — Buy at $0.05 before launch price of $0.10
+            </span>
+            <Link
+              to="/cnc"
+              className="px-3 py-1 rounded-full text-xs font-bold no-underline"
+              style={{ background: '#0A0B0D', color: '#FFD700' }}
+            >
+              Buy Now
+            </Link>
+            <button
+              onClick={() => { setCncBarOpen(false); localStorage.setItem('coinova_cnc_bar_dismissed', '1') }}
+              aria-label="Dismiss announcement"
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-lg leading-none"
+              style={{ color: '#0A0B0D' }}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
       {/* ── Navbar ─────────────────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -3,7 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import GlobalPreferences, { useGlobalPrefs } from './GlobalPreferences'
 import { useLanguage } from '../hooks/useLanguage'
+import { useCNCToken } from '../hooks/useCNCToken'
 import logo from '../assets/logo.jpeg'
+import cncLogo from '../assets/cnc-logo-32.png'
 
 const primaryLinkKeys = [
   { to: '/dashboard', key: 'dashboard' },
@@ -90,6 +92,7 @@ export default function Navbar() {
   const [prefsOpen, setPrefsOpen] = useState(false)
   const prefs = useGlobalPrefs()
   const { t } = useLanguage()
+  const cnc = useCNCToken()
   const moreRef = useRef(null)
 
   // Build translated link arrays
@@ -209,6 +212,22 @@ export default function Navbar() {
                   >
                     <GlobeIcon />
                   </button>
+
+                  {/* CNC price ticker */}
+                  <Link
+                    to="/cnc"
+                    title="Coinova Coin"
+                    className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold no-underline hover:bg-card-border/50 transition-colors"
+                    style={{ color: (Number(cnc.change_24h) || 0) >= 0 ? '#05B169' : '#E53935' }}
+                  >
+                    <img src={cncLogo} alt="CNC" className="w-5 h-5 rounded-full" />
+                    <span className="text-text-primary">CNC</span>
+                    <span className="text-text-primary">${Number(cnc.price || 0).toFixed(2)}</span>
+                    <span>
+                      {(Number(cnc.change_24h) || 0) >= 0 ? '+' : ''}
+                      {Number(cnc.change_24h || 0).toFixed(2)}%
+                    </span>
+                  </Link>
 
                   {/* Settings */}
                   <Link

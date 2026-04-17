@@ -20,7 +20,9 @@ import { LearnWidget } from './Learn'
 import { AnalyticsWidget } from './Analytics'
 import { useHoldings } from '../hooks/useHoldings'
 import { useWatchlist } from '../hooks/useWatchlist'
+import { useCNCToken } from '../hooks/useCNCToken'
 import { useLanguage } from '../hooks/useLanguage'
+import cncLogoImg from '../assets/cnc-logo-64.png'
 import { formatUSD, formatPercent } from '../utils/formatters'
 import { getCoinImageUrl } from '../utils/coinImages'
 import { getTopMarkets } from '../lib/coingecko'
@@ -136,6 +138,71 @@ function WatchlistLogo({ coinId, image, symbol }) {
   return <img src={src} alt={symbol} onError={() => setErr(true)} className="w-7 h-7 rounded-full bg-white/5 flex-shrink-0" />
 }
 
+function CNCBalanceCard() {
+  const { user } = useAuth()
+  const cnc = useCNCToken()
+  const [qty, setQty] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!user) { setLoading(false); return }
+    let cancelled = false
+    async function load() {
+      try {
+        const { data } = await supabase
+          .from('cnc_holdings')
+          .select('quantity')
+          .eq('user_id', user.id)
+          .maybeSingle()
+        if (!cancelled) setQty(Number(data?.quantity) || 0)
+      } catch {
+        // ignore
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [user])
+
+  if (loading) return null
+
+  const usdValue = qty * (Number(cnc.price) || 0)
+
+  return (
+    <div className="rounded-xl p-5 mb-6" style={{ background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(0, 82, 255, 0.08))', border: '1px solid #FFD70050' }}>
+      <div className="flex items-center gap-4 flex-wrap">
+        <img src={cncLogoImg} alt="CNC" className="w-12 h-12 rounded-full flex-shrink-0" />
+        <div className="flex-1 min-w-0">
+          <div className="text-[10px] uppercase tracking-widest mb-1" style={{ color: '#8A8F98' }}>
+            Your CNC Balance
+          </div>
+          <div className="text-2xl font-bold text-white tracking-tight">
+            {qty.toLocaleString(undefined, { maximumFractionDigits: 4 })} CNC
+          </div>
+          <div className="text-sm" style={{ color: '#FFD700' }}>{formatUSD(usdValue)}</div>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <Link
+            to="/cnc"
+            className="px-4 py-2 rounded-lg text-sm font-semibold no-underline transition-colors"
+            style={{ background: '#FFD700', color: '#0A0B0D' }}
+          >
+            Buy More
+          </Link>
+          <Link
+            to="/staking"
+            className="px-4 py-2 rounded-lg text-sm font-semibold no-underline bg-transparent transition-colors"
+            style={{ border: '1px solid #FFD700', color: '#FFD700' }}
+          >
+            Stake
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function WatchlistWidget() {
   const { watchlist, loading } = useWatchlist()
   const [prices, setPrices] = useState({})
@@ -234,6 +301,8 @@ export default function Dashboard() {
       <div className="mb-6">
         <WalletCard />
       </div>
+
+      <CNCBalanceCard />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <StatCard

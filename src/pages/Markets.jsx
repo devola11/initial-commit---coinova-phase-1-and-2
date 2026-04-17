@@ -12,7 +12,9 @@ import CoinSearch from '../components/CoinSearch'
 import InvestModal from '../components/InvestModal'
 import { INVEST_WALLETS } from './Invest'
 import { useWatchlist } from '../hooks/useWatchlist'
+import { useCNCToken } from '../hooks/useCNCToken'
 import { TrendingBanner } from './Trending'
+import cncLogoImg from '../assets/cnc-logo-64.png'
 
 function StarIcon({ filled }) {
   return (
@@ -78,6 +80,7 @@ function Skeleton() {
 export default function Markets() {
   const navigate = useNavigate()
   const { isWatched, toggle } = useWatchlist()
+  const cnc = useCNCToken()
   const [coins, setCoins] = useState([])
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
@@ -192,13 +195,56 @@ export default function Markets() {
                 </tr>
               </thead>
               <tbody>
+                {/* Pinned CNC row */}
+                <tr
+                  onClick={() => navigate('/cnc')}
+                  className="cursor-pointer transition-colors"
+                  style={{ borderBottom: '1px solid #1E2025', background: 'rgba(255, 215, 0, 0.04)', boxShadow: 'inset 0 0 0 1px #FFD700' }}
+                >
+                  <td className="py-4 px-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="flex items-center gap-3">
+                      <img src={cncLogoImg} alt="CNC" className="w-8 h-8 rounded-full flex-shrink-0" />
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-text-primary font-semibold">Coinova Coin</span>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ background: '#FFD700', color: '#0A0B0D' }}>
+                            Platform Token
+                          </span>
+                        </div>
+                        <div className="text-text-muted text-xs uppercase">CNC</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-4 px-4 text-text-primary">{formatUSD(cnc.price)}</td>
+                  <td className={`py-4 px-4 font-medium ${(Number(cnc.change_24h) || 0) >= 0 ? 'text-profit' : 'text-loss'}`}>
+                    {fmtPct(Number(cnc.change_24h) || 0)}
+                  </td>
+                  <td className="py-4 px-4 text-text-muted hidden md:table-cell">-</td>
+                  <td className="py-4 px-4 text-text-primary hidden sm:table-cell">${formatNumber(cnc.marketCap)}</td>
+                  <td className="py-4 px-4 text-text-muted hidden lg:table-cell">-</td>
+                  <td className="py-4 px-4 text-right">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate('/cnc') }}
+                      className="px-4 py-1.5 rounded-lg text-xs font-semibold border-none cursor-pointer transition-colors"
+                      style={{ background: '#FFD700', color: '#0A0B0D' }}
+                    >
+                      Buy CNC
+                    </button>
+                  </td>
+                </tr>
+
                 {visibleCoins.length === 0 && (
                   <tr>
                     <td
                       colSpan={8}
                       className="py-10 text-center text-text-muted text-sm"
                     >
-                      No coins match this filter.
+                      No other coins match this filter.
                     </td>
                   </tr>
                 )}

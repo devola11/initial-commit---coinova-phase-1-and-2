@@ -2,6 +2,26 @@ import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { detectAndSaveLocation } from '../hooks/useGeoLocation'
+import { supabase } from '../lib/supabase'
+
+async function creditCncBonus(userId) {
+  const { data: existing } = await supabase
+    .from('cnc_holdings')
+    .select('quantity')
+    .eq('user_id', userId)
+    .maybeSingle()
+  const newQty = (Number(existing?.quantity) || 0) + 100
+  if (existing) {
+    await supabase
+      .from('cnc_holdings')
+      .update({ quantity: newQty })
+      .eq('user_id', userId)
+  } else {
+    await supabase
+      .from('cnc_holdings')
+      .insert({ user_id: userId, quantity: 100, avg_buy_price: 0 })
+  }
+}
 
 export default function Register() {
   const [searchParams] = useSearchParams()
@@ -28,6 +48,9 @@ export default function Register() {
       // Auto-detect location after registration
       if (regData?.user) {
         detectAndSaveLocation(regData.user.id).catch(() => {})
+        creditCncBonus(regData.user.id).catch((err) =>
+          console.warn('CNC welcome bonus failed:', err?.message || err)
+        )
       }
       navigate('/dashboard')
     } catch (err) {

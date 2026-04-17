@@ -2,12 +2,13 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { formatUSD } from '../utils/formatters'
+import { formatUSD, formatNumber } from '../utils/formatters'
+import { useCNCToken } from '../hooks/useCNCToken'
 
 export const ADMIN_EMAIL = 'frontenddev177@gmail.com'
 
 const STATUS_TABS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED']
-const ADMIN_TABS = ['INVESTMENTS', 'KYC']
+const ADMIN_TABS = ['INVESTMENTS', 'KYC', 'CNC']
 
 const STATUS_STYLES = {
   pending:  'bg-yellow-500/15 text-yellow-400',
@@ -670,6 +671,10 @@ export default function Admin() {
         </div>
       )}
 
+      {adminTab === 'CNC' && (
+        <CNCAdminPanel showToast={showToast} />
+      )}
+
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[120] bg-card-bg border border-card-border rounded-lg px-5 py-3 text-sm text-text-primary shadow-xl">
           {toast}
@@ -684,5 +689,151 @@ export default function Admin() {
         />
       )}
     </div>
+  )
+}
+
+function CNCAdminPanel({ showToast }) {
+  const cnc = useCNCToken()
+  const [newPrice, setNewPrice] = useState('')
+  const [newChange, setNewChange] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [holders, setHolders] = useState([])
+  const [loadingHolders, setLoadingHolders] = useState(true)
+
+  const fetchHolders = useCallback(async () => {
+    setLoadingHolders(true)
+    try {
+      const { data, error } = await supabase
+        .from('cnc_holdings')
+        .select('*')
+        .order('quantity', { ascending: false })
+        .limit(100)
+      if (error) throw error
+      setHolders(data || [])
+    } catch (err) {
+      console.warn('fetchHolders failed', err?.message || err)
+      setHolders([])
+    } finally {
+      setLoadingHolders(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchHolders()
+  }, [fetchHolders])
+
+  async function handleUpdate() {
+    if (saving) return
+    const price = Number(newPrice)
+    const change = Number(newChange)
+    if (!price || price <= 0) {
+      showToast('Enter a valid price.')
+      return
+    }
+    setSaving(true)
+    try {
+      const payload = {
+        price,
+        change_24h: Number.isFinite(change) ? change : 0,
+        updated_at: new Date().toISOString(),
+      }
+      const { error } = await supabase
+        .from('cnc_token')
+        .upsert({ id: 1, ...payload }, { onConflict: 'id' })
+      if (error) throw error
+      showToast('CNC price updated!')
+      setNewPrice('')
+      setNewChange('')
+      cnc.refresh()
+    } catch (err) {
+      showToast(`Update failed: ${err.message}`)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <>
+      <p className="text-text-muted text-sm mb-4">Manage the CNC token price, presale data, and holders.</p>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <StatCard label="Current Price" value={formatUSD(cnc.price)} />
+        <StatCard label="24h Change" value={`${(Number(cnc.change_24h) || 0) >= 0 ? '+' : ''}${Number(cnc.change_24h || 0).toFixed(2)}%`} tone={(Number(cnc.change_24h) || 0) >= 0 ? 'green' : 'red'} />
+        <StatCard label="Total Sold" value={`${formatNumber(cnc.total_sold, 0)} CNC`} />
+        <StatCard label="USDT Received" value={formatUSD(cnc.total_usdt_received)} />
+      </div>
+
+      <div className="bg-card-bg border border-card-border rounded-xl p-5 mb-6">
+        <div className="text-text-primary font-semibold mb-4">Update CNC Price</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label className="block text-xs uppercase tracking-widest text-text-muted mb-2 font-medium">New Price (USD)</label>
+            <input
+              type="number"
+              step="0.0001"
+              min="0"
+              value={newPrice}
+              onChange={(e) => setNewPrice(e.target.value)}
+              placeholder={String(cnc.price)}
+              className="w-full bg-root-bg border border-card-border rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-subtle focus:outline-none focus:border-primary-blue"
+            />
+          </div>
+          <div>
+            <label className="block text-xs uppercase tracking-widest text-text-muted mb-2 font-medium">24h Change (%)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={newChange}
+              onChange={(e) => setNewChange(e.target.value)}
+              placeholder={String(cnc.change_24h)}
+              className="w-full bg-root-bg border border-card-border rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-subtle focus:outline-none focus:border-primary-blue"
+            />
+          </div>
+          <div className="flex items-end">
+            <button
+              onClick={handleUpdate}
+              disabled={saving || !newPrice}
+              className="w-full py-3 rounded-lg text-white text-sm font-semibold border-none cursor-pointer transition-colors disabled:opacity-50"
+              style={{ background: '#FFD700', color: '#0A0B0D' }}
+            >
+              {saving ? 'Updating...' : 'Update CNC'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-card-bg border border-card-border rounded-xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-text-primary font-semibold">Holders</div>
+          <div className="text-text-muted text-xs">{holders.length} total</div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-card-border text-left text-xs uppercase tracking-widest text-text-muted">
+                <th className="py-3 px-4 font-medium">User ID</th>
+                <th className="py-3 px-4 font-medium">Quantity (CNC)</th>
+                <th className="py-3 px-4 font-medium">Avg Buy Price</th>
+                <th className="py-3 px-4 font-medium">USD Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loadingHolders ? (
+                <tr><td colSpan={4} className="py-10 text-center text-text-muted">Loading...</td></tr>
+              ) : holders.length === 0 ? (
+                <tr><td colSpan={4} className="py-10 text-center text-text-muted">No holders yet.</td></tr>
+              ) : holders.map((h) => (
+                <tr key={h.user_id} className="border-b border-card-border last:border-b-0">
+                  <td className="py-3 px-4 text-text-primary text-xs font-mono break-all max-w-[260px]">{h.user_id}</td>
+                  <td className="py-3 px-4 text-text-primary font-semibold">{formatNumber(h.quantity, 2)}</td>
+                  <td className="py-3 px-4 text-text-muted">{formatUSD(Number(h.avg_buy_price) || 0)}</td>
+                  <td className="py-3 px-4 text-text-primary">{formatUSD((Number(h.quantity) || 0) * cnc.price)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
   )
 }

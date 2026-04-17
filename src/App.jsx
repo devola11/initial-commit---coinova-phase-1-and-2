@@ -24,6 +24,7 @@ import Staking from './pages/Staking'
 import Learn from './pages/Learn'
 import Analytics from './pages/Analytics'
 import KYC from './pages/KYC'
+import CNCToken from './pages/CNCToken'
 import InstallBanner from './components/InstallBanner'
 import Footer from './components/Footer'
 import Terms from './pages/Terms'
@@ -59,6 +60,7 @@ export default function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/cnc" element={<CNCToken />} />
 
             {/* Protected (with dark navbar layout) */}
             <Route element={<AppLayout />}>

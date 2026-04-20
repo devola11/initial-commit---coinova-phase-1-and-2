@@ -8,18 +8,34 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
+    let cancelled = false
 
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (cancelled) return
+        setUser(session?.user ?? null)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error('getSession failed:', err)
+        if (!cancelled) setLoading(false)
+      })
+
+    // Fires on SIGNED_IN (incl. after AuthCallback completes), SIGNED_OUT,
+    // TOKEN_REFRESHED, USER_UPDATED. Keep loading in sync so ProtectedRoute
+    // never gets stuck on stale state after an email-confirmation round trip.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null)
+        setLoading(false)
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      cancelled = true
+      subscription.unsubscribe()
+    }
   }, [])
 
   async function login(email, password) {

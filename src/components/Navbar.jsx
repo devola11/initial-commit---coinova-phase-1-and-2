@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import GlobalPreferences, { useGlobalPrefs } from './GlobalPreferences'
+import AccountToggle from './AccountToggle'
 import { useLanguage } from '../hooks/useLanguage'
 import { useCNCToken } from '../hooks/useCNCToken'
 import logo from '../assets/logo.jpeg'
@@ -137,6 +138,13 @@ export default function Navbar() {
                 Coinova
               </span>
             </Link>
+
+            {/* Account mode toggle (desktop) - right after logo */}
+            {user && (
+              <div className="hidden xl:block flex-shrink-0">
+                <AccountToggle compact />
+              </div>
+            )}
 
             {/* CENTER - Primary nav (desktop) */}
             {user && (
@@ -276,6 +284,9 @@ export default function Navbar() {
         {user && menuOpen && (
           <div className="lg:hidden bg-card-bg border-t border-card-border max-h-[calc(100vh-64px)] overflow-y-auto">
             <div className="px-4 py-3 space-y-1">
+              <div className="mb-3 flex justify-center">
+                <AccountToggle />
+              </div>
               {allLinks.map((link) => {
                 const isActive = location.pathname === link.to
                 return (

@@ -1,17 +1,18 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { usePortfolio } from '../context/PortfolioContext'
 import { useAuth } from '../context/AuthContext'
+import { useKycStatus } from './KYCBanner'
 import { formatUSD } from '../utils/formatters'
-import { useLanguage } from '../hooks/useLanguage'
+import FundWalletModal from './FundWalletModal'
 
-export default function WalletCard() {
+function DemoCard() {
   const { user } = useAuth()
   const { wallet, fetchWallet } = usePortfolio()
-  const { t } = useLanguage()
   const [loading, setLoading] = useState(false)
 
-  async function handleAddFunds() {
+  async function addFunds() {
     if (!user || !wallet) return
     setLoading(true)
     try {
@@ -24,30 +25,110 @@ export default function WalletCard() {
       await fetchWallet()
     } catch (err) {
       console.error(err)
-      alert('Failed to add funds: ' + err.message)
+      alert('Failed to add demo funds: ' + err.message)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="bg-card-bg border border-card-border rounded-xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div
+      className="rounded-xl p-5 flex flex-col gap-3 relative"
+      style={{
+        background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.02))',
+        border: '1px solid rgba(245, 158, 11, 0.35)',
+      }}
+    >
+      <span
+        className="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider"
+        style={{ background: '#F59E0B', color: '#0A0B0D' }}
+      >
+        DEMO
+      </span>
       <div>
-        <div className="text-xs uppercase tracking-widest text-text-muted font-medium mb-2">
-          {t.walletBalance}
+        <div className="text-[10px] uppercase tracking-widest font-medium mb-1" style={{ color: '#F59E0B' }}>
+          Demo Account
         </div>
-        <div className="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
+        <div className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
           {formatUSD(wallet?.balance_usd || 0)}
         </div>
-        <div className="mt-1 text-xs text-text-muted">Demo funds · USD</div>
+        <div className="text-xs text-text-muted mt-1">Practice funds · USD</div>
       </div>
       <button
-        onClick={handleAddFunds}
+        onClick={addFunds}
         disabled={loading}
-        className="px-5 py-3 rounded-lg bg-primary-blue hover:bg-primary-blue-hover text-white text-sm font-semibold transition-colors disabled:opacity-50 border-none cursor-pointer whitespace-nowrap"
+        className="px-4 py-2.5 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-50 border-none cursor-pointer whitespace-nowrap"
+        style={{ background: '#F59E0B', color: '#0A0B0D' }}
       >
-        {loading ? 'Adding...' : '+ Add $1,000'}
+        {loading ? 'Adding...' : '+ Add $1,000 demo funds'}
       </button>
+      <div className="text-[11px] text-text-muted">For learning and practice</div>
     </div>
+  )
+}
+
+function WalletCardInner({ onFund }) {
+  const { wallet } = usePortfolio()
+  const { kycStatus } = useKycStatus()
+  const balance = Number(wallet?.wallet_balance || 0)
+  const isVerified = kycStatus === 'approved'
+
+  return (
+    <div
+      className="rounded-xl p-5 flex flex-col gap-3 relative"
+      style={{
+        background: 'linear-gradient(135deg, rgba(0, 82, 255, 0.08), rgba(0, 82, 255, 0.02))',
+        border: '1px solid rgba(0, 82, 255, 0.35)',
+      }}
+    >
+      <span
+        className="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider"
+        style={{ background: '#0052FF', color: '#FFFFFF' }}
+      >
+        WALLET
+      </span>
+      <div>
+        <div className="text-[10px] uppercase tracking-widest font-medium mb-1" style={{ color: '#0052FF' }}>
+          Main Wallet
+        </div>
+        <div className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
+          {formatUSD(balance)}
+        </div>
+        <div className="text-xs text-text-muted mt-1">Real crypto funds</div>
+      </div>
+      {!isVerified ? (
+        <Link
+          to="/kyc"
+          className="px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border-none cursor-pointer whitespace-nowrap no-underline text-center"
+          style={{ background: '#0052FF', color: '#FFFFFF' }}
+        >
+          Complete KYC to fund
+        </Link>
+      ) : (
+        <button
+          onClick={onFund}
+          className="px-4 py-2.5 rounded-lg text-sm font-semibold transition-opacity border-none cursor-pointer whitespace-nowrap"
+          style={{ background: '#0052FF', color: '#FFFFFF' }}
+        >
+          + Fund Wallet
+        </button>
+      )}
+      <div className="text-[11px] text-text-muted">
+        {balance > 0 ? 'Ready for real trading' : 'Fund with real crypto'}
+      </div>
+    </div>
+  )
+}
+
+export default function WalletCard() {
+  const [fundOpen, setFundOpen] = useState(false)
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <DemoCard />
+        <WalletCardInner onFund={() => setFundOpen(true)} />
+      </div>
+      {fundOpen && <FundWalletModal onClose={() => setFundOpen(false)} />}
+    </>
   )
 }

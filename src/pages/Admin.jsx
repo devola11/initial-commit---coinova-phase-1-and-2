@@ -208,61 +208,33 @@ export default function Admin() {
     setTimeout(() => setToast(''), 2500)
   }
 
-  // Credit user: update holdings + insert transaction + mark request approved.
+  // Credit user's Main Wallet (cash top-up). Approved investments now add USD
+  // to wallet_balance — the user then buys coins from BuyModal in wallet mode.
+  // No direct holding creation, keeping demo and real ledgers cleanly separate.
   async function approveRequest(row) {
     if (actioning) return
     setActioning(row.id)
     try {
-      const price = Number(row.coin_price_at_submission) || 0
-      if (price <= 0) {
-        throw new Error('Missing reference price on request - cannot credit holdings')
+      const amount = Number(row.amount_usd) || 0
+      if (amount <= 0) {
+        throw new Error('Request has no amount to credit')
       }
-      const quantity = Number(row.amount_usd) / price
 
-      const { data: existing, error: findErr } = await supabase
-        .from('holdings')
-        .select('*')
+      const { data: walletRow, error: fetchErr } = await supabase
+        .from('wallet')
+        .select('wallet_balance')
         .eq('user_id', row.user_id)
-        .eq('coin_id', row.coin_id)
         .maybeSingle()
-      if (findErr) throw findErr
+      if (fetchErr) throw fetchErr
 
-      if (existing) {
-        const totalQty = Number(existing.quantity) + quantity
-        const totalCost =
-          Number(existing.buy_price_usd) * Number(existing.quantity) +
-          price * quantity
-        const newAvgPrice = totalCost / totalQty
-        const { error: updErr } = await supabase
-          .from('holdings')
-          .update({ quantity: totalQty, buy_price_usd: newAvgPrice })
-          .eq('id', existing.id)
-        if (updErr) throw updErr
-      } else {
-        const { error: insErr } = await supabase.from('holdings').insert({
-          user_id: row.user_id,
-          coin_id: row.coin_id,
-          coin_symbol: (row.coin_symbol || '').toUpperCase(),
-          coin_name: row.coin_name,
-          coin_image: row.coin_image || null,
-          quantity,
-          buy_price_usd: price,
-        })
-        if (insErr) throw insErr
-      }
+      const currentBalance = Number(walletRow?.wallet_balance || 0)
+      const newBalance = currentBalance + amount
 
-      const { error: txErr } = await supabase.from('transactions').insert({
-        user_id: row.user_id,
-        type: 'buy',
-        coin_id: row.coin_id,
-        symbol: (row.coin_symbol || '').toLowerCase(),
-        name: row.coin_name,
-        quantity,
-        price_usd: price,
-        total_usd: Number(row.amount_usd),
-        fee_usd: 0,
-      })
-      if (txErr) throw txErr
+      const { error: walletErr } = await supabase
+        .from('wallet')
+        .update({ wallet_balance: newBalance })
+        .eq('user_id', row.user_id)
+      if (walletErr) throw walletErr
 
       const { error: statusErr } = await supabase
         .from('investment_requests')
@@ -270,7 +242,7 @@ export default function Admin() {
         .eq('id', row.id)
       if (statusErr) throw statusErr
 
-      showToast('Investment approved and credited!')
+      showToast('Main Wallet credited with real funds!')
       await fetchRows()
     } catch (err) {
       console.error(err)

@@ -308,9 +308,23 @@ function DonutTooltip({ active, payload }) {
 
 /* ── Main Analytics Page ──────────────────────────────────────────────── */
 
+const ANALYTICS_TABS = [
+  { key: 'all', label: 'All', mode: undefined, color: '#8A919E' },
+  { key: 'demo', label: 'Demo', mode: 'demo', color: '#F59E0B' },
+  { key: 'wallet', label: 'Wallet', mode: 'wallet', color: '#0052FF' },
+]
+
 export default function Analytics() {
-  const { holdings, totalValue, totalPnl, totalCost, loading } = useHoldings()
-  const { transactions } = usePortfolio()
+  const [tab, setTab] = useState('all')
+  const tabMode = ANALYTICS_TABS.find((t) => t.key === tab)?.mode
+  const { holdings, totalValue, totalPnl, totalCost, loading } = useHoldings({ mode: tabMode })
+  const { transactions: allTransactions } = usePortfolio()
+  const transactions = useMemo(() => {
+    if (!tabMode) return allTransactions
+    return (allTransactions || []).filter(
+      (t) => (t.account_type || 'demo') === tabMode
+    )
+  }, [allTransactions, tabMode])
   const [updated] = useState(() => new Date())
 
   const analytics = useMemo(
@@ -341,7 +355,7 @@ export default function Analytics() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">Portfolio Analytics</h1>
           <p className="text-text-muted text-sm mt-1">Deep insights into your crypto portfolio</p>
@@ -349,6 +363,27 @@ export default function Analytics() {
         <span className="text-[#5B616E] text-xs">
           Updated {updated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
         </span>
+      </div>
+
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
+        {ANALYTICS_TABS.map((t) => {
+          const active = t.key === tab
+          return (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setTab(t.key)}
+              className="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold border cursor-pointer transition-colors"
+              style={
+                active
+                  ? { background: t.color, borderColor: t.color, color: t.key === 'demo' ? '#0A0B0D' : '#FFFFFF' }
+                  : { background: 'transparent', borderColor: '#1E2025', color: '#8A919E' }
+              }
+            >
+              {t.label}
+            </button>
+          )
+        })}
       </div>
 
       {holdings.length === 0 ? (

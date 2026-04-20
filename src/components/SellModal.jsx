@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { usePortfolio } from '../context/PortfolioContext'
 import { getCoinPrice } from '../lib/coingecko'
 import { calculateSell } from '../utils/calculations'
-import { formatUSD, formatCrypto } from '../utils/formatters'
+import { formatUSD, formatCrypto, getAccountBadge } from '../utils/formatters'
 import PINConfirm from './PINConfirm'
 
 const PCT = [25, 50, 75, 100]
@@ -12,6 +12,11 @@ const PCT = [25, 50, 75, 100]
 export default function SellModal({ holding, onClose }) {
   const { user } = useAuth()
   const { wallet, refreshAll } = usePortfolio()
+  // Sell credits the account that originally owned the holding, so a demo
+  // position can never leak proceeds into the real wallet balance.
+  const holdingMode = holding?.account_type === 'wallet' ? 'wallet' : 'demo'
+  const isWallet = holdingMode === 'wallet'
+  const badge = getAccountBadge(holdingMode)
   const [price, setPrice] = useState(null)
   const [loadingPrice, setLoadingPrice] = useState(true)
   const [pct, setPct] = useState(100)
@@ -70,10 +75,16 @@ export default function SellModal({ holding, onClose }) {
         if (uErr) throw uErr
       }
 
-      const newBalance = Number(wallet?.balance_usd || 0) + calc.netUsd
+      const currentBalance = Number(
+        isWallet ? (wallet?.wallet_balance || 0) : (wallet?.balance_usd || 0)
+      )
+      const newBalance = currentBalance + calc.netUsd
+      const walletPatch = isWallet
+        ? { wallet_balance: newBalance }
+        : { balance_usd: newBalance }
       const { error: wErr } = await supabase
         .from('wallet')
-        .update({ balance_usd: newBalance })
+        .update(walletPatch)
         .eq('user_id', user.id)
       if (wErr) throw wErr
 
@@ -86,6 +97,7 @@ export default function SellModal({ holding, onClose }) {
         price_usd: price,
         total_usd: calc.grossUsd,
         fee_usd: calc.fee,
+        account_type: holdingMode,
       })
       if (tErr) throw tErr
 
@@ -109,6 +121,18 @@ export default function SellModal({ holding, onClose }) {
         className="bg-card-bg border border-card-border rounded-xl w-full sm:max-w-md p-4 sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
+        <div
+          className="flex items-center justify-between rounded-lg px-3 py-1.5 mb-4"
+          style={{ background: badge.bg, border: `1px solid ${badge.border}` }}
+        >
+          <span className="text-[10px] font-bold tracking-widest" style={{ color: badge.text }}>
+            {badge.label} MODE
+          </span>
+          <span className="text-[11px] font-semibold" style={{ color: badge.text }}>
+            Proceeds credit {isWallet ? 'Main Wallet' : 'Demo Account'}
+          </span>
+        </div>
+
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             {holding.coin_image && (
@@ -144,7 +168,7 @@ export default function SellModal({ holding, onClose }) {
               Sell complete
             </div>
             <div className="text-text-muted text-sm">
-              {formatUSD(calc?.netUsd || 0)} added to wallet
+              {formatUSD(calc?.netUsd || 0)} added to {isWallet ? 'Main Wallet' : 'Demo Account'}
             </div>
           </div>
         ) : (

@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { usePortfolio } from '../context/PortfolioContext'
+import { useAccountMode } from '../hooks/useAccountMode'
 import { getCoinPrice } from '../lib/coingecko'
 import { calculateBuy } from '../utils/calculations'
-import { formatUSD, formatCrypto } from '../utils/formatters'
+import { formatUSD, formatCrypto, getAccountBadge } from '../utils/formatters'
 import PINConfirm from './PINConfirm'
 
 const QUICK_AMOUNTS = [100, 500, 1000, 5000]
@@ -12,6 +13,8 @@ const QUICK_AMOUNTS = [100, 500, 1000, 5000]
 export default function BuyModal({ coin, onClose }) {
   const { user } = useAuth()
   const { wallet, holdings, refreshAll } = usePortfolio()
+  const { mode, isWallet } = useAccountMode()
+  const badge = getAccountBadge(mode)
   const [usd, setUsd] = useState('')
   const [price, setPrice] = useState(null)
   const [loadingPrice, setLoadingPrice] = useState(true)
@@ -42,7 +45,9 @@ export default function BuyModal({ coin, onClose }) {
 
   const usdAmount = Number(usd) || 0
   const calc = price && usdAmount > 0 ? calculateBuy(usdAmount, price) : null
-  const balance = Number(wallet?.balance_usd || 0)
+  const balance = Number(
+    isWallet ? (wallet?.wallet_balance || 0) : (wallet?.balance_usd || 0)
+  )
   const insufficient = usdAmount > balance
   const canSubmit =
     !submitting && price && usdAmount > 0 && !insufficient && calc
@@ -52,16 +57,22 @@ export default function BuyModal({ coin, onClose }) {
     if (!canSubmit || !user) return
     setSubmitting(true)
     try {
-      // Deduct from wallet
+      // Deduct from the active account's balance column
       const newBalance = balance - usdAmount
+      const walletPatch = isWallet
+        ? { wallet_balance: newBalance }
+        : { balance_usd: newBalance }
       const { error: walletErr } = await supabase
         .from('wallet')
-        .update({ balance_usd: newBalance })
+        .update(walletPatch)
         .eq('user_id', user.id)
       if (walletErr) throw walletErr
 
-      // Insert or update holdings (weighted avg buy price)
-      const existing = holdings.find((h) => h.coin_id === coin.id)
+      // Only merge into a holding of the SAME account_type so demo and wallet
+      // positions stay on separate ledgers even if the same coin is held twice.
+      const existing = holdings.find(
+        (h) => h.coin_id === coin.id && (h.account_type || 'demo') === mode
+      )
       if (existing) {
         const totalQty = Number(existing.quantity) + calc.quantity
         const totalCost =
@@ -82,11 +93,11 @@ export default function BuyModal({ coin, onClose }) {
           coin_image: coin.image || coin.large || coin.thumb || null,
           quantity: calc.quantity,
           buy_price_usd: price,
+          account_type: mode,
         })
         if (hErr) throw hErr
       }
 
-      // Transaction record
       const { error: tErr } = await supabase.from('transactions').insert({
         user_id: user.id,
         type: 'buy',
@@ -96,6 +107,7 @@ export default function BuyModal({ coin, onClose }) {
         price_usd: price,
         total_usd: usdAmount,
         fee_usd: calc.fee,
+        account_type: mode,
       })
       if (tErr) throw tErr
 
@@ -119,6 +131,18 @@ export default function BuyModal({ coin, onClose }) {
         className="bg-card-bg border border-card-border rounded-xl w-full sm:max-w-md p-4 sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
+        <div
+          className="flex items-center justify-between rounded-lg px-3 py-1.5 mb-4"
+          style={{ background: badge.bg, border: `1px solid ${badge.border}` }}
+        >
+          <span className="text-[10px] font-bold tracking-widest" style={{ color: badge.text }}>
+            {badge.label} MODE
+          </span>
+          <span className="text-[11px] font-semibold" style={{ color: badge.text }}>
+            Balance: {formatUSD(balance)}
+          </span>
+        </div>
+
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             {(coin.image || coin.large) && (
@@ -166,7 +190,9 @@ export default function BuyModal({ coin, onClose }) {
               </span>
             </div>
             <div className="flex justify-between text-sm mb-6">
-              <span className="text-text-muted">Wallet balance</span>
+              <span className="text-text-muted">
+                {isWallet ? 'Wallet balance' : 'Demo balance'}
+              </span>
               <span className="text-text-primary font-semibold">
                 {formatUSD(balance)}
               </span>
@@ -218,7 +244,9 @@ export default function BuyModal({ coin, onClose }) {
 
             {insufficient && (
               <div className="mt-4 bg-loss/10 border border-loss/20 text-loss text-xs rounded-lg px-4 py-2">
-                Insufficient wallet balance
+                {isWallet
+                  ? 'Insufficient wallet funds. Fund your wallet first.'
+                  : 'Insufficient demo balance'}
               </div>
             )}
             {error && (

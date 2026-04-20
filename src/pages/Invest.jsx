@@ -192,6 +192,30 @@ export default function Invest() {
         </p>
       </div>
 
+      <div
+        className="mb-6 rounded-xl p-4 flex items-start gap-3"
+        style={{
+          background: 'rgba(0, 82, 255, 0.08)',
+          border: '1px solid rgba(0, 82, 255, 0.35)',
+        }}
+      >
+        <div
+          className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: '#0052FF' }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>
+        </div>
+        <div>
+          <div className="text-text-primary font-semibold text-sm">
+            Real crypto investments fund your Main Wallet
+          </div>
+          <div className="text-text-muted text-xs mt-0.5">
+            Your Main Wallet is used for real trading. Once approved, you can
+            buy any coin with real funds using the Wallet account mode.
+          </div>
+        </div>
+      </div>
+
       <KYCBanner />
 
       <div className="mb-4">

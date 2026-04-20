@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import WalletCard from '../components/WalletCard'
+import AccountToggle from '../components/AccountToggle'
 import StatCard from '../components/StatCard'
 import PortfolioChart from '../components/PortfolioChart'
 import AllocationChart from '../components/AllocationChart'
@@ -19,6 +20,7 @@ import { StakingWidget } from './Staking'
 import { LearnWidget } from './Learn'
 import { AnalyticsWidget } from './Analytics'
 import { useHoldings } from '../hooks/useHoldings'
+import { useAccountMode } from '../hooks/useAccountMode'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { useCNCToken } from '../hooks/useCNCToken'
 import { useLanguage } from '../hooks/useLanguage'
@@ -271,7 +273,8 @@ function WatchlistWidget() {
 }
 
 export default function Dashboard() {
-  const { holdings, totalValue, totalPnl, totalPnlPercent } = useHoldings()
+  const { mode } = useAccountMode()
+  const { holdings, totalValue, totalPnl, totalPnlPercent } = useHoldings({ mode })
   const { t } = useLanguage()
   const [buyCoin, setBuyCoin] = useState(null)
   const [sellHolding, setSellHolding] = useState(null)
@@ -298,8 +301,17 @@ export default function Dashboard() {
       <KYCBanner />
       <PINPromptBanner />
 
-      <div className="mb-6">
+      <div className="mb-4">
         <WalletCard />
+      </div>
+      <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
+        <AccountToggle />
+        <div
+          className="text-[10px] uppercase tracking-widest font-semibold"
+          style={{ color: mode === 'wallet' ? '#0052FF' : '#F59E0B' }}
+        >
+          Viewing {mode === 'wallet' ? 'Main Wallet' : 'Demo Account'}
+        </div>
       </div>
 
       <CNCBalanceCard />

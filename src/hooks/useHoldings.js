@@ -3,7 +3,16 @@ import { usePortfolio } from '../context/PortfolioContext'
 import { useLivePrices } from './useLivePrices'
 import { calculateProfitLoss } from '../utils/calculations'
 
-export function useHoldings() {
+function totalsOf(list) {
+  const value = list.reduce((s, h) => s + h.currentValue, 0)
+  const cost = list.reduce((s, h) => s + h.costBasis, 0)
+  const pnl = value - cost
+  const pnlPercent = cost > 0 ? (pnl / cost) * 100 : 0
+  return { value, cost, pnl, pnlPercent }
+}
+
+export function useHoldings(options = {}) {
+  const { mode } = options
   const { holdings, loading: holdingsLoading } = usePortfolio()
 
   const coinIds = useMemo(
@@ -13,7 +22,7 @@ export function useHoldings() {
 
   const { prices, loading: pricesLoading } = useLivePrices(coinIds)
 
-  const enrichedHoldings = useMemo(() => {
+  const enrichedAll = useMemo(() => {
     return holdings.map((h) => {
       const currentPrice = prices[h.coin_id]?.usd || 0
       const change24h = prices[h.coin_id]?.usd_24h_change || 0
@@ -24,6 +33,7 @@ export function useHoldings() {
       )
       return {
         ...h,
+        account_type: h.account_type || 'demo',
         coin_symbol: h.coin_symbol || (h.symbol || '').toUpperCase(),
         currentPrice,
         change24h,
@@ -35,17 +45,38 @@ export function useHoldings() {
     })
   }, [holdings, prices])
 
-  const totalValue = enrichedHoldings.reduce((sum, h) => sum + h.currentValue, 0)
-  const totalCost = enrichedHoldings.reduce((sum, h) => sum + h.costBasis, 0)
-  const totalPnl = totalValue - totalCost
-  const totalPnlPercent = totalCost > 0 ? (totalPnl / totalCost) * 100 : 0
+  const demoHoldings = useMemo(
+    () => enrichedAll.filter((h) => h.account_type === 'demo'),
+    [enrichedAll]
+  )
+  const walletHoldings = useMemo(
+    () => enrichedAll.filter((h) => h.account_type === 'wallet'),
+    [enrichedAll]
+  )
+
+  const visible = mode === 'demo'
+    ? demoHoldings
+    : mode === 'wallet'
+      ? walletHoldings
+      : enrichedAll
+
+  const demoTotals = useMemo(() => totalsOf(demoHoldings), [demoHoldings])
+  const walletTotals = useMemo(() => totalsOf(walletHoldings), [walletHoldings])
+  const allTotals = useMemo(() => totalsOf(enrichedAll), [enrichedAll])
+  const visibleTotals = useMemo(() => totalsOf(visible), [visible])
 
   return {
-    holdings: enrichedHoldings,
-    totalValue,
-    totalCost,
-    totalPnl,
-    totalPnlPercent,
+    holdings: visible,
+    allHoldings: enrichedAll,
+    demoHoldings,
+    walletHoldings,
+    totalValue: visibleTotals.value,
+    totalCost: visibleTotals.cost,
+    totalPnl: visibleTotals.pnl,
+    totalPnlPercent: visibleTotals.pnlPercent,
+    demoTotals,
+    walletTotals,
+    allTotals,
     loading: holdingsLoading || pricesLoading,
   }
 }

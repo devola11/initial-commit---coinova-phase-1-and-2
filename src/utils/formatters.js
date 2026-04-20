@@ -46,6 +46,31 @@ export function formatCrypto(value) {
   return value.toFixed(8)
 }
 
+export function formatAccountType(type) {
+  return type === 'wallet' ? 'Main Wallet' : 'Demo Account'
+}
+
+export function getAccountBadge(type) {
+  if (type === 'wallet') {
+    return {
+      label: 'WALLET',
+      bg: 'rgba(0, 82, 255, 0.12)',
+      text: '#0052FF',
+      solid: '#0052FF',
+      solidText: '#FFFFFF',
+      border: 'rgba(0, 82, 255, 0.35)',
+    }
+  }
+  return {
+    label: 'DEMO',
+    bg: 'rgba(245, 158, 11, 0.12)',
+    text: '#F59E0B',
+    solid: '#F59E0B',
+    solidText: '#0A0B0D',
+    border: 'rgba(245, 158, 11, 0.35)',
+  }
+}
+
 export function timeAgo(dateStr) {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
   if (seconds < 60) return 'just now'

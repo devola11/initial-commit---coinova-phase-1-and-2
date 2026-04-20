@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useHoldings } from '../hooks/useHoldings'
-import { formatUSD, formatCrypto } from '../utils/formatters'
+import { formatUSD, formatCrypto, getAccountBadge } from '../utils/formatters'
 import { getCoinImageUrl } from '../utils/coinImages'
 
 // Deterministic color per symbol so the fallback circle stays stable across
@@ -55,9 +55,9 @@ function format2dp(value) {
   return `${sign}${Number(value).toFixed(2)}%`
 }
 
-export default function HoldingsTable({ onBuy, onSell }) {
+export default function HoldingsTable({ onBuy, onSell, mode }) {
   const navigate = useNavigate()
-  const { holdings, loading } = useHoldings()
+  const { holdings, loading } = useHoldings({ mode })
 
   if (loading) {
     return (
@@ -103,6 +103,7 @@ export default function HoldingsTable({ onBuy, onSell }) {
             {holdings.map((h) => {
               const coinName = h.coin_name || h.name
               const coinSymbol = h.coin_symbol || h.symbol
+              const badge = getAccountBadge(h.account_type)
               return (
                 <tr
                   key={h.id}
@@ -117,8 +118,16 @@ export default function HoldingsTable({ onBuy, onSell }) {
                         storedImage={h.image}
                       />
                       <div>
-                        <div className="text-text-primary font-semibold">
-                          {coinName}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-text-primary font-semibold">
+                            {coinName}
+                          </span>
+                          <span
+                            className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider"
+                            style={{ background: badge.solid, color: badge.solidText }}
+                          >
+                            {badge.label}
+                          </span>
                         </div>
                         <div className="text-text-muted text-xs uppercase">
                           {coinSymbol}

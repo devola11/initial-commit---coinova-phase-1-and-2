@@ -85,6 +85,58 @@ function Card({ children }) {
   )
 }
 
+function detectPlatform() {
+  if (typeof navigator === 'undefined') return 'chrome-desktop'
+  const ua = navigator.userAgent || ''
+  const isIPad = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  const isIPhone = /iPhone|iPod/.test(ua)
+  const isAndroid = /Android/.test(ua)
+  const isSamsung = /SamsungBrowser/.test(ua)
+  const isFirefox = /Firefox|FxiOS/.test(ua)
+  const isEdge = /Edg\//.test(ua)
+  const isChrome = /Chrome/.test(ua) && !isEdge && !isSamsung
+
+  if (isIPad) return 'ipad-safari'
+  if (isIPhone) return 'iphone-safari'
+  if (isSamsung) return 'samsung'
+  if (isAndroid && isFirefox) return 'firefox-android'
+  if (isAndroid && isChrome) return 'chrome-android'
+  if (isAndroid) return 'chrome-android'
+  if (isFirefox) return 'firefox-desktop'
+  return 'chrome-desktop'
+}
+
+const INSTALL_STEPS = {
+  'chrome-android': {
+    label: 'Android (Chrome)',
+    steps: ['Tap the 3 dots menu at top right', 'Tap Add to Home Screen', 'Tap Install']
+  },
+  'iphone-safari': {
+    label: 'iPhone (Safari)',
+    steps: ['Tap the Share button at bottom', 'Scroll and tap Add to Home Screen', 'Tap Add in top right corner']
+  },
+  'ipad-safari': {
+    label: 'iPad (Safari)',
+    steps: ['Tap the Share button at top', 'Tap Add to Home Screen', 'Tap Add']
+  },
+  'chrome-desktop': {
+    label: 'Desktop (Chrome / Edge)',
+    steps: ['Click the install icon in the address bar', 'Or click the 3 dots menu', 'Click Install Coinova']
+  },
+  'firefox-android': {
+    label: 'Firefox (Android)',
+    steps: ['Tap the 3 dots menu', 'Tap Install']
+  },
+  'firefox-desktop': {
+    label: 'Firefox (Desktop)',
+    steps: ['Open the menu (3 lines)', 'Choose Install / Pin to Taskbar', 'Confirm to add Coinova']
+  },
+  'samsung': {
+    label: 'Samsung Internet',
+    steps: ['Tap the 3 lines menu', 'Tap Add page to', 'Tap Home screen']
+  }
+}
+
 function KYCCard() {
   const { kycStatus, rejectionReason } = useKycStatus()
   const statusConfig = {
@@ -540,22 +592,30 @@ export default function Settings() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
             Coinova is installed on this device
           </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="bg-root-bg border border-card-border rounded-lg p-3">
-              <div className="text-text-primary text-sm font-medium mb-1">Android (Chrome)</div>
-              <div className="text-text-muted text-xs">Tap the menu ({'\u22EE'}) {'\u2192'} Add to Home Screen {'\u2192'} Install</div>
+        ) : (() => {
+          const platform = detectPlatform()
+          const current = INSTALL_STEPS[platform] || INSTALL_STEPS['chrome-desktop']
+          const others = Object.entries(INSTALL_STEPS).filter(([key]) => key !== platform)
+          return (
+            <div className="space-y-3">
+              <div className="bg-primary-blue/10 border border-[#0052FF]/30 rounded-lg p-3">
+                <div className="text-[#0052FF] text-[11px] uppercase tracking-wider font-semibold mb-1">Your device</div>
+                <div className="text-text-primary text-sm font-medium mb-2">{current.label}</div>
+                <ol className="text-text-muted text-xs space-y-1 pl-4 list-decimal">
+                  {current.steps.map((s, i) => <li key={i}>{s}</li>)}
+                </ol>
+              </div>
+              {others.map(([key, info]) => (
+                <div key={key} className="bg-root-bg border border-card-border rounded-lg p-3">
+                  <div className="text-text-primary text-sm font-medium mb-1">{info.label}</div>
+                  <div className="text-text-muted text-xs">
+                    {info.steps.join(' \u2192 ')}
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="bg-root-bg border border-card-border rounded-lg p-3">
-              <div className="text-text-primary text-sm font-medium mb-1">iPhone (Safari)</div>
-              <div className="text-text-muted text-xs">Tap Share ({'\u25A1\u2191'}) {'\u2192'} Add to Home Screen {'\u2192'} Add</div>
-            </div>
-            <div className="bg-root-bg border border-card-border rounded-lg p-3">
-              <div className="text-text-primary text-sm font-medium mb-1">Desktop (Chrome)</div>
-              <div className="text-text-muted text-xs">Click the install icon ({'\u2295'}) in the address bar</div>
-            </div>
-          </div>
-        )}
+          )
+        })()}
       </Card>
 
       {/* ── Admin ─────────────────────────────────────────────────── */}

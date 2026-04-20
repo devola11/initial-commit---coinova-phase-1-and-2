@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { detectAndSaveLocation } from '../hooks/useGeoLocation'
 import { supabase } from '../lib/supabase'
+import { validatePassword } from '../utils/passwordValidator'
+import PasswordStrength from '../components/PasswordStrength'
 
 async function creditCncBonus(userId) {
   const { data: existing } = await supabase
@@ -28,24 +30,36 @@ export default function Register() {
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState(searchParams.get('email') || '')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { register } = useAuth()
   const navigate = useNavigate()
 
+  const passwordValidation = useMemo(
+    () => (password ? validatePassword(password) : null),
+    [password]
+  )
+  const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword
+  const canSubmit = !!passwordValidation?.isValid && passwordsMatch && !loading
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+    if (!passwordValidation?.isValid) {
+      setError('Please meet all password requirements')
+      return
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
       return
     }
 
     setLoading(true)
     try {
       const regData = await register(email, password, displayName)
-      // Auto-detect location after registration
       if (regData?.user) {
         detectAndSaveLocation(regData.user.id).catch(() => {})
         creditCncBonus(regData.user.id).catch((err) =>
@@ -61,9 +75,8 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="w-12 h-12 rounded-full bg-primary-blue mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-text-primary tracking-tight mb-2">
@@ -74,7 +87,6 @@ export default function Register() {
           </p>
         </div>
 
-        {/* Form card */}
         <div className="bg-card-bg border border-card-border rounded-xl p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
@@ -115,19 +127,60 @@ export default function Register() {
               <label className="block text-xs uppercase tracking-widest text-text-muted mb-2 font-medium">
                 Password
               </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Create a strong password"
+                  className="w-full bg-root-bg border border-card-border rounded-lg px-4 py-3 pr-16 text-sm text-text-primary placeholder-text-subtle focus:outline-none focus:border-primary-blue transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: 12,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#8A919E',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    fontWeight: 600,
+                  }}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+            </div>
+
+            <PasswordStrength validation={passwordValidation} />
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-text-muted mb-2 font-medium">
+                Confirm Password
+              </label>
               <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                type={showPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                placeholder="Minimum 6 characters"
+                placeholder="Confirm your password"
                 className="w-full bg-root-bg border border-card-border rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-subtle focus:outline-none focus:border-primary-blue transition-colors"
               />
+              {confirmPassword.length > 0 && !passwordsMatch && (
+                <div className="text-[#F6465D] text-xs mt-2">
+                  Passwords do not match
+                </div>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={!canSubmit}
               className="w-full bg-primary-blue hover:bg-primary-blue-hover text-white font-semibold py-3 rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer border-none"
             >
               {loading ? (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -8,6 +8,8 @@ import { useTheme } from '../hooks/useTheme'
 import { usePIN } from '../hooks/usePIN'
 import { useBiometric } from '../hooks/useBiometric'
 import PINSetup from '../components/PINSetup'
+import PasswordStrength from '../components/PasswordStrength'
+import { validatePassword } from '../utils/passwordValidator'
 
 const CURRENCIES = [
   { code: 'USD', symbol: '$', label: 'US Dollar' },
@@ -203,6 +205,13 @@ export default function Settings() {
   const [pw, setPw] = useState({ current: '', next: '', confirm: '' })
   const [pwMsg, setPwMsg] = useState('')
   const [pwSaving, setPwSaving] = useState(false)
+  const [showPwText, setShowPwText] = useState(false)
+  const pwValidation = useMemo(
+    () => (pw.next ? validatePassword(pw.next) : null),
+    [pw.next]
+  )
+  const pwMatches = pw.confirm.length > 0 && pw.next === pw.confirm
+  const canUpdatePw = !!pwValidation?.isValid && pwMatches && !pwSaving
   const [show2faModal, setShow2faModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showPinSetup, setShowPinSetup] = useState(false)
@@ -260,7 +269,8 @@ export default function Settings() {
 
   async function handlePasswordChange() {
     setPwMsg('')
-    if (pw.next.length < 6) { setPwMsg('Password must be at least 6 characters.'); return }
+    const v = validatePassword(pw.next)
+    if (!v.isValid) { setPwMsg('Password must meet all requirements.'); return }
     if (pw.next !== pw.confirm) { setPwMsg('Passwords do not match.'); return }
     setPwSaving(true)
     try {
@@ -420,34 +430,58 @@ export default function Settings() {
           />
           {showPwForm && (
             <div className="pb-4 px-1 space-y-3">
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPwText ? 'text' : 'password'}
+                  placeholder="Current password"
+                  value={pw.current}
+                  onChange={(e) => setPw({ ...pw, current: e.target.value })}
+                  className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 pr-16 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary-blue"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPwText(!showPwText)}
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#8A919E',
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                >
+                  {showPwText ? 'Hide' : 'Show'}
+                </button>
+              </div>
               <input
-                type="password"
-                placeholder="Current password"
-                value={pw.current}
-                onChange={(e) => setPw({ ...pw, current: e.target.value })}
-                className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary-blue"
-              />
-              <input
-                type="password"
+                type={showPwText ? 'text' : 'password'}
                 placeholder="New password"
                 value={pw.next}
                 onChange={(e) => setPw({ ...pw, next: e.target.value })}
                 className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary-blue"
               />
+              <PasswordStrength validation={pwValidation} />
               <input
-                type="password"
+                type={showPwText ? 'text' : 'password'}
                 placeholder="Confirm new password"
                 value={pw.confirm}
                 onChange={(e) => setPw({ ...pw, confirm: e.target.value })}
                 className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary-blue"
               />
+              {pw.confirm.length > 0 && !pwMatches && (
+                <div className="text-[#F6465D] text-xs">Passwords do not match</div>
+              )}
               {pwMsg && (
                 <div className={`text-xs ${pwMsg.includes('success') ? 'text-[#05B169]' : 'text-[#F6465D]'}`}>{pwMsg}</div>
               )}
               <button
                 onClick={handlePasswordChange}
-                disabled={pwSaving}
-                className="px-5 py-2.5 rounded-lg bg-primary-blue text-white text-sm font-semibold border-none cursor-pointer disabled:opacity-50"
+                disabled={!canUpdatePw}
+                className="px-5 py-2.5 rounded-lg bg-primary-blue text-white text-sm font-semibold border-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {pwSaving ? 'Saving...' : 'Update password'}
               </button>

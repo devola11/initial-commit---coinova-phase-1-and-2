@@ -9,6 +9,8 @@ import LandingPage from './pages/LandingPage'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import AuthCallback from './pages/AuthCallback'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import Portfolio from './pages/Portfolio'
 import Markets from './pages/Markets'
@@ -60,6 +62,8 @@ export default function App() {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/auth/confirm" element={<AuthCallback />} />
             <Route path="/auth/v1/verify" element={<AuthCallback />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/faq" element={<FAQ />} />

@@ -26,23 +26,40 @@ export default function AuthCallback() {
         const refreshToken = hashParams.get('refresh_token')
         const hashError = hashParams.get('error_code')
 
+        const isRecovery = type === 'recovery' ||
+          hashParams.get('type') === 'recovery'
+
         // Gmail (and some mail clients) pre-fetch the link for virus scanning,
         // which burns single-use tokens before the user clicks. If a session
-        // already exists, we're done — skip straight to the dashboard.
+        // already exists, we're done — skip straight to the right destination.
         const { data: existingSession } = await supabase.auth.getSession()
 
         if (existingSession?.session) {
+          if (isRecovery) {
+            setStatus('Reset link verified! Set a new password...')
+            setTimeout(() => navigate('/reset-password'), 1200)
+            return
+          }
           setStatus('Email verified! Redirecting to your dashboard...')
           window.history.replaceState({}, '', '/auth/callback')
           setTimeout(() => navigate('/dashboard'), 1500)
           return
         }
 
+        const finishSuccess = () => {
+          if (isRecovery) {
+            setStatus('Reset link verified! Set a new password...')
+            setTimeout(() => navigate('/reset-password'), 1200)
+          } else {
+            setStatus('Email verified! Welcome to Coinova!')
+            setTimeout(() => navigate('/dashboard'), 1500)
+          }
+        }
+
         if (code) {
           const { data, error } = await supabase.auth.exchangeCodeForSession(code)
           if (!error && data?.session) {
-            setStatus('Email verified! Welcome to Coinova!')
-            setTimeout(() => navigate('/dashboard'), 1500)
+            finishSuccess()
             return
           }
         }
@@ -53,8 +70,7 @@ export default function AuthCallback() {
             refresh_token: refreshToken,
           })
           if (!error) {
-            setStatus('Email verified! Welcome to Coinova!')
-            setTimeout(() => navigate('/dashboard'), 1500)
+            finishSuccess()
             return
           }
         }
@@ -65,8 +81,7 @@ export default function AuthCallback() {
             type: type,
           })
           if (!error && data?.session) {
-            setStatus('Email verified! Welcome to Coinova!')
-            setTimeout(() => navigate('/dashboard'), 1500)
+            finishSuccess()
             return
           }
         }
@@ -77,8 +92,7 @@ export default function AuthCallback() {
             type: 'signup',
           })
           if (!error && data?.session) {
-            setStatus('Email verified! Welcome to Coinova!')
-            setTimeout(() => navigate('/dashboard'), 1500)
+            finishSuccess()
             return
           }
         }

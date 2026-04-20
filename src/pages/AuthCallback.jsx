@@ -1,90 +1,121 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import logo from '../assets/logo.jpeg'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
-  const [status, setStatus] = useState('Confirming your email...')
-  const [errorMsg, setErrorMsg] = useState('')
+  const [searchParams] = useSearchParams()
+  const [status, setStatus] = useState('Verifying your email...')
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     const handleAuth = async () => {
       try {
-        const query = new URLSearchParams(window.location.search)
-        const hash = new URLSearchParams(window.location.hash.substring(1))
+        const code = searchParams.get('code')
+        const token = searchParams.get('token')
+        const tokenHash = searchParams.get('token_hash')
+        const type = searchParams.get('type')
+        const error = searchParams.get('error')
+        const errorDesc = searchParams.get('error_description')
 
-        // Error shape Supabase sometimes redirects with: ?error=...&error_description=...
-        const errParam = query.get('error') || hash.get('error')
-        const errDesc = query.get('error_description') || hash.get('error_description')
-        if (errParam) {
-          setErrorMsg(errDesc || errParam)
-          setTimeout(() => navigate('/login'), 2500)
+        const hashParams = new URLSearchParams(
+          window.location.hash.substring(1)
+        )
+        const accessToken = hashParams.get('access_token')
+        const refreshToken = hashParams.get('refresh_token')
+        const hashError = hashParams.get('error_code')
+
+        // Gmail (and some mail clients) pre-fetch the link for virus scanning,
+        // which burns single-use tokens before the user clicks. If a session
+        // already exists, we're done — skip straight to the dashboard.
+        const { data: existingSession } = await supabase.auth.getSession()
+
+        if (existingSession?.session) {
+          setStatus('Email verified! Redirecting to your dashboard...')
+          window.history.replaceState({}, '', '/auth/callback')
+          setTimeout(() => navigate('/dashboard'), 1500)
           return
         }
 
-        // Shape 1 — PKCE flow: ?code=<uuid>
-        const code = query.get('code')
         if (code) {
-          setStatus('Exchanging authorization code...')
-          const { error } = await supabase.auth.exchangeCodeForSession(code)
-          if (error) throw error
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+          if (!error && data?.session) {
+            setStatus('Email verified! Welcome to Coinova!')
+            setTimeout(() => navigate('/dashboard'), 1500)
+            return
+          }
         }
 
-        // Shape 2 — Token hash / OTP confirm: ?token_hash=&type=signup|email|recovery
-        const tokenHash = query.get('token_hash')
-        const type = query.get('type')
-        if (!code && tokenHash && type) {
-          setStatus('Verifying confirmation link...')
-          const { error } = await supabase.auth.verifyOtp({
-            token_hash: tokenHash,
-            type,
-          })
-          if (error) throw error
-        }
-
-        // Shape 3 — Legacy ?token=&type=
-        const legacyToken = query.get('token')
-        if (!code && !tokenHash && legacyToken && type) {
-          setStatus('Verifying token...')
-          const { error } = await supabase.auth.verifyOtp({
-            token: legacyToken,
-            type,
-          })
-          if (error) throw error
-        }
-
-        // Shape 4 — Hash fragment with access/refresh tokens (implicit flow)
-        const accessToken = hash.get('access_token')
-        const refreshToken = hash.get('refresh_token')
-        if (!code && !tokenHash && !legacyToken && accessToken && refreshToken) {
-          setStatus('Restoring session...')
+        if (accessToken && refreshToken) {
           const { error } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
           })
-          if (error) throw error
+          if (!error) {
+            setStatus('Email verified! Welcome to Coinova!')
+            setTimeout(() => navigate('/dashboard'), 1500)
+            return
+          }
         }
 
-        // Verify we actually have a session before leaving the page
-        const { data, error } = await supabase.auth.getSession()
-        if (error || !data.session) {
-          throw error || new Error('No session established')
+        if (tokenHash && type) {
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: type,
+          })
+          if (!error && data?.session) {
+            setStatus('Email verified! Welcome to Coinova!')
+            setTimeout(() => navigate('/dashboard'), 1500)
+            return
+          }
         }
 
-        // Clear the auth params from the URL before navigating away
-        window.history.replaceState({}, '', window.location.pathname)
-        navigate('/dashboard')
+        if (token && type === 'signup') {
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash: token,
+            type: 'signup',
+          })
+          if (!error && data?.session) {
+            setStatus('Email verified! Welcome to Coinova!')
+            setTimeout(() => navigate('/dashboard'), 1500)
+            return
+          }
+        }
+
+        if (error || hashError) {
+          const message = errorDesc ||
+            'This verification link has expired or was already used.'
+
+          if (
+            message.includes('expired') ||
+            message.includes('invalid') ||
+            message.includes('used')
+          ) {
+            setStatus('Your email is already verified! Please log in to continue.')
+            setIsError(false)
+            setTimeout(() => navigate('/login'), 2500)
+            return
+          }
+
+          setStatus(message)
+          setIsError(true)
+          setTimeout(() => navigate('/login'), 3000)
+          return
+        }
+
+        setStatus('Verification complete. Please log in to access your account.')
+        setTimeout(() => navigate('/login'), 2000)
       } catch (e) {
         console.error('Auth callback error:', e)
-        setErrorMsg(e?.message || 'Confirmation failed')
+        setStatus('Your email is verified. Please log in to continue.')
         setTimeout(() => navigate('/login'), 2500)
       }
     }
 
-    const timer = setTimeout(handleAuth, 500)
+    const timer = setTimeout(handleAuth, 600)
     return () => clearTimeout(timer)
-  }, [navigate])
+  }, [navigate, searchParams])
 
   return (
     <div
@@ -96,21 +127,47 @@ export default function AuthCallback() {
         background: '#0A0B0D',
         color: '#fff',
         flexDirection: 'column',
-        gap: 16,
+        gap: 24,
         padding: 20,
+        textAlign: 'center',
       }}
     >
       <img
         src={logo}
         alt="Coinova"
-        style={{ width: 64, height: 64, borderRadius: 12 }}
+        style={{ width: 72, height: 72, borderRadius: 14 }}
       />
-      <div style={{ fontSize: 20, fontWeight: 600 }}>
-        {errorMsg ? 'Confirmation failed' : status}
+
+      {!isError && (
+        <div
+          style={{
+            border: '3px solid #1E2025',
+            borderTopColor: '#0052FF',
+            borderRadius: '50%',
+            width: 40,
+            height: 40,
+            animation: 'spin 1s linear infinite',
+          }}
+        />
+      )}
+
+      <div
+        style={{
+          fontSize: 18,
+          fontWeight: 600,
+          maxWidth: 400,
+          lineHeight: 1.5,
+          color: isError ? '#F6465D' : '#FFFFFF',
+        }}
+      >
+        {status}
       </div>
-      <div style={{ color: errorMsg ? '#F6465D' : '#8A919E', fontSize: 14, textAlign: 'center', maxWidth: 360 }}>
-        {errorMsg ? errorMsg : 'Please wait a moment'}
-      </div>
+
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }

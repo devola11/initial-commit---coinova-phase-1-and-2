@@ -49,7 +49,7 @@ export default function AllocationChart() {
         Allocation
       </div>
       <div className="flex flex-col items-center">
-        <div className="w-full h-56">
+        <div style={{ width: '100%', height: 240, minHeight: 240 }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

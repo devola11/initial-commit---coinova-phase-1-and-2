@@ -188,15 +188,15 @@ function OverviewTab({ coinId, detail, onInvest, onBuy, sentimentBadge }) {
           ))}
         </div>
         {chartLoading ? (
-          <div className="h-[200px] sm:h-[300px] flex items-center justify-center text-[#8A8F98] text-sm">
+          <div style={{ width: '100%', height: 320, minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8A8F98', fontSize: 14 }}>
             Loading chart...
           </div>
         ) : chartData.length === 0 ? (
-          <div className="h-[200px] sm:h-[300px] flex items-center justify-center text-[#8A8F98] text-sm">
+          <div style={{ width: '100%', height: 320, minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8A8F98', fontSize: 14 }}>
             No chart data available
           </div>
         ) : (
-          <div className="h-[200px] sm:h-[300px]">
+          <div style={{ width: '100%', height: 320, minHeight: 320 }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <XAxis

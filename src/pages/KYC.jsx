@@ -228,7 +228,7 @@ export default function KYC() {
       .from('kyc_submissions')
       .select('status')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+      .order('submitted_at', { ascending: false })
       .limit(1)
       .then(({ data }) => {
         if (data?.[0]?.status === 'pending' || data?.[0]?.status === 'approved') {

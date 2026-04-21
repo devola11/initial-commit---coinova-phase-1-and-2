@@ -84,7 +84,12 @@ export default function PortfolioChart() {
           ))}
         </div>
       </div>
-      <div className="h-48 sm:h-64">
+      <div style={{ width: '100%', height: 300, minHeight: 300 }}>
+        {!data || data.length === 0 ? (
+          <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8A919E' }}>
+            Loading chart...
+          </div>
+        ) : (
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1E2025" vertical={false} />
@@ -123,6 +128,7 @@ export default function PortfolioChart() {
             />
           </LineChart>
         </ResponsiveContainer>
+        )}
       </div>
     </div>
   )

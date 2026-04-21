@@ -128,7 +128,7 @@ export default function Admin() {
     const { data, error } = await supabase
       .from('kyc_submissions')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('submitted_at', { ascending: false })
     if (error) console.error(error)
     setKycRows(data || [])
     setKycLoading(false)

@@ -500,7 +500,8 @@ export default function Analytics() {
                 </span>
               </div>
               {pieData.length > 0 && (
-                <ResponsiveContainer width="100%" height={200}>
+                <div style={{ width: '100%', height: 280, minHeight: 280 }}>
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={pieData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} dataKey="value" stroke="none">
                       {pieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
@@ -508,6 +509,7 @@ export default function Analytics() {
                     <Tooltip content={<DonutTooltip />} />
                   </PieChart>
                 </ResponsiveContainer>
+                </div>
               )}
               <div className="grid grid-cols-2 gap-2 mt-3">
                 {analytics.allocations.slice(0, 8).map((a, i) => (

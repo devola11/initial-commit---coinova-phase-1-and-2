@@ -307,7 +307,8 @@ export default function FearGreedIndex() {
         <div>
           <div className="text-[#8A919E] text-xs mb-2">Last 30 days</div>
           {chartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={260}>
+            <div style={{ width: '100%', height: 200, minHeight: 200 }}>
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <XAxis
                   dataKey="dateLabel"
@@ -334,9 +335,10 @@ export default function FearGreedIndex() {
                 />
               </LineChart>
             </ResponsiveContainer>
+            </div>
           ) : (
-            <div className="h-[260px] flex items-center justify-center text-[#8A919E] text-sm">
-              No historical data
+            <div style={{ width: '100%', height: 200, minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8A919E' }}>
+              Loading chart...
             </div>
           )}
         </div>

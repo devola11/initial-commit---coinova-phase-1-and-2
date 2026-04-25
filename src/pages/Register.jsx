@@ -34,6 +34,8 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [registeredEmail, setRegisteredEmail] = useState('')
   const { register } = useAuth()
   const navigate = useNavigate()
 
@@ -42,18 +44,26 @@ export default function Register() {
     [password]
   )
   const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword
-  const canSubmit = !!passwordValidation?.isValid && passwordsMatch && !loading
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
 
-    if (!passwordValidation?.isValid) {
-      setError('Please meet all password requirements')
+    if (!email || !password || !displayName) {
+      setError('Please fill in all fields')
       return
     }
+
+    if (!passwordValidation?.isValid) {
+      setError(
+        'Your password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
+      )
+      document.querySelector('input[type="password"]')?.focus()
+      return
+    }
+
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError('Passwords do not match. Please re-enter.')
       return
     }
 
@@ -65,11 +75,15 @@ export default function Register() {
         creditCncBonus(regData.user.id).catch((err) =>
           console.warn('CNC welcome bonus failed:', err?.message || err)
         )
+        setRegisteredEmail(email)
+        setShowSuccess(true)
+        setLoading(false)
+        return
       }
-      navigate('/dashboard')
+      setError('Registration completed but no user was returned. Please try logging in.')
+      setLoading(false)
     } catch (err) {
-      setError(err.message)
-    } finally {
+      setError(err.message || 'Something went wrong')
       setLoading(false)
     }
   }
@@ -87,10 +101,139 @@ export default function Register() {
           </p>
         </div>
 
+        {showSuccess ? (
+          <div
+            style={{
+              background: '#141519',
+              border: '1px solid #1E2025',
+              borderRadius: 16,
+              padding: 32,
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                width: 72,
+                height: 72,
+                margin: '0 auto 20px',
+                borderRadius: '50%',
+                background: '#05B16920',
+                border: '2px solid #05B169',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#05B169" strokeWidth="3">
+                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+
+            <h2 style={{ color: '#fff', fontSize: 24, fontWeight: 700, margin: '0 0 12px 0' }}>
+              Account created successfully!
+            </h2>
+
+            <p style={{ color: '#E0E2E6', fontSize: 15, lineHeight: 1.6, margin: '0 0 24px 0' }}>
+              We sent a verification email to:
+            </p>
+
+            <div
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 10,
+                padding: '14px 16px',
+                marginBottom: 24,
+                color: '#0052FF',
+                fontWeight: 600,
+                fontSize: 15,
+                wordBreak: 'break-all',
+              }}
+            >
+              {registeredEmail}
+            </div>
+
+            <div
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 12,
+                padding: 20,
+                textAlign: 'left',
+                marginBottom: 24,
+              }}
+            >
+              <h3 style={{ color: '#FFD700', fontSize: 14, fontWeight: 600, margin: '0 0 12px 0' }}>
+                Next steps:
+              </h3>
+              <ol style={{ color: '#E0E2E6', fontSize: 14, lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
+                <li>Check your inbox for our verification email</li>
+                <li>Click the "Verify my email" button</li>
+                <li>You will be redirected back to Coinova</li>
+                <li>Start trading with $10,000 demo funds!</li>
+              </ol>
+            </div>
+
+            <p style={{ color: '#8A919E', fontSize: 13, margin: '0 0 20px 0' }}>
+              Did not receive the email? Check your spam folder or wait a few minutes.
+            </p>
+
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                background: '#0052FF',
+                color: 'white',
+                border: 'none',
+                borderRadius: 10,
+                padding: '14px 24px',
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: 'pointer',
+                width: '100%',
+              }}
+            >
+              Go to login
+            </button>
+
+            <button
+              onClick={() => {
+                setShowSuccess(false)
+                setRegisteredEmail('')
+                setEmail('')
+                setPassword('')
+                setConfirmPassword('')
+                setDisplayName('')
+                setError('')
+              }}
+              style={{
+                background: 'transparent',
+                color: '#8A919E',
+                border: 'none',
+                marginTop: 12,
+                fontSize: 13,
+                cursor: 'pointer',
+                textDecoration: 'underline',
+              }}
+            >
+              Register another account
+            </button>
+          </div>
+        ) : (
         <div className="bg-card-bg border border-card-border rounded-xl p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-loss/10 border border-loss/20 text-loss text-sm rounded-lg px-4 py-3">
+              <div
+                style={{
+                  padding: 14,
+                  marginBottom: 16,
+                  background: '#F6465D15',
+                  border: '1px solid #F6465D',
+                  borderRadius: 10,
+                  color: '#F6465D',
+                  fontSize: 14,
+                  lineHeight: 1.5,
+                }}
+              >
                 {error}
               </div>
             )}
@@ -183,8 +326,13 @@ export default function Register() {
 
             <button
               type="submit"
-              disabled={!canSubmit}
-              className="w-full bg-primary-blue hover:bg-primary-blue-hover text-white font-semibold py-3 rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer border-none"
+              disabled={loading}
+              style={{
+                background: '#0052FF',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+              }}
+              className="w-full text-white font-semibold py-3 rounded-lg text-sm transition-opacity border-none"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -197,6 +345,7 @@ export default function Register() {
             </button>
           </form>
         </div>
+        )}
 
         <p className="text-center text-text-muted text-sm mt-6">
           Already have an account?{' '}

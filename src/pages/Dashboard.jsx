@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import WalletCard from '../components/WalletCard'
@@ -138,6 +138,125 @@ function WatchlistLogo({ coinId, image, symbol }) {
     )
   }
   return <img src={src} alt={symbol} onError={() => setErr(true)} className="w-7 h-7 rounded-full bg-white/5 flex-shrink-0" />
+}
+
+function CNCPromoCard() {
+  const navigate = useNavigate()
+  return (
+    <div
+      style={{
+        background: 'linear-gradient(135deg, #001a8c 0%, #0052FF 100%)',
+        borderRadius: 16,
+        padding: 24,
+        marginBottom: 24,
+        position: 'relative',
+        overflow: 'hidden',
+        border: '2px solid #FFD700',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          top: -40,
+          right: -40,
+          width: 200,
+          height: 200,
+          borderRadius: '50%',
+          background: 'rgba(255,215,0,0.1)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 20,
+          flexWrap: 'wrap',
+          position: 'relative',
+        }}
+      >
+        <img
+          src="/cnc-logo-192.png"
+          alt="CNC"
+          style={{ width: 80, height: 80, flexShrink: 0 }}
+        />
+
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+            <span
+              style={{
+                background: '#FFD700',
+                color: '#000',
+                padding: '3px 8px',
+                borderRadius: 4,
+                fontSize: 10,
+                fontWeight: 700,
+              }}
+            >
+              PRESALE LIVE
+            </span>
+            <span
+              style={{
+                background: '#05B16920',
+                color: '#05B169',
+                padding: '3px 8px',
+                borderRadius: 4,
+                fontSize: 10,
+                fontWeight: 700,
+              }}
+            >
+              50% OFF
+            </span>
+          </div>
+          <h2
+            style={{
+              color: 'white',
+              fontSize: 24,
+              fontWeight: 700,
+              margin: '0 0 4px 0',
+            }}
+          >
+            Coinova Coin (CNC)
+          </h2>
+          <p style={{ color: '#a0c4ff', fontSize: 14, margin: '0 0 12px 0' }}>
+            Buy at $0.05 today. Launches at $0.10 in Q3 2026.
+          </p>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ color: '#a0c4ff', fontSize: 11 }}>Presale Price</div>
+              <div style={{ color: '#FFD700', fontSize: 20, fontWeight: 700 }}>$0.05</div>
+            </div>
+            <div>
+              <div style={{ color: '#a0c4ff', fontSize: 11 }}>Launch Price</div>
+              <div style={{ color: 'white', fontSize: 20, fontWeight: 700 }}>$0.10</div>
+            </div>
+            <div>
+              <div style={{ color: '#a0c4ff', fontSize: 11 }}>Your Potential Gain</div>
+              <div style={{ color: '#05B169', fontSize: 20, fontWeight: 700 }}>+100%</div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => navigate('/cnc')}
+          style={{
+            background: '#FFD700',
+            color: '#000',
+            border: 'none',
+            borderRadius: 12,
+            padding: '14px 28px',
+            fontSize: 15,
+            fontWeight: 700,
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Buy CNC
+        </button>
+      </div>
+    </div>
+  )
 }
 
 function CNCBalanceCard() {
@@ -314,6 +433,7 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <CNCPromoCard />
       <CNCBalanceCard />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">

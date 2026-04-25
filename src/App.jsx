@@ -36,11 +36,13 @@ import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
 import MyTickets from './pages/MyTickets'
 import SupportButton from './components/SupportButton'
+import CNCPromoBanner from './components/CNCPromoBanner'
 
 function AppLayout() {
   return (
     <div className="min-h-screen bg-root-bg flex flex-col">
       <Navbar />
+      <CNCPromoBanner />
       <div className="flex-1">
         <Outlet />
       </div>

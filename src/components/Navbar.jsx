@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import GlobalPreferences, { useGlobalPrefs } from './GlobalPreferences'
@@ -19,6 +19,15 @@ const primaryLinkKeys = [
   { to: '/convert', key: 'convert' },
 ]
 
+const dropdownItem = {
+  display: 'block',
+  padding: '12px',
+  borderRadius: 8,
+  textDecoration: 'none',
+  marginBottom: 2,
+  transition: 'background 0.15s',
+}
+
 function GlobeIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -26,6 +35,140 @@ function GlobeIcon() {
       <path d="M2 12h20" />
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     </svg>
+  )
+}
+
+function EarnDropdown() {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const closeTimer = useRef(null)
+  const location = useLocation()
+  const isActive = ['/staking', '/airdrops', '/learn', '/cnc'].includes(location.pathname)
+
+  useEffect(() => {
+    function onClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onClick)
+    return () => document.removeEventListener('mousedown', onClick)
+  }, [])
+
+  function openMenu() {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    setOpen(true)
+  }
+  function scheduleClose() {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    closeTimer.current = setTimeout(() => setOpen(false), 120)
+  }
+
+  function handleItemHover(e) {
+    e.currentTarget.style.background = '#1E2025'
+  }
+  function handleItemLeave(e, base) {
+    e.currentTarget.style.background = base
+  }
+
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={openMenu}
+      onMouseLeave={scheduleClose}
+      style={{ position: 'relative' }}
+    >
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline whitespace-nowrap inline-flex items-center bg-transparent border-none cursor-pointer ${
+          isActive || open
+            ? 'text-text-primary bg-card-border'
+            : 'text-text-muted hover:text-text-primary hover:bg-card-border/50'
+        }`}
+      >
+        Earn
+        <span style={{ marginLeft: 4, fontSize: 10 }}>▾</span>
+      </button>
+
+      {open && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            marginTop: 8,
+            background: '#141519',
+            border: '1px solid #1E2025',
+            borderRadius: 12,
+            padding: 8,
+            minWidth: 240,
+            boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+            zIndex: 100,
+          }}
+        >
+          <Link
+            to="/staking"
+            onClick={() => setOpen(false)}
+            style={dropdownItem}
+            onMouseEnter={handleItemHover}
+            onMouseLeave={(e) => handleItemLeave(e, 'transparent')}
+          >
+            <div style={{ color: 'white', fontWeight: 600 }}>Staking</div>
+            <div style={{ color: '#8A919E', fontSize: 12 }}>Earn up to 20% APY</div>
+          </Link>
+
+          <Link
+            to="/airdrops"
+            onClick={() => setOpen(false)}
+            style={dropdownItem}
+            onMouseEnter={handleItemHover}
+            onMouseLeave={(e) => handleItemLeave(e, 'transparent')}
+          >
+            <div style={{ color: 'white', fontWeight: 600 }}>Airdrops</div>
+            <div style={{ color: '#8A919E', fontSize: 12 }}>Free crypto rewards</div>
+          </Link>
+
+          <Link
+            to="/learn"
+            onClick={() => setOpen(false)}
+            style={dropdownItem}
+            onMouseEnter={handleItemHover}
+            onMouseLeave={(e) => handleItemLeave(e, 'transparent')}
+          >
+            <div style={{ color: 'white', fontWeight: 600 }}>Learn & Earn</div>
+            <div style={{ color: '#8A919E', fontSize: 12 }}>Learn and get paid in crypto</div>
+          </Link>
+
+          <Link
+            to="/cnc"
+            onClick={() => setOpen(false)}
+            style={{
+              ...dropdownItem,
+              background: '#FFD70010',
+              border: '1px solid #FFD700',
+              marginTop: 6,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#FFD70022')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#FFD70010')}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ color: '#FFD700', fontWeight: 700 }}>Coinova Coin (CNC)</span>
+              <span
+                style={{
+                  background: '#FFD700',
+                  color: '#000',
+                  padding: '2px 6px',
+                  borderRadius: 4,
+                  fontSize: 10,
+                  fontWeight: 700,
+                }}
+              >
+                PRESALE
+              </span>
+            </div>
+            <div style={{ color: '#FFD700', fontSize: 12 }}>Buy at $0.05 - 50% discount</div>
+          </Link>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -45,6 +188,12 @@ export default function Navbar() {
 
   return (
     <>
+      <style>{`
+        @keyframes cnc-glow {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+          50% { box-shadow: 0 0 0 6px rgba(255, 215, 0, 0); }
+        }
+      `}</style>
       <nav className="sticky top-0 z-50 bg-root-bg/80 backdrop-blur-xl border-b border-card-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 gap-4 lg:gap-6">
@@ -85,12 +234,13 @@ export default function Navbar() {
                     </Link>
                   )
                 })}
+                <EarnDropdown />
               </div>
             )}
 
             <div className="flex-1" />
 
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {user ? (
                 <>
                   {/* Globe / preferences */}
@@ -102,25 +252,28 @@ export default function Navbar() {
                     <GlobeIcon />
                   </button>
 
-                  {/* CNC ticker */}
+                  {/* CNC pulsing presale ticker */}
                   <Link
                     to="/cnc"
-                    title="Coinova Coin"
-                    className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold no-underline hover:bg-card-border/50 transition-colors"
+                    title="Coinova Coin Presale"
+                    className="hidden md:inline-flex items-center gap-2 no-underline"
                     style={{
-                      color:
-                        (Number(cnc.change_24h) || 0) >= 0 ? '#05B169' : '#E53935',
+                      background: '#FFD70015',
+                      border: '1px solid #FFD700',
+                      borderRadius: 8,
+                      padding: '6px 12px',
+                      animation: 'cnc-glow 3s infinite',
                     }}
                   >
-                    <img src={cncLogo} alt="CNC" className="w-5 h-5 rounded-full" />
-                    <span className="text-text-primary">CNC</span>
-                    <span className="text-text-primary">
-                      ${Number(cnc.price || 0).toFixed(2)}
-                    </span>
-                    <span>
-                      {(Number(cnc.change_24h) || 0) >= 0 ? '+' : ''}
-                      {Number(cnc.change_24h || 0).toFixed(2)}%
-                    </span>
+                    <img src={cncLogo} alt="CNC" style={{ width: 18, height: 18 }} className="rounded-full" />
+                    <div style={{ lineHeight: 1.1 }}>
+                      <div style={{ color: '#FFD700', fontSize: 11, fontWeight: 700, letterSpacing: 0.5 }}>
+                        CNC PRESALE
+                      </div>
+                      <div style={{ color: '#fff', fontSize: 12, fontWeight: 600 }}>
+                        ${Number(cnc.price || 0.05).toFixed(2)}
+                      </div>
+                    </div>
                   </Link>
 
                   {/* User avatar — replaces hamburger, Settings, Logout, and More */}

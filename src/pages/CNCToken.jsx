@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { useCNCToken } from '../hooks/useCNCToken'
 import { useAuth } from '../context/AuthContext'
@@ -17,11 +16,15 @@ const GREY = '#8A919E'
 const QUICK_AMOUNTS = [10, 50, 100, 500, 1000]
 const LAUNCH_DATE_ISO = '2026-07-01'
 
-const TOKENOMICS = [
-  { name: 'Public Sale', value: 50, color: BLUE, supply: '50,000,000' },
-  { name: 'Platform Reserve', value: 25, color: GOLD, supply: '25,000,000' },
-  { name: 'Ecosystem', value: 15, color: GREEN, supply: '15,000,000' },
-  { name: 'Team', value: 10, color: GREY, supply: '10,000,000' },
+const PRESALE_PRICE = 0.05
+const LAUNCH_PRICE = 0.10
+const TOTAL_SUPPLY = 100_000_000
+
+const ALLOCATIONS = [
+  { name: 'Public Sale', percent: 50, amount: 50_000_000, color: BLUE },
+  { name: 'Platform Reserve', percent: 25, amount: 25_000_000, color: GOLD },
+  { name: 'Ecosystem Rewards', percent: 15, amount: 15_000_000, color: GREEN },
+  { name: 'Team and Advisors', percent: 10, amount: 10_000_000, color: GREY },
 ]
 
 const PHASES = [
@@ -583,51 +586,191 @@ export default function CNCToken() {
           />
         </div>
 
-        {/* TOKENOMICS */}
-        <h2 className="text-2xl font-bold text-white tracking-tight mb-6">Tokenomics</h2>
-        <div className="rounded-xl p-6 mb-12" style={{ background: '#141519', border: '1px solid #1E2025' }}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            <div style={{ width: '100%', height: 280 }}>
-              <ResponsiveContainer>
-                <PieChart>
-                  <Pie
-                    data={TOKENOMICS}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={110}
-                    paddingAngle={2}
-                  >
-                    {TOKENOMICS.map((e) => (
-                      <Cell key={e.name} fill={e.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{ background: '#0A0B0D', border: '1px solid #1E2025', color: '#FFF' }}
-                    formatter={(v) => `${v}%`}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+        {/* TOKEN ECONOMICS with dollar values */}
+        <div
+          style={{
+            background: '#141519',
+            border: '1px solid #1E2025',
+            borderRadius: 16,
+            padding: 24,
+            marginBottom: 24,
+          }}
+        >
+          <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: '0 0 8px 0' }}>
+            Token Economics
+          </h3>
+          <p style={{ color: '#8A919E', fontSize: 13, margin: '0 0 24px 0' }}>
+            {TOTAL_SUPPLY.toLocaleString()} CNC fixed supply
+          </p>
+
+          {/* Project Valuation */}
+          <div
+            style={{
+              background: '#0A0B0D',
+              border: '1px solid #FFD700',
+              borderRadius: 12,
+              padding: 16,
+              marginBottom: 20,
+            }}
+          >
+            <div
+              style={{
+                color: '#FFD700',
+                fontSize: 12,
+                fontWeight: 600,
+                letterSpacing: '1px',
+                marginBottom: 12,
+              }}
+            >
+              PROJECT VALUATION
             </div>
-            <div className="space-y-3">
-              {TOKENOMICS.map((item) => (
-                <div key={item.name} className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded" style={{ background: item.color }} />
-                  <div className="flex-1 flex justify-between items-center">
-                    <span className="text-white font-medium">{item.name}</span>
-                    <span className="font-bold" style={{ color: item.color }}>
-                      {item.value}% · {item.supply}
-                    </span>
-                  </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                gap: 16,
+              }}
+            >
+              <div>
+                <div style={{ color: '#8A919E', fontSize: 11 }}>At Presale Price</div>
+                <div style={{ color: '#fff', fontSize: 22, fontWeight: 700 }}>
+                  ${(TOTAL_SUPPLY * PRESALE_PRICE).toLocaleString()}
                 </div>
-              ))}
-              <div className="pt-3 mt-3 border-t" style={{ borderColor: '#1E2025' }}>
-                <div className="text-[#8A8F98] text-xs uppercase tracking-widest mb-1">Total Supply</div>
-                <div className="text-white font-bold text-lg">100,000,000 CNC</div>
+                <div style={{ color: '#8A919E', fontSize: 11 }}>${PRESALE_PRICE.toFixed(2)} per CNC</div>
+              </div>
+              <div>
+                <div style={{ color: '#8A919E', fontSize: 11 }}>At Launch Price</div>
+                <div style={{ color: '#FFD700', fontSize: 22, fontWeight: 700 }}>
+                  ${(TOTAL_SUPPLY * LAUNCH_PRICE).toLocaleString()}
+                </div>
+                <div style={{ color: '#8A919E', fontSize: 11 }}>${LAUNCH_PRICE.toFixed(2)} per CNC</div>
+              </div>
+              <div>
+                <div style={{ color: '#8A919E', fontSize: 11 }}>Potential Growth</div>
+                <div style={{ color: '#05B169', fontSize: 22, fontWeight: 700 }}>+100%</div>
+                <div style={{ color: '#8A919E', fontSize: 11 }}>Doubles at launch</div>
               </div>
             </div>
+          </div>
+
+          {/* Distribution */}
+          <h4 style={{ color: '#fff', fontSize: 14, fontWeight: 600, margin: '0 0 12px 0' }}>
+            Token Distribution
+          </h4>
+
+          {ALLOCATIONS.map((item) => (
+            <div
+              key={item.name}
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 10,
+                padding: 14,
+                marginBottom: 8,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 8,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 12, height: 12, borderRadius: 3, background: item.color }} />
+                  <span style={{ color: '#fff', fontWeight: 600 }}>{item.name}</span>
+                </div>
+                <span style={{ color: '#fff', fontWeight: 700, fontSize: 18 }}>{item.percent}%</span>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  color: '#8A919E',
+                  fontSize: 12,
+                  paddingLeft: 22,
+                  flexWrap: 'wrap',
+                  gap: 8,
+                }}
+              >
+                <span>{item.amount.toLocaleString()} CNC</span>
+                <span style={{ color: '#FFD700', fontWeight: 600 }}>
+                  ${(item.amount * PRESALE_PRICE).toLocaleString()}
+                  <span style={{ color: '#5B616E' }}> at presale</span>
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* WHAT YOU COULD EARN — calculator */}
+        <div
+          style={{
+            background: '#141519',
+            border: '1px solid #FFD700',
+            borderRadius: 16,
+            padding: 24,
+            marginBottom: 24,
+          }}
+        >
+          <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: '0 0 16px 0' }}>
+            What you could earn
+          </h3>
+
+          <div style={{ background: '#0A0B0D', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+            <div style={{ color: '#8A919E', fontSize: 12, marginBottom: 8 }}>
+              Investment scenarios at presale (${PRESALE_PRICE.toFixed(2)}):
+            </div>
+
+            {[10, 50, 100, 500, 1000].map((amount) => {
+              const cncAmount = amount / PRESALE_PRICE
+              const launchValue = cncAmount * LAUNCH_PRICE
+              return (
+                <div
+                  key={amount}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    gap: 8,
+                    padding: '10px 0',
+                    borderBottom: '1px solid #1E2025',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div>
+                    <div style={{ color: '#8A919E', fontSize: 11 }}>You pay</div>
+                    <div style={{ color: '#fff', fontWeight: 700 }}>${amount}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#8A919E', fontSize: 11 }}>You receive</div>
+                    <div style={{ color: '#FFD700', fontWeight: 700 }}>
+                      {cncAmount.toLocaleString()} CNC
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#8A919E', fontSize: 11 }}>At launch</div>
+                    <div style={{ color: '#05B169', fontWeight: 700 }}>
+                      ${launchValue.toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <div
+            style={{
+              background: '#FFD70010',
+              border: '1px solid #FFD700',
+              borderRadius: 10,
+              padding: 12,
+              color: '#FFD700',
+              fontSize: 13,
+              textAlign: 'center',
+            }}
+          >
+            Buy at presale, double your money at launch!
           </div>
         </div>
 

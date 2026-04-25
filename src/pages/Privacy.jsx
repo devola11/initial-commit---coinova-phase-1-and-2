@@ -101,7 +101,7 @@ export default function Privacy() {
             <li>Delete your account and data</li>
             <li>Export your data</li>
           </ul>
-          <p>Contact us at <a href="mailto:support@coinova.app" className="text-[#0052FF] no-underline hover:underline">support@coinova.app</a> to exercise these rights.</p>
+          <p>Contact us at <a href="mailto:coinovasupport@gmail.com" className="text-[#0052FF] no-underline hover:underline">coinovasupport@gmail.com</a> to exercise these rights.</p>
         </Section>
 
         <Section title="8. Security">
@@ -113,7 +113,7 @@ export default function Privacy() {
         </Section>
 
         <Section title="10. Contact">
-          <p>Privacy questions: <a href="mailto:privacy@coinova.app" className="text-[#0052FF] no-underline hover:underline">privacy@coinova.app</a></p>
+          <p>Privacy questions: <a href="mailto:coinovasupport@gmail.com" className="text-[#0052FF] no-underline hover:underline">coinovasupport@gmail.com</a></p>
         </Section>
 
         <div className="pt-8 flex flex-wrap gap-4 text-sm">

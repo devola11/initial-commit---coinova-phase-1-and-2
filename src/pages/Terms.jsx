@@ -116,7 +116,7 @@ export default function Terms() {
         </Section>
 
         <Section title="11. Contact">
-          <p>For questions about these terms, contact us at: <a href="mailto:support@coinova.app" className="text-[#0052FF] no-underline hover:underline">support@coinova.app</a></p>
+          <p>For questions about these terms, contact us at: <a href="mailto:coinovasupport@gmail.com" className="text-[#0052FF] no-underline hover:underline">coinovasupport@gmail.com</a></p>
         </Section>
 
         <div className="pt-8 flex flex-wrap gap-4 text-sm">

@@ -34,6 +34,8 @@ import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
 import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
+import MyTickets from './pages/MyTickets'
+import SupportButton from './components/SupportButton'
 
 function AppLayout() {
   return (
@@ -43,6 +45,7 @@ function AppLayout() {
         <Outlet />
       </div>
       <Footer />
+      <SupportButton />
     </div>
   )
 }
@@ -189,6 +192,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Admin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-tickets"
+                element={
+                  <ProtectedRoute>
+                    <MyTickets />
                   </ProtectedRoute>
                 }
               />

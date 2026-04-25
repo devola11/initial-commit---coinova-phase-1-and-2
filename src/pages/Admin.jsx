@@ -8,7 +8,22 @@ import { useCNCToken } from '../hooks/useCNCToken'
 export const ADMIN_EMAIL = 'frontenddev177@gmail.com'
 
 const STATUS_TABS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED']
-const ADMIN_TABS = ['INVESTMENTS', 'KYC', 'CNC']
+const ADMIN_TABS = ['INVESTMENTS', 'KYC', 'CNC', 'SUPPORT']
+const SUPPORT_TABS = ['ALL', 'OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED']
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY
+
+const TICKET_STATUS_STYLES = {
+  open:        { bg: '#F59E0B20', fg: '#F59E0B', label: 'Open' },
+  in_progress: { bg: '#0052FF20', fg: '#0052FF', label: 'In Progress' },
+  resolved:    { bg: '#05B16920', fg: '#05B169', label: 'Resolved' },
+  closed:      { bg: '#8A919E20', fg: '#8A919E', label: 'Closed' },
+}
+
+const TICKET_PRIORITY_STYLES = {
+  low:    { bg: '#8A919E20', fg: '#8A919E', label: 'Low' },
+  high:   { bg: '#F59E0B20', fg: '#F59E0B', label: 'High' },
+  urgent: { bg: '#F6465D20', fg: '#F6465D', label: 'Urgent' },
+}
 
 const STATUS_STYLES = {
   pending:  'bg-yellow-500/15 text-yellow-400',
@@ -109,6 +124,11 @@ export default function Admin() {
   const [kycActioning, setKycActioning] = useState(null)
   const [kycRejectReason, setKycRejectReason] = useState('')
   const [showKycReject, setShowKycReject] = useState(false)
+  const [tickets, setTickets] = useState([])
+  const [ticketsLoading, setTicketsLoading] = useState(true)
+  const [ticketTab, setTicketTab] = useState('ALL')
+  const [reviewingTicket, setReviewingTicket] = useState(null)
+  const [ticketSaving, setTicketSaving] = useState(false)
 
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL
 
@@ -134,9 +154,35 @@ export default function Admin() {
     setKycLoading(false)
   }, [])
 
+  const fetchTickets = useCallback(async () => {
+    setTicketsLoading(true)
+    const { data, error } = await supabase
+      .from('support_tickets')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) console.error(error)
+    setTickets(data || [])
+    setTicketsLoading(false)
+  }, [])
+
   useEffect(() => {
-    if (isAdmin) { fetchRows(); fetchKyc() }
-  }, [isAdmin, fetchRows, fetchKyc])
+    if (isAdmin) { fetchRows(); fetchKyc(); fetchTickets() }
+  }, [isAdmin, fetchRows, fetchKyc, fetchTickets])
+
+  const ticketStats = useMemo(() => {
+    const by = { open: 0, in_progress: 0, resolved: 0, closed: 0 }
+    for (const t of tickets) {
+      const s = (t.status || 'open').toLowerCase()
+      if (by[s] != null) by[s] += 1
+    }
+    return { total: tickets.length, ...by }
+  }, [tickets])
+
+  const visibleTickets = useMemo(() => {
+    if (ticketTab === 'ALL') return tickets
+    const target = ticketTab.toLowerCase()
+    return tickets.filter((t) => (t.status || 'open').toLowerCase() === target)
+  }, [tickets, ticketTab])
 
   const kycStats = useMemo(() => {
     const by = { pending: 0, approved: 0, rejected: 0 }
@@ -249,6 +295,66 @@ export default function Admin() {
       showToast(`Approve failed: ${err.message}`)
     } finally {
       setActioning(null)
+    }
+  }
+
+  async function saveTicketResponse(ticket, { adminResponse, newStatus, newPriority }) {
+    if (ticketSaving) return
+    setTicketSaving(true)
+    try {
+      const update = {
+        admin_response: adminResponse,
+        status: newStatus,
+        priority: newPriority,
+      }
+      if ((newStatus === 'resolved' || newStatus === 'closed') && !ticket.resolved_at) {
+        update.resolved_at = new Date().toISOString()
+      }
+
+      const { error: updateErr } = await supabase
+        .from('support_tickets')
+        .update(update)
+        .eq('id', ticket.id)
+      if (updateErr) throw updateErr
+
+      if (adminResponse?.trim() && ticket.user_email) {
+        try {
+          await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              access_key: WEB3FORMS_KEY,
+              subject: `Coinova Support: Response to ${ticket.ticket_number}`,
+              from_name: 'Coinova Support',
+              email: ticket.user_email,
+              message: `Hi ${ticket.user_name},
+
+Your ticket: ${ticket.ticket_number}
+Subject: ${ticket.subject}
+Status: ${newStatus}
+
+Our response:
+${adminResponse}
+
+Reply to this email if you need more help.
+
+Coinova Support Team`,
+              replyto: 'coinovasupport@gmail.com',
+            }),
+          })
+        } catch (mailErr) {
+          console.warn('Email send failed:', mailErr)
+        }
+      }
+
+      showToast('Ticket updated and customer notified')
+      setReviewingTicket(null)
+      await fetchTickets()
+    } catch (err) {
+      console.error(err)
+      showToast(`Update failed: ${err.message}`)
+    } finally {
+      setTicketSaving(false)
     }
   }
 
@@ -647,6 +753,121 @@ export default function Admin() {
         <CNCAdminPanel showToast={showToast} />
       )}
 
+      {adminTab === 'SUPPORT' && (
+        <>
+          <p className="text-text-muted text-sm mb-4">
+            Respond to customer support tickets. Saving a response sends an email to the customer.
+          </p>
+
+          {/* Support stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <StatCard label="Total tickets" value={ticketStats.total} />
+            <StatCard label="Open" value={ticketStats.open} tone="yellow" />
+            <StatCard label="In progress" value={ticketStats.in_progress} />
+            <StatCard label="Resolved" value={ticketStats.resolved} tone="green" />
+          </div>
+
+          {/* Support filter tabs */}
+          <div className="flex items-center gap-2 mb-5 overflow-x-auto">
+            {SUPPORT_TABS.map((t) => {
+              const active = t === ticketTab
+              return (
+                <button
+                  key={t}
+                  onClick={() => setTicketTab(t)}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-colors cursor-pointer ${
+                    active
+                      ? 'bg-primary-blue border-primary-blue text-white'
+                      : 'bg-transparent border-card-border text-text-muted hover:text-text-primary hover:border-primary-blue/50'
+                  }`}
+                >
+                  {t.replace('_', ' ')}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Support table */}
+          <div className="bg-card-bg border border-card-border rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-card-border text-left text-xs uppercase tracking-widest text-text-muted">
+                    <th className="py-3 px-4 font-medium">Ticket</th>
+                    <th className="py-3 px-4 font-medium">Customer</th>
+                    <th className="py-3 px-4 font-medium">Subject</th>
+                    <th className="py-3 px-4 font-medium">Category</th>
+                    <th className="py-3 px-4 font-medium">Priority</th>
+                    <th className="py-3 px-4 font-medium">Status</th>
+                    <th className="py-3 px-4 font-medium">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ticketsLoading ? (
+                    <tr><td colSpan={7} className="py-10 text-center text-text-muted">Loading...</td></tr>
+                  ) : visibleTickets.length === 0 ? (
+                    <tr><td colSpan={7} className="py-10 text-center text-text-muted">No tickets in this bucket.</td></tr>
+                  ) : (
+                    visibleTickets.map((t) => {
+                      const status = (t.status || 'open').toLowerCase()
+                      const sStyle = TICKET_STATUS_STYLES[status] || TICKET_STATUS_STYLES.open
+                      const pStyle = TICKET_PRIORITY_STYLES[(t.priority || '').toLowerCase()]
+                      return (
+                        <tr
+                          key={t.id}
+                          onClick={() => setReviewingTicket(t)}
+                          className="border-b border-card-border last:border-b-0 hover:bg-root-bg/40 transition-colors cursor-pointer"
+                        >
+                          <td className="py-4 px-4 text-primary-blue font-mono text-xs">{t.ticket_number}</td>
+                          <td className="py-4 px-4">
+                            <div className="text-text-primary text-sm">{t.user_name || '-'}</div>
+                            <div className="text-text-muted text-xs">{t.user_email}</div>
+                          </td>
+                          <td className="py-4 px-4 text-text-primary text-sm max-w-[260px] truncate">{t.subject}</td>
+                          <td className="py-4 px-4 text-text-muted text-xs">{t.category}</td>
+                          <td className="py-4 px-4">
+                            {pStyle ? (
+                              <span
+                                className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase"
+                                style={{ background: pStyle.bg, color: pStyle.fg }}
+                              >
+                                {pStyle.label}
+                              </span>
+                            ) : (
+                              <span className="text-text-muted text-xs">Normal</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4">
+                            <span
+                              className="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide"
+                              style={{ background: sStyle.bg, color: sStyle.fg }}
+                            >
+                              {sStyle.label}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4 text-text-muted text-xs">
+                            {t.created_at ? new Date(t.created_at).toLocaleDateString() : '-'}
+                          </td>
+                        </tr>
+                      )
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
+
+      {reviewingTicket && (
+        <TicketDetailModal
+          ticket={reviewingTicket}
+          onClose={() => setReviewingTicket(null)}
+          onSave={saveTicketResponse}
+          saving={ticketSaving}
+        />
+      )}
+
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[120] bg-card-bg border border-card-border rounded-lg px-5 py-3 text-sm text-text-primary shadow-xl">
           {toast}
@@ -807,5 +1028,123 @@ function CNCAdminPanel({ showToast }) {
         </div>
       </div>
     </>
+  )
+}
+
+function TicketDetailModal({ ticket, onClose, onSave, saving }) {
+  const [adminResponse, setAdminResponse] = useState(ticket.admin_response || '')
+  const [newStatus, setNewStatus] = useState((ticket.status || 'open').toLowerCase())
+  const [newPriority, setNewPriority] = useState((ticket.priority || 'normal').toLowerCase())
+
+  const sStyle = TICKET_STATUS_STYLES[(ticket.status || 'open').toLowerCase()] || TICKET_STATUS_STYLES.open
+
+  return (
+    <div
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-card-bg border border-card-border rounded-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between mb-5 gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="text-primary-blue font-mono text-xs">{ticket.ticket_number}</span>
+              <span
+                className="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide"
+                style={{ background: sStyle.bg, color: sStyle.fg }}
+              >
+                {sStyle.label}
+              </span>
+            </div>
+            <div className="text-text-primary font-semibold text-lg break-words">{ticket.subject}</div>
+            <div className="text-text-muted text-xs mt-1">
+              {ticket.user_name} · {ticket.user_email} · {ticket.category}
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-text-muted hover:text-white bg-transparent border-none cursor-pointer text-xl flex-shrink-0"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div className="bg-root-bg border border-card-border rounded-lg p-4 mb-5">
+          <div className="text-text-muted text-[10px] uppercase tracking-widest mb-1.5 font-medium">
+            Customer message
+          </div>
+          <div className="text-text-primary text-sm whitespace-pre-wrap leading-relaxed">
+            {ticket.message}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest text-text-muted mb-2 font-medium">
+              Status
+            </label>
+            <select
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value)}
+              className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary-blue"
+            >
+              <option value="open">Open</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest text-text-muted mb-2 font-medium">
+              Priority
+            </label>
+            <select
+              value={newPriority}
+              onChange={(e) => setNewPriority(e.target.value)}
+              className="w-full bg-root-bg border border-card-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary-blue"
+            >
+              <option value="low">Low</option>
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mb-5">
+          <label className="block text-[10px] uppercase tracking-widest text-text-muted mb-2 font-medium">
+            Your response
+          </label>
+          <textarea
+            value={adminResponse}
+            onChange={(e) => setAdminResponse(e.target.value)}
+            placeholder="Write a reply to the customer. Saving sends them an email."
+            rows={6}
+            className="w-full bg-root-bg border border-card-border rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-subtle focus:outline-none focus:border-primary-blue"
+          />
+          <div className="text-text-muted text-xs mt-1.5">
+            Tip: leaving this blank just updates status/priority — no email is sent.
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-lg border border-card-border text-text-primary hover:border-primary-blue text-sm font-semibold bg-transparent cursor-pointer transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onSave(ticket, { adminResponse, newStatus, newPriority })}
+            disabled={saving}
+            className="flex-1 py-2.5 rounded-lg bg-primary-blue hover:opacity-90 text-white text-sm font-semibold border-none cursor-pointer transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? 'Saving...' : 'Save & notify customer'}
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }

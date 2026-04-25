@@ -39,6 +39,7 @@ const BASE_SECTIONS = [
   {
     title: 'ACCOUNT',
     links: [
+      { name: 'My Tickets', path: '/my-tickets' },
       { name: 'Settings', path: '/settings' },
       { name: 'KYC Verification', path: '/kyc' },
     ],

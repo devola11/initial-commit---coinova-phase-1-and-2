@@ -350,6 +350,7 @@ export default function LandingPage() {
                 <img src={logo} alt="Coinova" className="h-7 rounded" />
                 <span className="text-lg font-extrabold text-black tracking-tight">Coinova</span>
               </Link>
+              <p className="text-sm text-gray-500 max-w-xs">Trade crypto, build wealth.</p>
               <button
                 onClick={() => setPrefsOpen(true)}
                 className="flex items-center gap-2 text-sm text-gray-500 hover:text-black bg-transparent border-none cursor-pointer transition-colors p-0"
@@ -363,26 +364,25 @@ export default function LandingPage() {
                 <div className="font-semibold text-gray-800 mb-2">Product</div>
                 <div className="flex flex-col gap-1.5">
                   <Link to="/markets" className="hover:text-black no-underline text-gray-500">Markets</Link>
-                  <Link to="/login" className="hover:text-black no-underline text-gray-500">Sign in</Link>
-                  <Link to="/register" className="hover:text-black no-underline text-gray-500">Get started</Link>
+                  <Link to="/portfolio" className="hover:text-black no-underline text-gray-500">Portfolio</Link>
                 </div>
               </div>
               <div>
                 <div className="font-semibold text-gray-800 mb-2">Legal</div>
                 <div className="flex flex-col gap-1.5">
-                  <Link to="/terms" className="hover:text-black no-underline text-gray-500">Terms of Service</Link>
-                  <Link to="/privacy" className="hover:text-black no-underline text-gray-500">Privacy Policy</Link>
+                  <Link to="/terms" className="hover:text-black no-underline text-gray-500">Terms</Link>
+                  <Link to="/privacy" className="hover:text-black no-underline text-gray-500">Privacy</Link>
+                  <Link to="/faq" className="hover:text-black no-underline text-gray-500">FAQ</Link>
                 </div>
               </div>
               <div>
                 <div className="font-semibold text-gray-800 mb-2">Support</div>
                 <div className="flex flex-col gap-1.5">
-                  <Link to="/faq" className="hover:text-black no-underline text-gray-500">FAQ</Link>
                   <Link to="/contact" className="hover:text-black no-underline text-gray-500">Contact</Link>
                 </div>
               </div>
             </div>
-            <div className="text-sm text-gray-500">&copy; 2026 Coinova</div>
+            <div className="text-sm text-gray-500">&copy; 2026 Coinova. All rights reserved.</div>
           </div>
         </div>
       </footer>

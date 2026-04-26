@@ -10,6 +10,9 @@ import { useBiometric } from '../hooks/useBiometric'
 import PINSetup from '../components/PINSetup'
 import PasswordStrength from '../components/PasswordStrength'
 import { validatePassword } from '../utils/passwordValidator'
+import TwoFactorSetup from '../components/TwoFactorSetup'
+import { logActivity } from '../utils/activityLogger'
+import { sendSecurityEmail } from '../utils/notifications'
 
 const CURRENCIES = [
   { code: 'USD', symbol: '$', label: 'US Dollar' },
@@ -213,6 +216,7 @@ export default function Settings() {
   const pwMatches = pw.confirm.length > 0 && pw.next === pw.confirm
   const canUpdatePw = !!pwValidation?.isValid && pwMatches && !pwSaving
   const [show2faModal, setShow2faModal] = useState(false)
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showPinSetup, setShowPinSetup] = useState(false)
   const [showDisablePinConfirm, setShowDisablePinConfirm] = useState(false)
@@ -234,7 +238,34 @@ export default function Settings() {
       }
     }
     load()
+    check2FAStatus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
+
+  async function check2FAStatus() {
+    if (!user) return
+    const { data } = await supabase
+      .from('user_2fa')
+      .select('enabled')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    setIs2FAEnabled(!!data?.enabled)
+  }
+
+  async function handleDisable2FA() {
+    // eslint-disable-next-line no-alert
+    if (!window.confirm('Are you sure you want to disable 2FA?')) return
+    await supabase
+      .from('user_2fa')
+      .update({ enabled: false })
+      .eq('user_id', user.id)
+    await supabase.from('activity_log').insert({
+      user_id: user.id,
+      action: 'two_factor_disabled',
+      description: 'Two-factor authentication disabled',
+    })
+    setIs2FAEnabled(false)
+  }
 
   const walletId = user?.id || '--------'
   const initials = (displayName || user?.email || '?').charAt(0).toUpperCase()
@@ -278,6 +309,16 @@ export default function Settings() {
       if (error) throw error
       setPwMsg('Password updated successfully.')
       setPw({ current: '', next: '', confirm: '' })
+      logActivity({
+        userId: user.id,
+        action: 'password_changed',
+        description: 'Password updated',
+      })
+      sendSecurityEmail({
+        userEmail: user.email,
+        userName: displayName || user.email,
+        type: 'password_changed',
+      })
       setTimeout(() => { setShowPwForm(false); setPwMsg('') }, 2000)
     } catch (err) {
       setPwMsg(err.message || 'Failed to update password.')
@@ -492,17 +533,47 @@ export default function Settings() {
         <div className="flex items-center justify-between py-3.5 px-1 border-b border-card-border">
           <div>
             <div className="text-text-primary text-sm font-medium">2-Step Verification</div>
+            <div className="text-text-muted text-xs mt-0.5">
+              {is2FAEnabled
+                ? 'Enabled - your account is more secure'
+                : 'Add an extra layer of security'}
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#F6465D]/10 text-[#F6465D]">Not enabled</span>
-            <button
-              onClick={() => setShow2faModal(true)}
-              className="px-3 py-1.5 rounded-lg border border-card-border bg-transparent text-text-muted hover:text-text-primary text-xs font-semibold cursor-pointer transition-colors"
-            >
-              Enable
-            </button>
+            {is2FAEnabled ? (
+              <>
+                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#05B169]/10 text-[#05B169]">Enabled</span>
+                <button
+                  onClick={handleDisable2FA}
+                  className="px-3 py-1.5 rounded-lg border border-[#F6465D]/30 bg-transparent text-[#F6465D] hover:bg-[#F6465D]/10 text-xs font-semibold cursor-pointer transition-colors"
+                >
+                  Disable
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#F6465D]/10 text-[#F6465D]">Not enabled</span>
+                <button
+                  onClick={() => setShow2faModal(true)}
+                  className="px-3 py-1.5 rounded-lg bg-primary-blue text-white text-xs font-semibold border-none cursor-pointer transition-colors hover:bg-primary-blue-hover"
+                >
+                  Enable
+                </button>
+              </>
+            )}
           </div>
         </div>
+        {/* Account Activity */}
+        <Link
+          to="/security/activity"
+          className="flex items-center justify-between py-3.5 px-1 border-b border-card-border no-underline"
+        >
+          <div>
+            <div className="text-text-primary text-sm font-medium">View Account Activity</div>
+            <div className="text-text-muted text-xs mt-0.5">See all recent activity on your account</div>
+          </div>
+          <span className="text-text-muted">{'›'}</span>
+        </Link>
         {/* PIN Lock */}
         <div className="flex items-center justify-between py-3.5 px-1 border-b border-card-border">
           <div>
@@ -688,22 +759,12 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* ── 2FA Modal ─────────────────────────────────────────────── */}
+      {/* ── 2FA Setup Modal ───────────────────────────────────────── */}
       {show2faModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setShow2faModal(false)}>
-          <div className="bg-card-bg border border-card-border rounded-xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="text-text-primary font-semibold mb-3">2-Step Verification</div>
-            <p className="text-text-muted text-sm mb-5 leading-relaxed">
-              Two-factor authentication adds an extra layer of security to your account. This feature will be available in a future update.
-            </p>
-            <button
-              onClick={() => setShow2faModal(false)}
-              className="w-full py-2.5 rounded-lg bg-primary-blue text-white text-sm font-semibold border-none cursor-pointer"
-            >
-              Got it
-            </button>
-          </div>
-        </div>
+        <TwoFactorSetup
+          onClose={() => setShow2faModal(false)}
+          onSuccess={() => setIs2FAEnabled(true)}
+        />
       )}
 
       {/* ── Delete Account Modal ──────────────────────────────────── */}

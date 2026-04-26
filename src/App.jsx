@@ -28,6 +28,7 @@ import Learn from './pages/Learn'
 import Analytics from './pages/Analytics'
 import KYC from './pages/KYC'
 import CNCToken from './pages/CNCToken'
+import SecurityActivity from './pages/SecurityActivity'
 import InstallBanner from './components/InstallBanner'
 import Footer from './components/Footer'
 import Terms from './pages/Terms'
@@ -210,6 +211,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <CoinDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/security/activity"
+                element={
+                  <ProtectedRoute>
+                    <SecurityActivity />
                   </ProtectedRoute>
                 }
               />

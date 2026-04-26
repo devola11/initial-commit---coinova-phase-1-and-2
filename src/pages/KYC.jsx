@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { logActivity } from '../utils/activityLogger'
 
 const COUNTRIES = [
   'Afghanistan', 'Albania', 'Algeria', 'Andorra',
@@ -331,6 +332,12 @@ export default function KYC() {
         .update({ kyc_status: 'pending' })
         .eq('id', user.id)
       if (profErr) throw profErr
+
+      logActivity({
+        userId: user.id,
+        action: 'kyc_submitted',
+        description: 'KYC verification submitted',
+      })
 
       setSubmitted(true)
     } catch (err) {

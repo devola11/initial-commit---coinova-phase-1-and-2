@@ -7,6 +7,7 @@ import { getCoinPrice } from '../lib/coingecko'
 import { calculateBuy } from '../utils/calculations'
 import { formatUSD, formatCrypto, getAccountBadge } from '../utils/formatters'
 import PINConfirm from './PINConfirm'
+import { logActivity } from '../utils/activityLogger'
 
 const QUICK_AMOUNTS = [100, 500, 1000, 5000]
 
@@ -112,6 +113,17 @@ export default function BuyModal({ coin, onClose }) {
       if (tErr) throw tErr
 
       await refreshAll()
+      logActivity({
+        userId: user.id,
+        action: 'crypto_purchased',
+        description: `Bought ${formatCrypto(calc.quantity)} ${(coin.symbol || '').toUpperCase()}`,
+        metadata: {
+          symbol: (coin.symbol || '').toUpperCase(),
+          quantity: calc.quantity,
+          amount: usdAmount,
+          account_type: mode,
+        },
+      })
       setSuccess(true)
       setTimeout(() => onClose(), 2000)
     } catch (err) {

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { logActivity } from '../utils/activityLogger'
 
 const AuthContext = createContext(null)
 
@@ -68,6 +69,11 @@ export function AuthProvider({ children }) {
       await supabase.from('wallet').insert({
         user_id: data.user.id,
         balance_usd: 10000,
+      })
+      logActivity({
+        userId: data.user.id,
+        action: 'account_created',
+        description: 'Account created',
       })
     }
 

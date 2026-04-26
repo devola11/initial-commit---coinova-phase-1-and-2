@@ -6,6 +6,7 @@ import { getCoinPrice } from '../lib/coingecko'
 import { calculateSell } from '../utils/calculations'
 import { formatUSD, formatCrypto, getAccountBadge } from '../utils/formatters'
 import PINConfirm from './PINConfirm'
+import { logActivity } from '../utils/activityLogger'
 
 const PCT = [25, 50, 75, 100]
 
@@ -102,6 +103,17 @@ export default function SellModal({ holding, onClose }) {
       if (tErr) throw tErr
 
       await refreshAll()
+      logActivity({
+        userId: user.id,
+        action: 'crypto_sold',
+        description: `Sold ${formatCrypto(sellQty)} ${(holding.coin_symbol || holding.symbol || '').toUpperCase()}`,
+        metadata: {
+          symbol: (holding.coin_symbol || holding.symbol || '').toUpperCase(),
+          quantity: sellQty,
+          net_usd: calc.netUsd,
+          account_type: holdingMode,
+        },
+      })
       setSuccess(true)
       setTimeout(() => onClose(), 2000)
     } catch (err) {

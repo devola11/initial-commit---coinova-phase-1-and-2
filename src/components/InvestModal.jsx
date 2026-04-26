@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { supabase } from '../lib/supabase'
+import { logActivity } from '../utils/activityLogger'
 import { useAuth } from '../context/AuthContext'
 import { getCoinImageUrl } from '../utils/coinImages'
 import { formatUSD } from '../utils/formatters'
@@ -102,6 +103,16 @@ export default function InvestModal({ coin, wallets, onClose }) {
         status: 'pending',
       })
       if (e) throw e
+      logActivity({
+        userId: user.id,
+        action: 'investment_submitted',
+        description: `Investment request for ${coin.name}`,
+        metadata: {
+          symbol,
+          amount_usd: usdAmount,
+          wallet: walletKey,
+        },
+      })
       setSubmittedAt(new Date().toISOString())
       setStep(3)
     } catch (err) {

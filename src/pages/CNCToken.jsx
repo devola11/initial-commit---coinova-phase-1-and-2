@@ -14,7 +14,6 @@ const GREEN = '#05B169'
 const GREY = '#8A919E'
 
 const QUICK_AMOUNTS = [10, 50, 100, 500, 1000]
-const LAUNCH_DATE_ISO = '2026-07-01'
 
 const PRESALE_PRICE = 0.05
 const LAUNCH_PRICE = 0.10
@@ -225,29 +224,52 @@ function PhaseRow({ phase }) {
   )
 }
 
-function useCountdown(targetDateIso) {
-  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000
+
+function useCountdown() {
+  const [countdown, setCountdown] = useState({
+    days: 90,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  })
 
   useEffect(() => {
-    const launchDate = new Date(targetDateIso).getTime()
-    function tick() {
+    let endDate = localStorage.getItem('cnc-presale-end')
+
+    if (!endDate) {
+      endDate = String(Date.now() + NINETY_DAYS_MS)
+      localStorage.setItem('cnc-presale-end', endDate)
+    }
+
+    let targetTime = parseInt(endDate, 10)
+
+    function calculate() {
       const now = Date.now()
-      const distance = launchDate - now
+      const distance = targetTime - now
+
       if (distance < 0) {
-        setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-        return
+        const newEnd = Date.now() + NINETY_DAYS_MS
+        localStorage.setItem('cnc-presale-end', String(newEnd))
+        targetTime = newEnd
+        return { days: 90, hours: 0, minutes: 0, seconds: 0 }
       }
-      setCountdown({
+
+      return {
         days: Math.floor(distance / (1000 * 60 * 60 * 24)),
         hours: Math.floor((distance / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((distance / (1000 * 60)) % 60),
         seconds: Math.floor((distance / 1000) % 60),
-      })
+      }
     }
-    tick()
-    const interval = setInterval(tick, 1000)
+
+    setCountdown(calculate())
+    const interval = setInterval(() => {
+      setCountdown(calculate())
+    }, 1000)
+
     return () => clearInterval(interval)
-  }, [targetDateIso])
+  }, [])
 
   return countdown
 }
@@ -294,7 +316,7 @@ export default function CNCToken() {
   const cnc = useCNCToken()
   const [usd, setUsd] = useState('')
   const [showInvest, setShowInvest] = useState(false)
-  const countdown = useCountdown(LAUNCH_DATE_ISO)
+  const countdown = useCountdown()
   const stats = usePlatformStats()
 
   const usdAmount = Number(usd) || 0
@@ -445,7 +467,7 @@ export default function CNCToken() {
 
           {/* Countdown timer */}
           <div className="text-[10px] uppercase tracking-widest mb-2 font-medium" style={{ color: '#8A8F98' }}>
-            Presale closes in
+            Presale ends in
           </div>
           <div
             style={{
@@ -470,28 +492,6 @@ export default function CNCToken() {
             <div className="rounded-lg p-4" style={{ background: '#0A0B0D', border: '1px solid #1E2025' }}>
               <div className="text-[10px] uppercase tracking-widest text-[#8A8F98] mb-1">Launch Price</div>
               <div className="text-xl font-bold text-white">{formatUSD(cnc.launch_price)}</div>
-            </div>
-          </div>
-
-          {/* Token Economics */}
-          <div
-            className="rounded-xl mb-6"
-            style={{ background: '#0A0B0D', border: '1px solid #1E2025', padding: 20 }}
-          >
-            <div className="text-white font-semibold mb-3">Token Economics</div>
-            <div className="space-y-2 text-sm">
-              {[
-                ['Total supply', '100,000,000 CNC (fixed)'],
-                ['Available in presale', '50,000,000 CNC'],
-                ['Platform reserve', '25,000,000 CNC'],
-                ['Ecosystem rewards', '15,000,000 CNC'],
-                ['Team', '10,000,000 CNC'],
-              ].map(([label, val]) => (
-                <div key={label} className="flex justify-between gap-3">
-                  <span style={{ color: '#8A919E' }}>{label}</span>
-                  <span className="text-white font-medium">{val}</span>
-                </div>
-              ))}
             </div>
           </div>
 
@@ -609,99 +609,123 @@ export default function CNCToken() {
               background: '#0A0B0D',
               border: '1px solid #FFD700',
               borderRadius: 12,
-              padding: 16,
-              marginBottom: 20,
+              padding: 20,
+              marginBottom: 24,
             }}
           >
             <div
               style={{
                 color: '#FFD700',
-                fontSize: 12,
-                fontWeight: 600,
+                fontSize: 11,
+                fontWeight: 700,
                 letterSpacing: '1px',
-                marginBottom: 12,
+                marginBottom: 16,
               }}
             >
               PROJECT VALUATION
             </div>
+
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
                 gap: 16,
               }}
             >
               <div>
-                <div style={{ color: '#8A919E', fontSize: 11 }}>At Presale Price</div>
-                <div style={{ color: '#fff', fontSize: 22, fontWeight: 700 }}>
+                <div style={{ color: '#8A919E', fontSize: 11, marginBottom: 4 }}>At Presale Price</div>
+                <div style={{ color: '#fff', fontSize: 24, fontWeight: 700 }}>
                   ${(TOTAL_SUPPLY * PRESALE_PRICE).toLocaleString()}
                 </div>
-                <div style={{ color: '#8A919E', fontSize: 11 }}>${PRESALE_PRICE.toFixed(2)} per CNC</div>
+                <div style={{ color: '#8A919E', fontSize: 11, marginTop: 2 }}>
+                  ${PRESALE_PRICE.toFixed(2)} per CNC
+                </div>
               </div>
+
               <div>
-                <div style={{ color: '#8A919E', fontSize: 11 }}>At Launch Price</div>
-                <div style={{ color: '#FFD700', fontSize: 22, fontWeight: 700 }}>
+                <div style={{ color: '#8A919E', fontSize: 11, marginBottom: 4 }}>At Launch Price</div>
+                <div style={{ color: '#FFD700', fontSize: 24, fontWeight: 700 }}>
                   ${(TOTAL_SUPPLY * LAUNCH_PRICE).toLocaleString()}
                 </div>
-                <div style={{ color: '#8A919E', fontSize: 11 }}>${LAUNCH_PRICE.toFixed(2)} per CNC</div>
+                <div style={{ color: '#8A919E', fontSize: 11, marginTop: 2 }}>
+                  ${LAUNCH_PRICE.toFixed(2)} per CNC
+                </div>
               </div>
+
               <div>
-                <div style={{ color: '#8A919E', fontSize: 11 }}>Potential Growth</div>
-                <div style={{ color: '#05B169', fontSize: 22, fontWeight: 700 }}>+100%</div>
-                <div style={{ color: '#8A919E', fontSize: 11 }}>Doubles at launch</div>
+                <div style={{ color: '#8A919E', fontSize: 11, marginBottom: 4 }}>Potential Growth</div>
+                <div style={{ color: '#05B169', fontSize: 24, fontWeight: 700 }}>+100%</div>
+                <div style={{ color: '#8A919E', fontSize: 11, marginTop: 2 }}>Doubles at launch</div>
               </div>
             </div>
           </div>
 
-          {/* Distribution */}
+          {/* Distribution heading */}
           <h4 style={{ color: '#fff', fontSize: 14, fontWeight: 600, margin: '0 0 12px 0' }}>
             Token Distribution
           </h4>
 
-          {ALLOCATIONS.map((item) => (
-            <div
-              key={item.name}
-              style={{
-                background: '#0A0B0D',
-                border: '1px solid #1E2025',
-                borderRadius: 10,
-                padding: 14,
-                marginBottom: 8,
-              }}
-            >
+          {/* Allocations with dollar amounts */}
+          {ALLOCATIONS.map((item) => {
+            const usdValue = item.amount * PRESALE_PRICE
+            const launchValue = item.amount * LAUNCH_PRICE
+
+            return (
               <div
+                key={item.name}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  background: '#0A0B0D',
+                  border: '1px solid #1E2025',
+                  borderRadius: 10,
+                  padding: 14,
                   marginBottom: 8,
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 12, height: 12, borderRadius: 3, background: item.color }} />
-                  <span style={{ color: '#fff', fontWeight: 600 }}>{item.name}</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 8,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 12, height: 12, borderRadius: 3, background: item.color }} />
+                    <span style={{ color: '#fff', fontWeight: 600 }}>{item.name}</span>
+                  </div>
+                  <span style={{ color: '#fff', fontWeight: 700, fontSize: 18 }}>{item.percent}%</span>
                 </div>
-                <span style={{ color: '#fff', fontWeight: 700, fontSize: 18 }}>{item.percent}%</span>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr auto auto',
+                    gap: 8,
+                    alignItems: 'center',
+                    paddingLeft: 22,
+                    fontSize: 12,
+                  }}
+                >
+                  <span style={{ color: '#8A919E' }}>{item.amount.toLocaleString()} CNC</span>
+                  <span style={{ color: '#FFD700', fontWeight: 600 }}>
+                    ${usdValue.toLocaleString()}
+                  </span>
+                  <span style={{ color: '#5B616E', fontSize: 11 }}>at presale</span>
+                </div>
+
+                <div
+                  style={{
+                    paddingLeft: 22,
+                    marginTop: 4,
+                    fontSize: 11,
+                    color: '#5B616E',
+                  }}
+                >
+                  ${launchValue.toLocaleString()} at launch price
+                </div>
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  color: '#8A919E',
-                  fontSize: 12,
-                  paddingLeft: 22,
-                  flexWrap: 'wrap',
-                  gap: 8,
-                }}
-              >
-                <span>{item.amount.toLocaleString()} CNC</span>
-                <span style={{ color: '#FFD700', fontWeight: 600 }}>
-                  ${(item.amount * PRESALE_PRICE).toLocaleString()}
-                  <span style={{ color: '#5B616E' }}> at presale</span>
-                </span>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* WHAT YOU COULD EARN — calculator */}

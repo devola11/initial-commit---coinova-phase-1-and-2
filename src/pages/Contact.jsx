@@ -138,7 +138,7 @@ ${formData.message}`,
       <Nav />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">Contact Us</h1>
-        <p className="text-gray-500 text-sm mb-10">We're here to help — typical reply within 24 hours.</p>
+        <p className="text-gray-500 text-sm mb-10">We're here to help - typical reply within 24 hours.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Left - Info cards */}

@@ -69,7 +69,7 @@ export default function LandingPage() {
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-600" />
             </span>
             <span className="text-xs sm:text-sm font-semibold" style={{ color: '#0A0B0D' }}>
-              CNC Presale is LIVE — Buy at $0.05 before launch price of $0.10
+              CNC Presale is LIVE - Buy at $0.05 before launch price of $0.10
             </span>
             <Link
               to="/cnc"

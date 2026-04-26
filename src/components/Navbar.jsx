@@ -276,7 +276,7 @@ export default function Navbar() {
                     </div>
                   </Link>
 
-                  {/* User avatar — replaces hamburger, Settings, Logout, and More */}
+                  {/* User avatar - replaces hamburger, Settings, Logout, and More */}
                   <UserAvatar onClick={() => setDrawerOpen(true)} />
                 </>
               ) : (

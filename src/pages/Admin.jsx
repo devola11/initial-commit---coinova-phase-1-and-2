@@ -255,7 +255,7 @@ export default function Admin() {
   }
 
   // Credit user's Main Wallet (cash top-up). Approved investments now add USD
-  // to wallet_balance — the user then buys coins from BuyModal in wallet mode.
+  // to wallet_balance - the user then buys coins from BuyModal in wallet mode.
   // No direct holding creation, keeping demo and real ledgers cleanly separate.
   async function approveRequest(row) {
     if (actioning) return
@@ -1125,7 +1125,7 @@ function TicketDetailModal({ ticket, onClose, onSave, saving }) {
             className="w-full bg-root-bg border border-card-border rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-subtle focus:outline-none focus:border-primary-blue"
           />
           <div className="text-text-muted text-xs mt-1.5">
-            Tip: leaving this blank just updates status/priority — no email is sent.
+            Tip: leaving this blank just updates status/priority - no email is sent.
           </div>
         </div>
 

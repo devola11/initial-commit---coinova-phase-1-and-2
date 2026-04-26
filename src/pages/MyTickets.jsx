@@ -126,7 +126,7 @@ function TicketCard({ ticket, expanded, onToggle }) {
           ) : (
             <div className="bg-root-bg border border-dashed border-card-border rounded-lg p-4 text-center">
               <div className="text-text-muted text-sm">
-                Awaiting response — we typically reply within 24 hours.
+                Awaiting response - we typically reply within 24 hours.
               </div>
             </div>
           )}

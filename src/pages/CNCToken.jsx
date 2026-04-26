@@ -728,7 +728,7 @@ export default function CNCToken() {
           })}
         </div>
 
-        {/* WHAT YOU COULD EARN — calculator */}
+        {/* WHAT YOU COULD EARN - calculator */}
         <div
           style={{
             background: '#141519',

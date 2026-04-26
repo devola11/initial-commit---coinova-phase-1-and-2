@@ -31,7 +31,7 @@ export default function AuthCallback() {
 
         // Gmail (and some mail clients) pre-fetch the link for virus scanning,
         // which burns single-use tokens before the user clicks. If a session
-        // already exists, we're done — skip straight to the right destination.
+        // already exists, we're done - skip straight to the right destination.
         const { data: existingSession } = await supabase.auth.getSession()
 
         if (existingSession?.session) {

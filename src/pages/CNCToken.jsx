@@ -317,7 +317,6 @@ export default function CNCToken() {
   const [usd, setUsd] = useState('')
   const [showInvest, setShowInvest] = useState(false)
   const countdown = useCountdown()
-  const stats = usePlatformStats()
 
   const usdAmount = Number(usd) || 0
   const receiveQty = cnc.price > 0 && usdAmount > 0 ? usdAmount / cnc.price : 0
@@ -390,53 +389,6 @@ export default function CNCToken() {
           <StatCard label="Launch Price" value={formatUSD(cnc.launch_price)} sub="Q3 2026" />
         </div>
 
-        {/* LIVE PLATFORM STATS (real Supabase data) */}
-        <div
-          style={{
-            background: '#141519',
-            border: '1px solid #1E2025',
-            borderRadius: 16,
-            padding: 24,
-            marginBottom: 24,
-          }}
-        >
-          <h3 style={{ color: '#FFFFFF', fontSize: 18, fontWeight: 700, margin: '0 0 16px 0' }}>
-            Live Platform Stats
-          </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            <div>
-              <div style={{ color: '#8A919E', fontSize: 12 }}>Total Users</div>
-              <div style={{ color: '#fff', fontSize: 24, fontWeight: 700, marginTop: 4 }}>
-                {stats.users.toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <div style={{ color: '#8A919E', fontSize: 12 }}>CNC Holders</div>
-              <div style={{ color: '#FFD700', fontSize: 24, fontWeight: 700, marginTop: 4 }}>
-                {stats.holders.toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <div style={{ color: '#8A919E', fontSize: 12 }}>CNC Issued</div>
-              <div style={{ color: '#0052FF', fontSize: 24, fontWeight: 700, marginTop: 4 }}>
-                {stats.cncIssued.toLocaleString()}
-              </div>
-            </div>
-          </div>
-          <div
-            style={{
-              marginTop: 16,
-              paddingTop: 16,
-              borderTop: '1px solid #1E2025',
-              color: '#5B616E',
-              fontSize: 11,
-              textAlign: 'center',
-            }}
-          >
-            Updated in real-time from Coinova database
-          </div>
-        </div>
-
         {/* TOKEN ROADMAP (phase indicators) */}
         <div
           style={{
@@ -457,8 +409,404 @@ export default function CNCToken() {
           </div>
         </div>
 
+        {/* COINOVA AT A GLANCE */}
+        <div
+          style={{
+            background: '#141519',
+            border: '1px solid #1E2025',
+            borderRadius: 16,
+            padding: 24,
+            marginBottom: 24,
+          }}
+        >
+          <h3
+            style={{
+              color: '#FFFFFF',
+              fontSize: 18,
+              fontWeight: 700,
+              margin: '0 0 8px 0',
+            }}
+          >
+            Coinova At A Glance
+          </h3>
+          <p
+            style={{
+              color: '#8A919E',
+              fontSize: 13,
+              margin: '0 0 20px 0',
+            }}
+          >
+            Built for traders who demand more
+          </p>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 12,
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: '#0052FF20',
+                  color: '#0052FF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  marginBottom: 12,
+                }}
+              >
+                G
+              </div>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
+                Global Platform
+              </div>
+              <div style={{ color: '#8A919E', fontSize: 13 }}>
+                Available in 195 countries
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 12,
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: '#FFD70020',
+                  color: '#FFD700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  marginBottom: 12,
+                }}
+              >
+                C
+              </div>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
+                250+ Cryptocurrencies
+              </div>
+              <div style={{ color: '#8A919E', fontSize: 13 }}>
+                Trade any major coin
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 12,
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: '#7C3AED20',
+                  color: '#7C3AED',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  marginBottom: 12,
+                }}
+              >
+                AI
+              </div>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
+                AI-Powered Learning
+              </div>
+              <div style={{ color: '#8A919E', fontSize: 13 }}>
+                Learn any crypto with Claude AI
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 12,
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: '#05B16920',
+                  color: '#05B169',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  marginBottom: 12,
+                }}
+              >
+                S
+              </div>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
+                Bank-Level Security
+              </div>
+              <div style={{ color: '#8A919E', fontSize: 13 }}>
+                2FA, Biometric, KYC verified
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 12,
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: '#F59E0B20',
+                  color: '#F59E0B',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  marginBottom: 12,
+                }}
+              >
+                M
+              </div>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
+                Available Everywhere
+              </div>
+              <div style={{ color: '#8A919E', fontSize: 13 }}>
+                PWA, mobile and desktop
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 12,
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: '#F6465D20',
+                  color: '#F6465D',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  marginBottom: 12,
+                }}
+              >
+                B
+              </div>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
+                100 CNC Bonus
+              </div>
+              <div style={{ color: '#8A919E', fontSize: 13 }}>
+                Free for every new user
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* BE AMONG THE FIRST 1000 HOLDERS */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #001a8c 0%, #0052FF 100%)',
+            borderRadius: 16,
+            padding: 32,
+            marginBottom: 24,
+            textAlign: 'center',
+            border: '2px solid #FFD700',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: -30,
+              right: -30,
+              width: 120,
+              height: 120,
+              borderRadius: '50%',
+              background: 'rgba(255,215,0,0.15)',
+            }}
+          />
+
+          <div
+            style={{
+              color: '#FFD700',
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: '2px',
+              marginBottom: 12,
+            }}
+          >
+            EARLY SUPPORTER ACCESS
+          </div>
+
+          <h2
+            style={{
+              color: '#fff',
+              fontSize: 28,
+              fontWeight: 800,
+              margin: '0 0 12px 0',
+              lineHeight: 1.2,
+            }}
+          >
+            Be Among the First 1,000 Holders
+          </h2>
+
+          <p
+            style={{
+              color: '#a0c4ff',
+              fontSize: 15,
+              margin: '0 auto 24px',
+              maxWidth: 480,
+            }}
+          >
+            Get founder status when you buy CNC during presale. Limited time
+            offer ends when phase closes.
+          </p>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: 12,
+              marginBottom: 24,
+              maxWidth: 600,
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,215,0,0.3)',
+                borderRadius: 10,
+                padding: 14,
+                textAlign: 'left',
+              }}
+            >
+              <div style={{ color: '#FFD700', fontSize: 11, fontWeight: 700 }}>
+                FOUNDER BADGE
+              </div>
+              <div style={{ color: '#fff', fontSize: 13, marginTop: 4 }}>
+                Permanent profile badge
+              </div>
+            </div>
+            <div
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,215,0,0.3)',
+                borderRadius: 10,
+                padding: 14,
+                textAlign: 'left',
+              }}
+            >
+              <div style={{ color: '#FFD700', fontSize: 11, fontWeight: 700 }}>
+                50% PRESALE DISCOUNT
+              </div>
+              <div style={{ color: '#fff', fontSize: 13, marginTop: 4 }}>
+                Buy at $0.05 vs $0.10 launch
+              </div>
+            </div>
+            <div
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,215,0,0.3)',
+                borderRadius: 10,
+                padding: 14,
+                textAlign: 'left',
+              }}
+            >
+              <div style={{ color: '#FFD700', fontSize: 11, fontWeight: 700 }}>
+                PRIORITY SUPPORT
+              </div>
+              <div style={{ color: '#fff', fontSize: 13, marginTop: 4 }}>
+                Faster response times
+              </div>
+            </div>
+            <div
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,215,0,0.3)',
+                borderRadius: 10,
+                padding: 14,
+                textAlign: 'left',
+              }}
+            >
+              <div style={{ color: '#FFD700', fontSize: 11, fontWeight: 700 }}>
+                EARLY FEATURE ACCESS
+              </div>
+              <div style={{ color: '#fff', fontSize: 13, marginTop: 4 }}>
+                Test new features first
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              document
+                .querySelector('.presale-card')
+                ?.scrollIntoView({ behavior: 'smooth' })
+            }}
+            style={{
+              background: '#FFD700',
+              color: '#000',
+              border: 'none',
+              borderRadius: 12,
+              padding: '14px 32px',
+              fontSize: 15,
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Get my CNC now
+          </button>
+        </div>
+
         {/* PRESALE CARD */}
-        <div className="rounded-2xl p-6 sm:p-8 mb-8" style={{ background: '#141519', border: `2px solid ${GOLD}` }}>
+        <div className="presale-card rounded-2xl p-6 sm:p-8 mb-8" style={{ background: '#141519', border: `2px solid ${GOLD}` }}>
           <div className="flex items-center gap-3 mb-2 flex-wrap">
             <h2 className="text-2xl font-bold text-white tracking-tight">Buy CNC at Presale Price</h2>
             <PresaleLiveBadge />

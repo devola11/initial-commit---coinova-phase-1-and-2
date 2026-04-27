@@ -67,7 +67,7 @@ function DemoCard() {
   )
 }
 
-function WalletCardInner({ onFund }) {
+function WalletCardInner({ onFund, onWithdraw }) {
   const { wallet } = usePortfolio()
   const { kycStatus } = useKycStatus()
   const balance = Number(wallet?.wallet_balance || 0)
@@ -105,13 +105,26 @@ function WalletCardInner({ onFund }) {
           Complete KYC to fund
         </Link>
       ) : (
-        <button
-          onClick={onFund}
-          className="px-4 py-2.5 rounded-lg text-sm font-semibold transition-opacity border-none cursor-pointer whitespace-nowrap"
-          style={{ background: '#0052FF', color: '#FFFFFF' }}
-        >
-          + Fund Wallet
-        </button>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={onFund}
+            className="px-3 py-2.5 rounded-lg text-sm font-semibold transition-opacity border-none cursor-pointer whitespace-nowrap"
+            style={{ background: '#0052FF', color: '#FFFFFF' }}
+          >
+            + Fund
+          </button>
+          <button
+            onClick={onWithdraw}
+            className="px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer whitespace-nowrap"
+            style={{
+              background: 'transparent',
+              color: '#0052FF',
+              border: '1px solid #0052FF',
+            }}
+          >
+            Withdraw
+          </button>
+        </div>
       )}
       <div className="text-[11px] text-text-muted">
         {balance > 0 ? 'Ready for real trading' : 'Fund with real crypto'}
@@ -120,13 +133,13 @@ function WalletCardInner({ onFund }) {
   )
 }
 
-export default function WalletCard() {
+export default function WalletCard({ onWithdraw }) {
   const [fundOpen, setFundOpen] = useState(false)
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <DemoCard />
-        <WalletCardInner onFund={() => setFundOpen(true)} />
+        <WalletCardInner onFund={() => setFundOpen(true)} onWithdraw={onWithdraw} />
       </div>
       {fundOpen && <FundWalletModal onClose={() => setFundOpen(false)} />}
     </>

@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext'
 const COUNTRIES = [
   { flag: '\u{1F1FA}\u{1F1F8}', name: 'United States' },
   { flag: '\u{1F1EC}\u{1F1E7}', name: 'United Kingdom' },
-  { flag: '\u{1F1F3}\u{1F1EC}', name: 'Nigeria' },
   { flag: '\u{1F1E9}\u{1F1EA}', name: 'Germany' },
   { flag: '\u{1F1EB}\u{1F1F7}', name: 'France' },
   { flag: '\u{1F1E8}\u{1F1E6}', name: 'Canada' },

@@ -36,6 +36,7 @@ import Privacy from './pages/Privacy'
 import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
 import MyTickets from './pages/MyTickets'
+import MyWithdrawals from './pages/MyWithdrawals'
 import SupportButton from './components/SupportButton'
 import CNCPromoBanner from './components/CNCPromoBanner'
 
@@ -203,6 +204,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <MyTickets />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-withdrawals"
+                element={
+                  <ProtectedRoute>
+                    <MyWithdrawals />
                   </ProtectedRoute>
                 }
               />

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { usePortfolio } from '../context/PortfolioContext'
 import WalletCard from '../components/WalletCard'
 import AccountToggle from '../components/AccountToggle'
 import StatCard from '../components/StatCard'
@@ -10,6 +11,7 @@ import AllocationChart from '../components/AllocationChart'
 import HoldingsTable from '../components/HoldingsTable'
 import BuyModal from '../components/BuyModal'
 import SellModal from '../components/SellModal'
+import WithdrawModal from '../components/WithdrawModal'
 import CoinSearch from '../components/CoinSearch'
 import SavingsGoal from '../components/SavingsGoal'
 import FearGreedIndex from '../components/FearGreedIndex'
@@ -392,12 +394,33 @@ function WatchlistWidget() {
 }
 
 export default function Dashboard() {
+  const { user } = useAuth()
   const { mode } = useAccountMode()
   const { holdings, totalValue, totalPnl, totalPnlPercent } = useHoldings({ mode })
+  const { wallet } = usePortfolio()
   const { t } = useLanguage()
   const [buyCoin, setBuyCoin] = useState(null)
   const [sellHolding, setSellHolding] = useState(null)
   const [showSearch, setShowSearch] = useState(false)
+  const [showWithdraw, setShowWithdraw] = useState(false)
+  const [cncBalance, setCncBalance] = useState(0)
+
+  const walletBalance = Number(wallet?.wallet_balance || 0)
+
+  useEffect(() => {
+    if (!user) return
+    let cancelled = false
+    async function loadCnc() {
+      const { data } = await supabase
+        .from('cnc_holdings')
+        .select('quantity')
+        .eq('user_id', user.id)
+        .maybeSingle()
+      if (!cancelled) setCncBalance(Number(data?.quantity) || 0)
+    }
+    loadCnc()
+    return () => { cancelled = true }
+  }, [user, showWithdraw])
 
   const change24h = holdings.reduce(
     (sum, h) => sum + h.currentValue * (h.change24h / 100),
@@ -421,7 +444,7 @@ export default function Dashboard() {
       <PINPromptBanner />
 
       <div className="mb-4">
-        <WalletCard />
+        <WalletCard onWithdraw={() => setShowWithdraw(true)} />
       </div>
       <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
         <AccountToggle />
@@ -525,6 +548,13 @@ export default function Dashboard() {
       {buyCoin && <BuyModal coin={buyCoin} onClose={() => setBuyCoin(null)} />}
       {sellHolding && (
         <SellModal holding={sellHolding} onClose={() => setSellHolding(null)} />
+      )}
+      {showWithdraw && (
+        <WithdrawModal
+          onClose={() => setShowWithdraw(false)}
+          walletBalance={walletBalance}
+          cncBalance={cncBalance}
+        />
       )}
     </div>
   )

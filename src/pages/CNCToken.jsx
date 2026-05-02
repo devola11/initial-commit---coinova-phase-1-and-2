@@ -235,7 +235,6 @@ function useCountdown() {
   })
 
   useEffect(() => {
-    localStorage.removeItem('cnc-presale-end')
     let endDate = localStorage.getItem('cnc-presale-end')
 
     if (!endDate) {

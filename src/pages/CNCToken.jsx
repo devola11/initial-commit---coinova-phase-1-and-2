@@ -224,21 +224,22 @@ function PhaseRow({ phase }) {
   )
 }
 
-const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000
+const ONE_EIGHTY_DAYS_MS = 180 * 24 * 60 * 60 * 1000
 
 function useCountdown() {
   const [countdown, setCountdown] = useState({
-    days: 90,
+    days: 180,
     hours: 0,
     minutes: 0,
     seconds: 0,
   })
 
   useEffect(() => {
+    localStorage.removeItem('cnc-presale-end')
     let endDate = localStorage.getItem('cnc-presale-end')
 
     if (!endDate) {
-      endDate = String(Date.now() + NINETY_DAYS_MS)
+      endDate = String(Date.now() + ONE_EIGHTY_DAYS_MS)
       localStorage.setItem('cnc-presale-end', endDate)
     }
 
@@ -249,10 +250,10 @@ function useCountdown() {
       const distance = targetTime - now
 
       if (distance < 0) {
-        const newEnd = Date.now() + NINETY_DAYS_MS
+        const newEnd = Date.now() + ONE_EIGHTY_DAYS_MS
         localStorage.setItem('cnc-presale-end', String(newEnd))
         targetTime = newEnd
-        return { days: 90, hours: 0, minutes: 0, seconds: 0 }
+        return { days: 180, hours: 0, minutes: 0, seconds: 0 }
       }
 
       return {

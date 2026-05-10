@@ -1,19 +1,69 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
 import { supabase } from '../lib/supabase'
 import { useCNCToken } from '../hooks/useCNCToken'
+import { useCryptoPrices } from '../hooks/useCryptoPrices'
 import { useAuth } from '../context/AuthContext'
 import { formatUSD, formatNumber } from '../utils/formatters'
-import InvestModal from '../components/InvestModal'
-import { INVEST_WALLETS } from './Invest'
+import { logActivity } from '../utils/activityLogger'
+import PriceLockTimer from '../components/PriceLockTimer'
 import cncLogo from '../assets/cnc-logo.png'
+
+const WALLETS = {
+  btc: 'bc1qmc3umarwy6hfgql8rsuc5njuv0dpxzmkdh0pvl',
+  eth: '0x52C50eb16a1a565e446EDBBE337B0D8e47bfb458',
+  usdt_trc20: 'TMKLBuSegAg4e1QvsjpsTgWrqKLfgx4gca',
+}
+
+const NETWORKS = {
+  btc: 'Bitcoin Network',
+  eth: 'Ethereum Network (ERC-20)',
+  usdt_trc20: 'Tron Network (TRC-20)',
+}
+
+const SYMBOLS = {
+  btc: 'BTC',
+  eth: 'ETH',
+  usdt_trc20: 'USDT',
+}
+
+const EXPLORER_URLS = {
+  btc: 'https://blockchain.com/explorer/transactions/btc/',
+  eth: 'https://etherscan.io/tx/',
+  usdt_trc20: 'https://tronscan.org/#/transaction/',
+}
+
+const PAYMENT_METHODS = [
+  {
+    id: 'btc',
+    label: 'Bitcoin',
+    symbol: 'BTC',
+    color: '#F7931A',
+    description: 'Most popular globally',
+  },
+  {
+    id: 'usdt_trc20',
+    label: 'USDT',
+    symbol: 'TRC-20',
+    color: '#26A17B',
+    description: 'Stable, no volatility',
+  },
+  {
+    id: 'eth',
+    label: 'Ethereum',
+    symbol: 'ETH',
+    color: '#627EEA',
+    description: 'Popular in US/Europe',
+  },
+]
+
+const CNC_PRICE = 0.05
 
 const GOLD = '#FFD700'
 const BLUE = '#0052FF'
 const GREEN = '#05B169'
 const GREY = '#8A919E'
-
-const QUICK_AMOUNTS = [10, 50, 100, 500, 1000]
 
 const PRESALE_PRICE = 0.05
 const LAUNCH_PRICE = 0.10
@@ -314,21 +364,137 @@ function usePlatformStats() {
 export default function CNCToken() {
   const { user } = useAuth()
   const cnc = useCNCToken()
-  const [usd, setUsd] = useState('')
-  const [showInvest, setShowInvest] = useState(false)
+  const prices = useCryptoPrices()
   const countdown = useCountdown()
 
-  const usdAmount = Number(usd) || 0
-  const receiveQty = cnc.price > 0 && usdAmount > 0 ? usdAmount / cnc.price : 0
   const positive = (Number(cnc.change_24h) || 0) >= 0
 
-  const investCoin = {
-    id: 'coinova-coin',
-    name: 'Coinova Coin',
-    symbol: 'CNC',
-    image: '/cnc-logo-192.png',
-    current_price: cnc.price,
-    wallet_used: 'usdt_trc20',
+  const [paymentMethod, setPaymentMethod] = useState('btc')
+  const [usdAmount, setUsdAmount] = useState('')
+  const [txHash, setTxHash] = useState('')
+  const [priceLockTime, setPriceLockTime] = useState(null)
+  const [lockedPrices, setLockedPrices] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  const getCNCAmount = () => {
+    const usd = parseFloat(usdAmount) || 0
+    return Math.floor(usd / CNC_PRICE)
+  }
+
+  const getCryptoAmount = () => {
+    const usd = parseFloat(usdAmount) || 0
+    const currentPrices = lockedPrices || prices
+    if (paymentMethod === 'btc') {
+      if (!currentPrices.BTC) return '0'
+      return (usd / currentPrices.BTC).toFixed(8)
+    }
+    if (paymentMethod === 'eth') {
+      if (!currentPrices.ETH) return '0'
+      return (usd / currentPrices.ETH).toFixed(6)
+    }
+    return usd.toFixed(2)
+  }
+
+  const handleLockPrice = () => {
+    if (paymentMethod !== 'usdt_trc20' && !priceLockTime) {
+      setLockedPrices({ BTC: prices.BTC, ETH: prices.ETH })
+      setPriceLockTime(Date.now())
+    }
+  }
+
+  const handlePriceExpire = () => {
+    setLockedPrices(null)
+    setPriceLockTime(null)
+  }
+
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(WALLETS[paymentMethod])
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handlePaymentMethodChange = (methodId) => {
+    setPaymentMethod(methodId)
+    setLockedPrices(null)
+    setPriceLockTime(null)
+    setUsdAmount('')
+    setError('')
+  }
+
+  const handleSubmit = async () => {
+    setError('')
+
+    if (!user) {
+      setError('Please login to buy CNC')
+      return
+    }
+
+    const usd = parseFloat(usdAmount)
+    if (!usdAmount || usd < 10) {
+      setError('Minimum purchase is $10')
+      return
+    }
+
+    if (!txHash || txHash.trim().length < 20) {
+      setError('Please enter a valid transaction hash')
+      return
+    }
+
+    setSubmitting(true)
+
+    try {
+      const { count } = await supabase
+        .from('investment_requests')
+        .select('*', { count: 'exact', head: true })
+
+      const num = String((count || 0) + 1).padStart(4, '0')
+      const reqNum = 'CNC-2026-' + num
+
+      const currentPrices = lockedPrices || prices
+      const cryptoAmount = getCryptoAmount()
+      const explorerLink = EXPLORER_URLS[paymentMethod] + txHash.trim()
+
+      const { error: dbError } = await supabase
+        .from('investment_requests')
+        .insert({
+          user_id: user.id,
+          coin_id: 'coinova-coin',
+          coin_name: 'Coinova Coin',
+          coin_symbol: 'CNC',
+          amount_usd: usd,
+          tx_hash: txHash.trim(),
+          status: 'pending',
+          payment_method: paymentMethod,
+          wallet_used: paymentMethod,
+          crypto_price_at_submission:
+            paymentMethod === 'btc' ? currentPrices.BTC :
+            paymentMethod === 'eth' ? currentPrices.ETH : 1,
+          crypto_amount_sent: parseFloat(cryptoAmount),
+          price_locked_until: priceLockTime
+            ? new Date(priceLockTime + 3600000).toISOString()
+            : null,
+          explorer_link: explorerLink,
+          request_number: reqNum,
+        })
+
+      if (dbError) throw dbError
+
+      await logActivity({
+        userId: user.id,
+        action: 'cnc_purchase_submitted',
+        description: `CNC purchase: $${usd} via ${SYMBOLS[paymentMethod]}`,
+        metadata: { usd, method: paymentMethod, txHash: txHash.trim() },
+      })
+
+      setSubmitted(true)
+    } catch (err) {
+      setError(err.message || 'Failed to submit. Try again.')
+    }
+
+    setSubmitting(false)
   }
 
   return (
@@ -806,110 +972,616 @@ export default function CNCToken() {
         </div>
 
         {/* PRESALE CARD */}
-        <div className="presale-card rounded-2xl p-6 sm:p-8 mb-8" style={{ background: '#141519', border: `2px solid ${GOLD}` }}>
-          <div className="flex items-center gap-3 mb-2 flex-wrap">
-            <h2 className="text-2xl font-bold text-white tracking-tight">Buy CNC at Presale Price</h2>
-            <PresaleLiveBadge />
-          </div>
-          <p className="text-[#8A8F98] mb-6">Get 50% discount before launch</p>
+        <div className="presale-card" style={{
+          background: '#141519',
+          border: '2px solid #FFD700',
+          borderRadius: 20,
+          padding: 28,
+          marginBottom: 24,
+        }}>
+          {!submitted ? (
+            <>
+              <h2 style={{ color: '#fff', margin: '0 0 4px 0', fontSize: 22, fontWeight: 700 }}>
+                Buy Coinova Coin (CNC)
+              </h2>
+              <p style={{ color: '#8A919E', margin: '0 0 16px 0', fontSize: 14 }}>
+                Presale price $0.05 - 50% off launch price
+              </p>
 
-          {/* Countdown timer */}
-          <div className="text-[10px] uppercase tracking-widest mb-2 font-medium" style={{ color: '#8A8F98' }}>
-            Presale ends in
-          </div>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: 8,
-              marginBottom: 24,
-            }}
-          >
-            <CountdownBox value={countdown.days} label="Days" />
-            <CountdownBox value={countdown.hours} label="Hours" />
-            <CountdownBox value={countdown.minutes} label="Minutes" />
-            <CountdownBox value={countdown.seconds} label="Seconds" />
-          </div>
+              {/* Countdown timer */}
+              <div className="text-[10px] uppercase tracking-widest mb-2 font-medium" style={{ color: '#8A8F98' }}>
+                Presale ends in
+              </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: 8,
+                marginBottom: 24,
+              }}>
+                <CountdownBox value={countdown.days} label="Days" />
+                <CountdownBox value={countdown.hours} label="Hours" />
+                <CountdownBox value={countdown.minutes} label="Minutes" />
+                <CountdownBox value={countdown.seconds} label="Seconds" />
+              </div>
 
-          {/* Price comparison */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="rounded-lg p-4" style={{ background: '#0A0B0D', border: '1px solid #1E2025' }}>
-              <div className="text-[10px] uppercase tracking-widest text-[#8A8F98] mb-1">Presale Price</div>
-              <div className="text-xl font-bold" style={{ color: GOLD }}>{formatUSD(cnc.price)}</div>
-            </div>
-            <div className="rounded-lg p-4" style={{ background: '#0A0B0D', border: '1px solid #1E2025' }}>
-              <div className="text-[10px] uppercase tracking-widest text-[#8A8F98] mb-1">Launch Price</div>
-              <div className="text-xl font-bold text-white">{formatUSD(cnc.launch_price)}</div>
-            </div>
-          </div>
+              {/* PAYMENT METHOD SELECTOR */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{
+                  color: '#8A919E',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '1px',
+                  marginBottom: 10,
+                }}>
+                  SELECT PAYMENT METHOD
+                </div>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 8,
+                }}>
+                  {PAYMENT_METHODS.map((method) => (
+                    <button
+                      key={method.id}
+                      onClick={() => handlePaymentMethodChange(method.id)}
+                      style={{
+                        padding: '14px 8px',
+                        background: paymentMethod === method.id ? method.color + '20' : '#0A0B0D',
+                        border: `2px solid ${paymentMethod === method.id ? method.color : '#1E2025'}`,
+                        borderRadius: 12,
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      <div style={{
+                        color: paymentMethod === method.id ? method.color : '#fff',
+                        fontWeight: 700,
+                        fontSize: 15,
+                      }}>
+                        {method.label}
+                      </div>
+                      <div style={{ color: '#8A919E', fontSize: 10, marginTop: 2 }}>
+                        {method.symbol}
+                      </div>
+                      {method.id === 'btc' && (
+                        <div style={{
+                          background: '#F7931A',
+                          color: '#000',
+                          fontSize: 9,
+                          fontWeight: 700,
+                          padding: '2px 6px',
+                          borderRadius: 4,
+                          marginTop: 4,
+                          display: 'inline-block',
+                        }}>
+                          POPULAR
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          {/* Why buy now */}
-          <div
-            className="rounded-xl mb-6"
-            style={{ background: '#0A0B0D', border: '1px solid #1E2025', padding: 20 }}
-          >
-            <div className="text-white font-semibold mb-3">Why buy now</div>
-            <ul style={{ margin: 0, paddingLeft: 20, color: '#E0E2E6' }} className="space-y-1.5 text-sm">
-              <li>100% potential gain at launch ($0.05 → $0.10)</li>
-              <li>Early supporter benefits</li>
-              <li>Limited time presale</li>
-            </ul>
-          </div>
+              {/* LIVE PRICE FOR BTC AND ETH */}
+              {paymentMethod !== 'usdt_trc20' && (
+                <div style={{
+                  background: '#0A0B0D',
+                  border: '1px solid #1E2025',
+                  borderRadius: 10,
+                  padding: '12px 16px',
+                  marginBottom: 16,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                  <div>
+                    <div style={{ color: '#8A919E', fontSize: 11, fontWeight: 600 }}>
+                      LIVE {SYMBOLS[paymentMethod]} PRICE
+                    </div>
+                    <div style={{ color: '#fff', fontWeight: 700, fontSize: 20, marginTop: 2 }}>
+                      {prices.loading
+                        ? 'Loading...'
+                        : '$' + (paymentMethod === 'btc'
+                            ? (lockedPrices?.BTC || prices.BTC)?.toLocaleString()
+                            : (lockedPrices?.ETH || prices.ETH)?.toLocaleString())
+                      }
+                    </div>
+                  </div>
+                  <div style={{ color: '#8A919E', fontSize: 11, textAlign: 'right' }}>
+                    {lockedPrices ? 'Price locked' : 'Updates every 60s'}
+                  </div>
+                </div>
+              )}
 
-          <label className="block text-xs uppercase tracking-widest text-[#8A8F98] mb-2 font-medium">
-            Amount (USD)
-          </label>
-          <input
-            type="number"
-            min="0"
-            value={usd}
-            onChange={(e) => setUsd(e.target.value)}
-            placeholder="0.00"
-            className="w-full rounded-lg px-4 py-3 text-lg text-white placeholder-[#50555c] focus:outline-none transition-colors"
-            style={{ background: '#0A0B0D', border: '1px solid #1E2025' }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = GOLD)}
-            onBlur={(e) => (e.currentTarget.style.borderColor = '#1E2025')}
-          />
+              {/* USD AMOUNT */}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{
+                  color: '#8A919E',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  display: 'block',
+                  marginBottom: 8,
+                }}>
+                  HOW MUCH DO YOU WANT TO SPEND? (USD)
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <span style={{
+                    position: 'absolute',
+                    left: 16,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#8A919E',
+                    fontSize: 18,
+                    fontWeight: 700,
+                  }}>$</span>
+                  <input
+                    type="number"
+                    value={usdAmount}
+                    onChange={(e) => setUsdAmount(e.target.value)}
+                    onFocus={handleLockPrice}
+                    placeholder="0.00"
+                    min="10"
+                    style={{
+                      width: '100%',
+                      padding: '16px 16px 16px 36px',
+                      background: '#0A0B0D',
+                      border: '1px solid #1E2025',
+                      borderRadius: 12,
+                      color: '#fff',
+                      fontSize: 20,
+                      fontWeight: 700,
+                    }}
+                  />
+                </div>
 
-          <div className="flex gap-2 mt-3 flex-wrap">
-            {QUICK_AMOUNTS.map((amt) => (
+                {/* QUICK AMOUNTS */}
+                <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                  {[10, 25, 50, 100, 250, 500, 1000].map((amt) => (
+                    <button
+                      key={amt}
+                      onClick={() => {
+                        setUsdAmount(amt.toString())
+                        handleLockPrice()
+                      }}
+                      style={{
+                        padding: '6px 14px',
+                        background: parseFloat(usdAmount) === amt ? '#FFD70020' : '#0A0B0D',
+                        border: `1px solid ${parseFloat(usdAmount) === amt ? '#FFD700' : '#1E2025'}`,
+                        borderRadius: 6,
+                        color: parseFloat(usdAmount) === amt ? '#FFD700' : '#8A919E',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ${amt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* CALCULATION SUMMARY */}
+              {usdAmount && parseFloat(usdAmount) >= 10 && (
+                <div style={{
+                  background: '#0A0B0D',
+                  border: '1px solid #FFD700',
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 16,
+                }}>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    gap: 12,
+                    textAlign: 'center',
+                  }}>
+                    <div>
+                      <div style={{ color: '#8A919E', fontSize: 11, fontWeight: 600 }}>
+                        YOU PAY
+                      </div>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 4 }}>
+                        {paymentMethod === 'usdt_trc20'
+                          ? `$${parseFloat(usdAmount).toFixed(2)}`
+                          : `${getCryptoAmount()} ${SYMBOLS[paymentMethod]}`
+                        }
+                      </div>
+                    </div>
+                    <div style={{ borderLeft: '1px solid #1E2025', borderRight: '1px solid #1E2025' }}>
+                      <div style={{ color: '#8A919E', fontSize: 11, fontWeight: 600 }}>
+                        AT PRICE
+                      </div>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 4 }}>
+                        $0.05/CNC
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ color: '#8A919E', fontSize: 11, fontWeight: 600 }}>
+                        YOU RECEIVE
+                      </div>
+                      <div style={{ color: '#FFD700', fontWeight: 800, fontSize: 18, marginTop: 4 }}>
+                        {getCNCAmount().toLocaleString()} CNC
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* PRICE LOCK TIMER */}
+              {priceLockTime && paymentMethod !== 'usdt_trc20' && (
+                <div style={{ marginBottom: 16 }}>
+                  <PriceLockTimer
+                    lockedAt={priceLockTime}
+                    onExpire={handlePriceExpire}
+                  />
+                </div>
+              )}
+
+              {/* WALLET + QR CODE */}
+              <div style={{
+                background: '#0A0B0D',
+                border: '1px solid #1E2025',
+                borderRadius: 14,
+                padding: 20,
+                marginBottom: 16,
+              }}>
+                <div style={{
+                  color: '#8A919E',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '1px',
+                  marginBottom: 16,
+                }}>
+                  SEND {SYMBOLS[paymentMethod]} TO THIS ADDRESS ({NETWORKS[paymentMethod]})
+                </div>
+
+                {/* QR CODE */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                  <div style={{ background: '#fff', padding: 16, borderRadius: 12 }}>
+                    <QRCodeSVG
+                      value={WALLETS[paymentMethod]}
+                      size={180}
+                      level="M"
+                    />
+                  </div>
+                </div>
+
+                {/* WALLET ADDRESS */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  background: '#141519',
+                  border: '1px solid #1E2025',
+                  borderRadius: 10,
+                  padding: '12px 14px',
+                  marginBottom: 12,
+                }}>
+                  <span style={{
+                    color: '#fff',
+                    fontSize: 12,
+                    fontFamily: 'monospace',
+                    flex: 1,
+                    wordBreak: 'break-all',
+                    lineHeight: 1.5,
+                  }}>
+                    {WALLETS[paymentMethod]}
+                  </span>
+                  <button
+                    onClick={handleCopyAddress}
+                    style={{
+                      background: copied ? '#05B169' : '#0052FF',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 8,
+                      padding: '8px 14px',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                      transition: 'background 0.2s',
+                    }}
+                  >
+                    {copied ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+
+                {/* NETWORK WARNING */}
+                <div style={{
+                  background: '#F59E0B10',
+                  border: '1px solid #F59E0B',
+                  borderRadius: 8,
+                  padding: 10,
+                  color: '#F59E0B',
+                  fontSize: 12,
+                  display: 'flex',
+                  gap: 8,
+                  alignItems: 'flex-start',
+                }}>
+                  <span style={{ flexShrink: 0 }}>!</span>
+                  <span>
+                    Send ONLY {SYMBOLS[paymentMethod]} on the {NETWORKS[paymentMethod]}.
+                    Sending wrong coin or wrong network will result in permanent loss of funds.
+                  </span>
+                </div>
+              </div>
+
+              {/* TX HASH INPUT */}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{
+                  color: '#8A919E',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  display: 'block',
+                  marginBottom: 8,
+                }}>
+                  TRANSACTION HASH (paste after sending)
+                </label>
+                <input
+                  type="text"
+                  value={txHash}
+                  onChange={(e) => setTxHash(e.target.value)}
+                  placeholder="Paste your TX hash here..."
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    background: '#0A0B0D',
+                    border: '1px solid #1E2025',
+                    borderRadius: 10,
+                    color: '#fff',
+                    fontSize: 12,
+                    fontFamily: 'monospace',
+                  }}
+                />
+                <div style={{ color: '#8A919E', fontSize: 11, marginTop: 6 }}>
+                  Verify your transaction on{' '}
+                  {paymentMethod === 'btc' && (
+                    <a
+                      href="https://blockchain.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#0052FF' }}
+                    >
+                      blockchain.com
+                    </a>
+                  )}
+                  {paymentMethod === 'eth' && (
+                    <a
+                      href="https://etherscan.io"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#0052FF' }}
+                    >
+                      etherscan.io
+                    </a>
+                  )}
+                  {paymentMethod === 'usdt_trc20' && (
+                    <a
+                      href="https://tronscan.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#0052FF' }}
+                    >
+                      tronscan.org
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* ERROR MESSAGE */}
+              {error && (
+                <div style={{
+                  padding: 14,
+                  background: '#F6465D15',
+                  border: '1px solid #F6465D',
+                  borderRadius: 10,
+                  color: '#F6465D',
+                  fontSize: 14,
+                  marginBottom: 16,
+                }}>
+                  {error}
+                </div>
+              )}
+
+              {/* LOGIN PROMPT */}
+              {!user && (
+                <div style={{
+                  background: '#0052FF15',
+                  border: '1px solid #0052FF',
+                  borderRadius: 10,
+                  padding: 14,
+                  marginBottom: 16,
+                  textAlign: 'center',
+                  fontSize: 14,
+                }}>
+                  <Link to="/login" style={{ color: '#0052FF', fontWeight: 700 }}>
+                    Login
+                  </Link>
+                  {' '}or{' '}
+                  <Link to="/register" style={{ color: '#0052FF', fontWeight: 700 }}>
+                    Create account
+                  </Link>
+                  {' '}to buy CNC
+                </div>
+              )}
+
+              {/* SUBMIT BUTTON */}
               <button
-                key={amt}
-                onClick={() => setUsd(String(amt))}
-                className="flex-1 min-w-[60px] px-2 py-2 rounded-lg text-white text-xs font-semibold bg-transparent cursor-pointer transition-colors"
-                style={{ border: '1px solid #1E2025' }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = GOLD)}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1E2025')}
+                onClick={handleSubmit}
+                disabled={submitting || !usdAmount || !txHash || parseFloat(usdAmount) < 10}
+                style={{
+                  width: '100%',
+                  padding: 18,
+                  background: (submitting || !usdAmount || !txHash) ? '#1E2025' : '#FFD700',
+                  color: (submitting || !usdAmount || !txHash) ? '#8A919E' : '#000',
+                  border: 'none',
+                  borderRadius: 12,
+                  fontSize: 16,
+                  fontWeight: 800,
+                  cursor: (submitting || !usdAmount || !txHash) ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                }}
               >
-                ${amt}
+                {submitting
+                  ? 'Submitting...'
+                  : user
+                    ? 'Submit Payment'
+                    : 'Login to Buy CNC'
+                }
               </button>
-            ))}
-          </div>
 
-          <div className="mt-5 rounded-lg p-4 text-sm" style={{ background: '#0A0B0D', border: '1px solid #1E2025' }}>
-            <div className="flex justify-between">
-              <span className="text-[#8A8F98]">You will receive</span>
-              <span className="font-semibold" style={{ color: GOLD }}>
-                {receiveQty > 0 ? formatNumber(receiveQty, 2) : '0'} CNC
-              </span>
-            </div>
-          </div>
+              <div style={{ textAlign: 'center', marginTop: 12, color: '#8A919E', fontSize: 12 }}>
+                Processing time: Up to 24 hours after submission
+              </div>
+            </>
+          ) : (
+            /* SUCCESS STATE */
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <div style={{
+                width: 80,
+                height: 80,
+                borderRadius: '50%',
+                background: '#05B16920',
+                border: '2px solid #05B169',
+                margin: '0 auto 24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 40,
+                color: '#05B169',
+              }}>
+                ✓
+              </div>
 
-          <button
-            onClick={() => setShowInvest(true)}
-            disabled={!user || usdAmount <= 0}
-            className="w-full mt-5 py-3.5 rounded-lg text-white text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors border-none"
-            style={{ background: BLUE }}
-            onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.background = '#0046D9')}
-            onMouseLeave={(e) => !e.currentTarget.disabled && (e.currentTarget.style.background = BLUE)}
-          >
-            {user ? 'Buy CNC' : 'Sign in to buy'}
-          </button>
-          {!user && (
-            <div className="text-center mt-3">
-              <Link to="/register" className="text-sm font-semibold" style={{ color: GOLD }}>
-                Create an account →
-              </Link>
+              <h3 style={{ color: '#fff', margin: '0 0 8px 0', fontSize: 24, fontWeight: 700 }}>
+                Payment Submitted!
+              </h3>
+
+              <p style={{ color: '#8A919E', marginBottom: 24, fontSize: 15 }}>
+                We will verify and credit your CNC within 24 hours
+              </p>
+
+              <div style={{
+                background: '#0A0B0D',
+                border: '1px solid #FFD700',
+                borderRadius: 14,
+                padding: 20,
+                marginBottom: 24,
+                textAlign: 'left',
+              }}>
+                <div style={{
+                  color: '#FFD700',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '1px',
+                  marginBottom: 16,
+                }}>
+                  PURCHASE SUMMARY
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 0',
+                  borderBottom: '1px solid #1E2025',
+                }}>
+                  <span style={{ color: '#8A919E' }}>Amount paid</span>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>
+                    ${parseFloat(usdAmount).toFixed(2)} USD
+                  </span>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 0',
+                  borderBottom: '1px solid #1E2025',
+                }}>
+                  <span style={{ color: '#8A919E' }}>Paid with</span>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>
+                    {SYMBOLS[paymentMethod]} ({NETWORKS[paymentMethod]})
+                  </span>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 0',
+                  borderBottom: '1px solid #1E2025',
+                }}>
+                  <span style={{ color: '#8A919E' }}>CNC price</span>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>$0.05 per CNC</span>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '12px 0 0',
+                }}>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>CNC to receive</span>
+                  <span style={{ color: '#FFD700', fontWeight: 800, fontSize: 20 }}>
+                    {getCNCAmount().toLocaleString()} CNC
+                  </span>
+                </div>
+              </div>
+
+              <div style={{
+                background: '#05B16910',
+                border: '1px solid #05B169',
+                borderRadius: 10,
+                padding: 12,
+                color: '#05B169',
+                fontSize: 13,
+                marginBottom: 24,
+              }}>
+                You will receive an email confirmation once your payment is verified.
+              </div>
+
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={() => {
+                    setSubmitted(false)
+                    setTxHash('')
+                    setUsdAmount('')
+                    setPriceLockTime(null)
+                    setLockedPrices(null)
+                    setError('')
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: 14,
+                    background: '#FFD700',
+                    color: '#000',
+                    border: 'none',
+                    borderRadius: 10,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Buy More CNC
+                </button>
+                <Link
+                  to="/dashboard"
+                  style={{
+                    flex: 1,
+                    padding: 14,
+                    background: '#1E2025',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 10,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  Go to Dashboard
+                </Link>
+              </div>
             </div>
           )}
         </div>
@@ -1156,14 +1828,6 @@ export default function CNCToken() {
           <HowToBuyStep n={5} title="Submit TX hash" desc="Receive your CNC within 24 hours after verification." />
         </div>
       </div>
-
-      {showInvest && (
-        <InvestModal
-          coin={investCoin}
-          wallets={INVEST_WALLETS}
-          onClose={() => setShowInvest(false)}
-        />
-      )}
     </div>
   )
 }

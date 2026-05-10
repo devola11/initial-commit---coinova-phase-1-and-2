@@ -273,7 +273,7 @@ export default function LandingPage() {
 
       {/* ── Features ───────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* Card 1 */}
           <div className="p-8 rounded-2xl bg-white border border-gray-100" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: '#EBF0FF' }}>
@@ -297,6 +297,15 @@ export default function LandingPage() {
             </div>
             <h3 className="text-xl font-extrabold text-black tracking-tight">Set price alerts</h3>
             <p className="mt-3 text-gray-500 leading-relaxed">Never miss a price movement. Get notified the moment any coin hits your target.</p>
+          </div>
+
+          {/* Card 4 - Multi-currency payments */}
+          <div className="p-8 rounded-2xl bg-white border border-gray-100" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: '#FFF4E0' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F7931A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 6v2m0 8v2"/></svg>
+            </div>
+            <h3 className="text-xl font-extrabold text-black tracking-tight">Pay with Bitcoin, USDT or Ethereum</h3>
+            <p className="mt-3 text-gray-500 leading-relaxed">Buy CNC and fund your account globally with BTC, USDT (TRC-20) or ETH.</p>
           </div>
         </div>
       </section>

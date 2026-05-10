@@ -618,7 +618,16 @@ Cointehera Support Team`,
                 visibleRows.map((r) => {
                   const status = (r.status || 'pending').toLowerCase()
                   const style = STATUS_STYLES[status] || STATUS_STYLES.pending
-                  const txUrl = explorerUrl(r.wallet_used, r.tx_hash)
+                  const method = (r.payment_method || r.wallet_used || '').toLowerCase()
+                  const methodBadge =
+                    method === 'btc'
+                      ? { bg: '#F7931A20', color: '#F7931A', label: 'BTC' }
+                      : method === 'eth'
+                      ? { bg: '#627EEA20', color: '#627EEA', label: 'ETH' }
+                      : method === 'usdt_trc20' || method === 'usdt'
+                      ? { bg: '#26A17B20', color: '#26A17B', label: 'USDT' }
+                      : { bg: '#1E2025', color: '#8A919E', label: (r.wallet_used || '-').toUpperCase() }
+                  const txUrl = r.explorer_link || explorerUrl(r.wallet_used, r.tx_hash)
                   const isPending = status === 'pending'
                   return (
                     <tr
@@ -636,11 +645,28 @@ Cointehera Support Team`,
                           {r.coin_symbol}
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-text-primary font-semibold">
-                        {formatUSD(r.amount_usd)}
+                      <td className="py-4 px-4">
+                        <div className="text-text-primary font-semibold">
+                          {formatUSD(r.amount_usd)}
+                        </div>
+                        {r.crypto_amount_sent != null && (
+                          <div className="text-text-muted text-[11px] mt-0.5">
+                            {Number(r.crypto_amount_sent)} {methodBadge.label}
+                          </div>
+                        )}
+                        {r.crypto_price_at_submission != null && method !== 'usdt_trc20' && method !== 'usdt' && (
+                          <div className="text-text-muted text-[10px]">
+                            @ {formatUSD(Number(r.crypto_price_at_submission))}
+                          </div>
+                        )}
                       </td>
-                      <td className="py-4 px-4 text-text-muted uppercase text-xs">
-                        {r.wallet_used}
+                      <td className="py-4 px-4">
+                        <span
+                          className="px-2 py-1 rounded text-[10px] font-bold"
+                          style={{ background: methodBadge.bg, color: methodBadge.color }}
+                        >
+                          {methodBadge.label}
+                        </span>
                       </td>
                       <td className="py-4 px-4">
                         {txUrl ? (
@@ -656,6 +682,18 @@ Cointehera Support Team`,
                           <span className="text-text-muted font-mono text-xs">
                             {truncate(r.tx_hash)}
                           </span>
+                        )}
+                        {r.explorer_link && (
+                          <div className="mt-1">
+                            <a
+                              href={r.explorer_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary-blue text-[11px] no-underline hover:underline"
+                            >
+                              Verify on blockchain
+                            </a>
+                          </div>
                         )}
                       </td>
                       <td className="py-4 px-4 text-text-muted text-xs">

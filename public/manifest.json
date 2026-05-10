@@ -1,7 +1,7 @@
 {
-  "name": "Coinova - Trade Crypto. Build Wealth.",
-  "short_name": "Coinova",
-  "description": "Buy, sell and invest in 250+ cryptocurrencies with one trusted account.",
+  "name": "Cointehera - Trade Crypto. Build Wealth.",
+  "short_name": "Cointehera",
+  "description": "Cointehera - Your trusted crypto trading and investment platform.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -92,7 +92,7 @@
       "sizes": "512x512",
       "type": "image/jpeg",
       "form_factor": "narrow",
-      "label": "Coinova Dashboard"
+      "label": "Cointehera Dashboard"
     }
   ],
   "prefer_related_applications": false

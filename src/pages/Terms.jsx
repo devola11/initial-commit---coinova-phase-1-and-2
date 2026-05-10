@@ -7,8 +7,8 @@ function Nav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 no-underline">
-            <img src={logo} alt="Coinova" className="h-8 rounded" />
-            <span className="text-xl font-extrabold text-black tracking-tight">Coinova</span>
+            <img src={logo} alt="Cointehera" className="h-8 rounded" />
+            <span className="text-xl font-extrabold text-black tracking-tight">Cointehera</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/login" className="px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100 rounded-full transition-colors no-underline">Sign in</Link>
@@ -38,11 +38,11 @@ export default function Terms() {
         <p className="text-gray-500 text-sm mb-8">Last updated: April 14, 2026</p>
 
         <Section title="1. Acceptance of Terms">
-          <p>By accessing and using Coinova ("the Platform"), you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our platform.</p>
+          <p>By accessing and using Cointehera ("the Platform"), you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our platform.</p>
         </Section>
 
         <Section title="2. Description of Service">
-          <p>Coinova is a cryptocurrency portfolio tracking and investment simulation platform. We provide:</p>
+          <p>Cointehera is a cryptocurrency portfolio tracking and investment simulation platform. We provide:</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>Real-time cryptocurrency price tracking</li>
             <li>Portfolio management tools</li>
@@ -50,7 +50,7 @@ export default function Terms() {
             <li>Educational content about cryptocurrencies</li>
             <li>Market analysis and insights</li>
           </ul>
-          <p><strong>Important:</strong> Coinova is a demonstration platform. All investments made on Coinova use simulated demo funds and do not involve real money unless explicitly stated in our investment features.</p>
+          <p><strong>Important:</strong> Cointehera is a demonstration platform. All investments made on Cointehera use simulated demo funds and do not involve real money unless explicitly stated in our investment features.</p>
         </Section>
 
         <Section title="3. Investment Disclaimer">
@@ -60,9 +60,9 @@ export default function Terms() {
               <li>Cryptocurrency investments are highly volatile</li>
               <li>Past performance does not guarantee future results</li>
               <li>You may lose some or all of your investment</li>
-              <li>Coinova's investment features use real cryptocurrency wallet addresses for actual crypto transfers</li>
+              <li>Cointehera's investment features use real cryptocurrency wallet addresses for actual crypto transfers</li>
               <li>Only invest what you can afford to lose</li>
-              <li>Coinova is not a licensed financial advisor</li>
+              <li>Cointehera is not a licensed financial advisor</li>
               <li>Always do your own research (DYOR)</li>
             </ul>
           </div>
@@ -89,26 +89,26 @@ export default function Terms() {
             <li>You acknowledge sending real cryptocurrency</li>
             <li>Investments are subject to manual verification</li>
             <li>Processing time is up to 24 hours</li>
-            <li>Coinova reserves the right to reject suspicious transactions</li>
+            <li>Cointehera reserves the right to reject suspicious transactions</li>
           </ul>
         </Section>
 
         <Section title="7. Wallet Addresses">
-          <p>Coinova's official wallet addresses are:</p>
+          <p>Cointehera's official wallet addresses are:</p>
           <div className="bg-gray-50 rounded-lg p-4 space-y-2 font-mono text-xs break-all">
             <div><span className="font-semibold text-black">BTC:</span> bc1qmc3umarwy6hfgql8rsuc5njuv0dpxzmkdh0pvl</div>
             <div><span className="font-semibold text-black">ETH:</span> 0x52C50eb16a1a565e446EDBBE337B0D8e47bfb458</div>
             <div><span className="font-semibold text-black">USDT TRC-20:</span> TMKLBuSegAg4e1QvsjpsTgWrqKLfgx4gca</div>
           </div>
-          <p className="text-red-600 font-medium">Warning: Only send crypto to these addresses. Coinova is not responsible for funds sent to incorrect addresses.</p>
+          <p className="text-red-600 font-medium">Warning: Only send crypto to these addresses. Cointehera is not responsible for funds sent to incorrect addresses.</p>
         </Section>
 
         <Section title="8. Fees">
-          <p>Coinova charges a 0.1% fee on all simulated trades within the platform. Investment processing fees may apply for external transfers.</p>
+          <p>Cointehera charges a 0.1% fee on all simulated trades within the platform. Investment processing fees may apply for external transfers.</p>
         </Section>
 
         <Section title="9. Limitation of Liability">
-          <p>Coinova shall not be liable for any indirect, incidental, or consequential damages arising from your use of our platform.</p>
+          <p>Cointehera shall not be liable for any indirect, incidental, or consequential damages arising from your use of our platform.</p>
         </Section>
 
         <Section title="10. Changes to Terms">

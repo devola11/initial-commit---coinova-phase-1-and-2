@@ -47,7 +47,7 @@ export default function PINSetup({ onComplete, onCancel }) {
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#05B169" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div className="text-white font-semibold text-lg mb-2">PIN created successfully!</div>
-          <div className="text-[#8A8F98] text-sm mb-6">Your PIN protects your Coinova account</div>
+          <div className="text-[#8A8F98] text-sm mb-6">Your PIN protects your Cointehera account</div>
 
           {bioSupported ? (
             <>

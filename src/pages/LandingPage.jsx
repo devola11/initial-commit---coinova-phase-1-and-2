@@ -94,8 +94,8 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-2 no-underline">
-              <img src={logo} alt="Coinova" className="h-8 rounded" />
-              <span className="text-xl font-extrabold text-black tracking-tight">Coinova</span>
+              <img src={logo} alt="Cointehera" className="h-8 rounded" />
+              <span className="text-xl font-extrabold text-black tracking-tight">Cointehera</span>
             </Link>
             <div className="flex items-center gap-2 sm:gap-3">
               <Link
@@ -172,7 +172,7 @@ export default function LandingPage() {
           <div className="relative flex justify-center lg:justify-end">
             <img
               src={hero1}
-              alt="Coinova trading platform"
+              alt="Cointehera trading platform"
               className="w-full max-w-lg rounded-2xl"
               style={{ animation: 'heroFloat 4s ease-in-out infinite' }}
             />
@@ -266,7 +266,7 @@ export default function LandingPage() {
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0040CC')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0052FF')}
           >
-            Join Coinova to track the market
+            Join Cointehera to track the market
           </Link>
         </div>
       </section>
@@ -347,8 +347,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-start">
             <div className="flex flex-col gap-3">
               <Link to="/" className="flex items-center gap-2 no-underline">
-                <img src={logo} alt="Coinova" className="h-7 rounded" />
-                <span className="text-lg font-extrabold text-black tracking-tight">Coinova</span>
+                <img src={logo} alt="Cointehera" className="h-7 rounded" />
+                <span className="text-lg font-extrabold text-black tracking-tight">Cointehera</span>
               </Link>
               <p className="text-sm text-gray-500 max-w-xs">Trade crypto, build wealth.</p>
               <button
@@ -382,7 +382,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            <div className="text-sm text-gray-500">&copy; 2026 Coinova. All rights reserved.</div>
+            <div className="text-sm text-gray-500">&copy; 2026 Cointehera. Trade Crypto. Build Wealth.</div>
           </div>
         </div>
       </footer>

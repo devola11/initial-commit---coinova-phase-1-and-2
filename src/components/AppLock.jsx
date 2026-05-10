@@ -94,7 +94,7 @@ export default function AppLock({ children }) {
 
       <PINPad
         title="Enter your PIN"
-        subtitle="Unlock your Coinova account"
+        subtitle="Unlock your Cointehera account"
         onSuccess={handlePinEntry}
         showBiometric={bioEnabled}
         onBiometric={handleBiometric}

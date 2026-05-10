@@ -7,8 +7,8 @@ function Nav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 no-underline">
-            <img src={logo} alt="Coinova" className="h-8 rounded" />
-            <span className="text-xl font-extrabold text-black tracking-tight">Coinova</span>
+            <img src={logo} alt="Cointehera" className="h-8 rounded" />
+            <span className="text-xl font-extrabold text-black tracking-tight">Cointehera</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/login" className="px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100 rounded-full transition-colors no-underline">Sign in</Link>
@@ -109,7 +109,7 @@ export default function Privacy() {
         </Section>
 
         <Section title="9. Children's Privacy">
-          <p>Coinova is not intended for users under 18 years of age. We do not knowingly collect data from minors.</p>
+          <p>Cointehera is not intended for users under 18 years of age. We do not knowingly collect data from minors.</p>
         </Section>
 
         <Section title="10. Contact">

@@ -8,8 +8,8 @@ function Nav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 no-underline">
-            <img src={logo} alt="Coinova" className="h-8 rounded" />
-            <span className="text-xl font-extrabold text-black tracking-tight">Coinova</span>
+            <img src={logo} alt="Cointehera" className="h-8 rounded" />
+            <span className="text-xl font-extrabold text-black tracking-tight">Cointehera</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/login" className="px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100 rounded-full transition-colors no-underline">Sign in</Link>
@@ -45,16 +45,16 @@ const SECTIONS = [
     title: 'Getting Started',
     items: [
       {
-        q: 'What is Coinova?',
-        a: 'Coinova is a cryptocurrency platform where you can track prices, manage a portfolio, learn about crypto, and invest in 250+ cryptocurrencies. New users start with $10,000 in demo funds to practice trading.',
+        q: 'What is Cointehera?',
+        a: 'Cointehera is a cryptocurrency platform where you can track prices, manage a portfolio, learn about crypto, and invest in 250+ cryptocurrencies. New users start with $10,000 in demo funds to practice trading.',
       },
       {
         q: 'How do I create an account?',
         a: 'Click "Get started" on the homepage, enter your email and password, verify your email, and you\'re ready to go!',
       },
       {
-        q: 'Is Coinova free to use?',
-        a: 'Yes! Coinova is completely free. You get $10,000 in demo funds when you sign up.',
+        q: 'Is Cointehera free to use?',
+        a: 'Yes! Cointehera is completely free. You get $10,000 in demo funds when you sign up.',
       },
     ],
   },
@@ -62,7 +62,7 @@ const SECTIONS = [
     title: 'Investing',
     items: [
       {
-        q: 'How does investing on Coinova work?',
+        q: 'How does investing on Cointehera work?',
         a: 'You can invest real cryptocurrency by sending BTC, ETH, or USDT to our wallet addresses. We verify your transaction within 24 hours and credit your account.',
       },
       {
@@ -121,8 +121,8 @@ const SECTIONS = [
     title: 'Technical',
     items: [
       {
-        q: 'Can I install Coinova as an app?',
-        a: 'Yes! Coinova is a Progressive Web App (PWA). On Android tap "Add to Home Screen" in Chrome. On iPhone tap Share \u2192 Add to Home Screen in Safari.',
+        q: 'Can I install Cointehera as an app?',
+        a: 'Yes! Cointehera is a Progressive Web App (PWA). On Android tap "Add to Home Screen" in Chrome. On iPhone tap Share \u2192 Add to Home Screen in Safari.',
       },
       {
         q: 'Why are prices sometimes delayed?',
@@ -138,7 +138,7 @@ export default function FAQ() {
       <Nav />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">Frequently Asked Questions</h1>
-        <p className="text-gray-500 text-sm mb-10">Everything you need to know about Coinova</p>
+        <p className="text-gray-500 text-sm mb-10">Everything you need to know about Cointehera</p>
 
         {SECTIONS.map((section) => (
           <div key={section.title} className="mb-8">

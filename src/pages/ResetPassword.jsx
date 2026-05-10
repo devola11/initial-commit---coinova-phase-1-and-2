@@ -103,7 +103,7 @@ export default function ResetPassword() {
             Set a new password
           </h1>
           <p className="text-text-muted text-sm">
-            Choose a strong password for your Coinova account
+            Choose a strong password for your Cointehera account
           </p>
         </div>
 

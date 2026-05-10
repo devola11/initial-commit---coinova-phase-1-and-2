@@ -427,7 +427,7 @@ export default function CNCToken() {
               margin: '0 0 8px 0',
             }}
           >
-            Coinova At A Glance
+            Cointehera At A Glance
           </h3>
           <p
             style={{
@@ -919,7 +919,7 @@ export default function CNCToken() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
           <WhyHoldCard
             title="Fee Discounts"
-            desc="Hold CNC to receive up to 50% off trading and withdrawal fees on Coinova."
+            desc="Hold CNC to receive up to 50% off trading and withdrawal fees on Cointehera."
             icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>}
           />
           <WhyHoldCard
@@ -1149,7 +1149,7 @@ export default function CNCToken() {
         {/* HOW TO BUY */}
         <h2 className="text-2xl font-bold text-white tracking-tight mb-6">How to Buy CNC</h2>
         <div className="rounded-xl p-6 sm:p-8 mb-12 space-y-5" style={{ background: '#141519', border: '1px solid #1E2025' }}>
-          <HowToBuyStep n={1} title="Create a Coinova account" desc="Sign up in under 60 seconds." />
+          <HowToBuyStep n={1} title="Create a Cointehera account" desc="Sign up in under 60 seconds." />
           <HowToBuyStep n={2} title="Visit the CNC page" desc="Open /cnc to access the presale dashboard." />
           <HowToBuyStep n={3} title="Choose your amount" desc="Enter USD amount or pick a quick preset." />
           <HowToBuyStep n={4} title="Send USDT TRC-20" desc="Scan the QR or copy the treasury address." />

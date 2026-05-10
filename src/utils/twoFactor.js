@@ -12,7 +12,7 @@ export function generateSecret() {
 export async function generateQRCode(email, secret) {
   const otpauth = generateURI({
     strategy: 'totp',
-    issuer: 'Coinova',
+    issuer: 'Cointehera',
     label: email,
     secret,
   })

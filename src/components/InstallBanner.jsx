@@ -81,7 +81,7 @@ export default function InstallBanner() {
       return {
         icon: '⋮',
         text: 'Tap menu then "Install"',
-        buttonText: 'Install Coinova'
+        buttonText: 'Install Cointehera'
       }
     }
     return {
@@ -108,7 +108,7 @@ export default function InstallBanner() {
       zIndex: 9999,
       boxShadow: '0 -4px 20px rgba(0,0,0,0.3)'
     }}>
-      <img src={logo} alt="Coinova"
+      <img src={logo} alt="Cointehera"
         style={{
           width: 40, height: 40,
           borderRadius: 8, flexShrink: 0
@@ -118,7 +118,7 @@ export default function InstallBanner() {
           color: '#fff', fontWeight: 600,
           fontSize: 14
         }}>
-          Install Coinova App
+          Install Cointehera App
         </div>
         <div style={{
           color: '#8A919E', fontSize: 12,

@@ -105,7 +105,7 @@ export default function FundWalletModal({ onClose }) {
         <div className="flex items-start justify-between mb-4">
           <div>
             <div className="text-text-primary font-semibold text-lg">Fund Your Main Wallet</div>
-            <div className="text-text-muted text-sm mt-1">Send real crypto to your Coinova wallet</div>
+            <div className="text-text-muted text-sm mt-1">Send real crypto to your Cointehera wallet</div>
           </div>
           <button
             onClick={onClose}

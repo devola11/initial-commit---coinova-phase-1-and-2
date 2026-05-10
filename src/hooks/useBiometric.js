@@ -29,7 +29,7 @@ export function useBiometric() {
         publicKey: {
           challenge,
           rp: {
-            name: 'Coinova',
+            name: 'Cointehera',
             id: window.location.hostname,
           },
           user: {

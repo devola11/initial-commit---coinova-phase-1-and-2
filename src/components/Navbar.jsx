@@ -202,9 +202,9 @@ export default function Navbar() {
               to={user ? '/dashboard' : '/'}
               className="flex items-center gap-2 no-underline flex-shrink-0"
             >
-              <img src={logo} alt="Coinova" className="h-7 rounded" />
+              <img src={logo} alt="Cointehera" className="h-7 rounded" />
               <span className="text-lg font-bold text-text-primary tracking-tight whitespace-nowrap">
-                Coinova
+                Cointehera
               </span>
             </Link>
 

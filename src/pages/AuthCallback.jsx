@@ -51,7 +51,7 @@ export default function AuthCallback() {
             setStatus('Reset link verified! Set a new password...')
             setTimeout(() => navigate('/reset-password'), 1200)
           } else {
-            setStatus('Email verified! Welcome to Coinova!')
+            setStatus('Email verified! Welcome to Cointehera!')
             setTimeout(() => navigate('/dashboard'), 1500)
           }
         }
@@ -148,7 +148,7 @@ export default function AuthCallback() {
     >
       <img
         src={logo}
-        alt="Coinova"
+        alt="Cointehera"
         style={{ width: 72, height: 72, borderRadius: 14 }}
       />
 

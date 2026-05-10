@@ -161,7 +161,7 @@ export default function Login() {
             Welcome back
           </h1>
           <p className="text-text-muted text-sm">
-            Sign in to your Coinova account
+            Sign in to your Cointehera account
           </p>
         </div>
 

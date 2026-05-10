@@ -367,8 +367,8 @@ export default function Admin() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               access_key: WEB3FORMS_KEY,
-              subject: `Coinova Support: Response to ${ticket.ticket_number}`,
-              from_name: 'Coinova Support',
+              subject: `Cointehera Support: Response to ${ticket.ticket_number}`,
+              from_name: 'Cointehera Support',
               email: ticket.user_email,
               message: `Hi ${ticket.user_name},
 
@@ -381,7 +381,7 @@ ${adminResponse}
 
 Reply to this email if you need more help.
 
-Coinova Support Team`,
+Cointehera Support Team`,
               replyto: 'coinovasupport@gmail.com',
             }),
           })

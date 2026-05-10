@@ -55,7 +55,7 @@ export default function UserDrawer({ open, onClose }) {
   const wallet = useWallet()
 
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL
-  const displayName = user?.user_metadata?.display_name || 'Coinova User'
+  const displayName = user?.user_metadata?.display_name || 'Cointehera User'
 
   const sections = BASE_SECTIONS.map((s) => ({
     ...s,
@@ -136,8 +136,8 @@ export default function UserDrawer({ open, onClose }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img src={logo} alt="Coinova" style={{ width: 28, height: 28, borderRadius: 6 }} />
-            <span style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>Coinova</span>
+            <img src={logo} alt="Cointehera" style={{ width: 28, height: 28, borderRadius: 6 }} />
+            <span style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>Cointehera</span>
           </div>
           <button
             onClick={onClose}
@@ -367,7 +367,7 @@ export default function UserDrawer({ open, onClose }) {
           </button>
 
           <div style={{ marginTop: 16, textAlign: 'center', color: '#5B616E', fontSize: 11 }}>
-            © 2026 Coinova. v1.0.0
+            © 2026 Cointehera. v1.0.0
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ function getEmailTemplate({ userName, title, body, ctaText, ctaLink }) {
 <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; background: #0A0B0D; color: #FFFFFF;">
   <div style="padding: 32px; text-align: center; background: #141519; border-bottom: 1px solid #1E2025;">
     <div style="background: #0052FF; width: 48px; height: 48px; border-radius: 12px; display: inline-block; line-height: 48px; font-size: 24px; font-weight: 700;">C</div>
-    <h1 style="color: #FFFFFF; font-size: 24px; margin: 16px 0 0 0;">Coinova</h1>
+    <h1 style="color: #FFFFFF; font-size: 24px; margin: 16px 0 0 0;">Cointehera</h1>
   </div>
 
   <div style="padding: 40px 32px; background: #141519;">
@@ -39,7 +39,7 @@ ${body}
 
   <div style="padding: 24px 32px; background: #0A0B0D; text-align: center;">
     <p style="color: #5B616E; font-size: 11px;">
-      &copy; 2026 Coinova. Trade Crypto. Build Wealth.
+      &copy; 2026 Cointehera. Trade Crypto. Build Wealth.
     </p>
   </div>
 </div>
@@ -57,11 +57,11 @@ export async function sendSecurityEmail({
 
   const templates = {
     new_login: {
-      subject: 'New login to your Coinova account',
+      subject: 'New login to your Cointehera account',
       html: getEmailTemplate({
         userName,
         title: 'New Login Detected',
-        body: `We detected a new login to your Coinova account.
+        body: `We detected a new login to your Cointehera account.
 
 Time: ${new Date().toLocaleString()}
 Browser: ${details.userAgent || 'Unknown device'}
@@ -77,11 +77,11 @@ If this was NOT you:
       }),
     },
     password_changed: {
-      subject: 'Your Coinova password was changed',
+      subject: 'Your Cointehera password was changed',
       html: getEmailTemplate({
         userName,
         title: 'Password Changed',
-        body: `Your Coinova password was just changed.
+        body: `Your Cointehera password was just changed.
 
 Time: ${new Date().toLocaleString()}
 

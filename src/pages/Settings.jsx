@@ -126,7 +126,7 @@ const INSTALL_STEPS = {
   },
   'chrome-desktop': {
     label: 'Desktop (Chrome / Edge)',
-    steps: ['Click the install icon in the address bar', 'Or click the 3 dots menu', 'Click Install Coinova']
+    steps: ['Click the install icon in the address bar', 'Or click the 3 dots menu', 'Click Install Cointehera']
   },
   'firefox-android': {
     label: 'Firefox (Android)',
@@ -134,7 +134,7 @@ const INSTALL_STEPS = {
   },
   'firefox-desktop': {
     label: 'Firefox (Desktop)',
-    steps: ['Open the menu (3 lines)', 'Choose Install / Pin to Taskbar', 'Confirm to add Coinova']
+    steps: ['Open the menu (3 lines)', 'Choose Install / Pin to Taskbar', 'Confirm to add Cointehera']
   },
   'samsung': {
     label: 'Samsung Internet',
@@ -691,11 +691,11 @@ export default function Settings() {
 
       {/* ── Install App ─────────────────────────────────────────── */}
       <Card>
-        <SectionTitle>Install Coinova App</SectionTitle>
+        <SectionTitle>Install Cointehera App</SectionTitle>
         {typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches ? (
           <div className="flex items-center gap-2 text-[#05B169] text-sm font-semibold">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-            Coinova is installed on this device
+            Cointehera is installed on this device
           </div>
         ) : (() => {
           const platform = detectPlatform()

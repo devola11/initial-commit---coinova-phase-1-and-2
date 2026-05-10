@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     const resend = new Resend(apiKey)
 
     const { data, error } = await resend.emails.send({
-      from: 'Coinova <onboarding@resend.dev>',
+      from: 'Cointehera <onboarding@resend.dev>',
       to: [to],
       subject,
       html,

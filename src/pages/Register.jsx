@@ -169,7 +169,7 @@ export default function Register() {
               <ol style={{ color: '#E0E2E6', fontSize: 14, lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
                 <li>Check your inbox for our verification email</li>
                 <li>Click the "Verify my email" button</li>
-                <li>You will be redirected back to Coinova</li>
+                <li>You will be redirected back to Cointehera</li>
                 <li>Start trading with $10,000 demo funds!</li>
               </ol>
             </div>

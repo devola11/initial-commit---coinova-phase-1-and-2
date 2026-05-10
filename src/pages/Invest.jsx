@@ -140,7 +140,7 @@ function KYCGateModal({ kycStatus, onClose }) {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <div className="text-white font-semibold mb-2">KYC Verification Required</div>
-        <p className="text-[#8A8F98] text-sm mb-5">Verify your identity to invest real cryptocurrency on Coinova</p>
+        <p className="text-[#8A8F98] text-sm mb-5">Verify your identity to invest real cryptocurrency on Cointehera</p>
         <button onClick={() => navigate('/kyc')} className="w-full py-2.5 rounded-lg bg-[#0052FF] text-white text-sm font-semibold border-none cursor-pointer mb-2">Complete KYC</button>
         <button onClick={onClose} className="text-[#8A8F98] hover:text-white text-sm bg-transparent border-none cursor-pointer transition-colors">Maybe later</button>
       </div>
@@ -187,7 +187,7 @@ export default function Invest() {
           Invest
         </h1>
         <p className="text-text-muted text-sm mt-1">
-          Fund your Coinova account by sending crypto. Your balance is credited
+          Fund your Cointehera account by sending crypto. Your balance is credited
           within 24 hours after we verify your transaction.
         </p>
       </div>

@@ -41,7 +41,7 @@ export default function SecurityActivity() {
     <div style={{ padding: 24, maxWidth: 800, margin: '0 auto' }}>
       <h1 style={{ color: '#fff', marginBottom: 8 }}>Account Activity</h1>
       <p style={{ color: '#8A919E', marginBottom: 24 }}>
-        Recent activity on your Coinova account
+        Recent activity on your Cointehera account
       </p>
 
       {loading && <div style={{ color: '#8A919E' }}>Loading...</div>}

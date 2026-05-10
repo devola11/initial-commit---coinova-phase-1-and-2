@@ -1,4 +1,4 @@
-const CACHE_NAME = 'coinova-v3'
+const CACHE_NAME = 'cointehera-v1'
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -82,7 +82,7 @@ self.addEventListener('push', (event) => {
   const data = event.data?.json() || {}
   event.waitUntil(
     self.registration.showNotification(
-      data.title || 'Coinova',
+      data.title || 'Cointehera',
       {
         body: data.body || 'You have a new notification',
         icon: '/logo.jpeg',

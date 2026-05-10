@@ -113,7 +113,7 @@ function TicketCard({ ticket, expanded, onToggle }) {
                   </svg>
                 </div>
                 <div>
-                  <div className="text-text-primary text-sm font-semibold">Coinova Support</div>
+                  <div className="text-text-primary text-sm font-semibold">Cointehera Support</div>
                   {ticket.resolved_at && (
                     <div className="text-text-muted text-[11px]">Replied {formatDate(ticket.resolved_at)}</div>
                   )}

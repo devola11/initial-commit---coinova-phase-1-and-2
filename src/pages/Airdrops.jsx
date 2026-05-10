@@ -337,7 +337,7 @@ export default function Airdrops() {
 
         <div className="flex items-center gap-2 mb-4">
           <a
-            href={`https://wa.me/?text=${encodeURIComponent(`Join Coinova and get free crypto! ${refLink}`)}`}
+            href={`https://wa.me/?text=${encodeURIComponent(`Join Cointehera and get free crypto! ${refLink}`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 rounded-lg bg-[#25D366]/10 text-[#25D366] text-xs font-semibold no-underline hover:bg-[#25D366]/20 transition-colors"
@@ -345,7 +345,7 @@ export default function Airdrops() {
             WhatsApp
           </a>
           <a
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Join Coinova and claim free crypto airdrops! ${refLink}`)}`}
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Join Cointehera and claim free crypto airdrops! ${refLink}`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 rounded-lg bg-white/5 text-white text-xs font-semibold no-underline hover:bg-white/10 transition-colors"
@@ -353,7 +353,7 @@ export default function Airdrops() {
             X / Twitter
           </a>
           <a
-            href={`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent('Join Coinova and get free crypto!')}`}
+            href={`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent('Join Cointehera and get free crypto!')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 rounded-lg bg-[#0088CC]/10 text-[#0088CC] text-xs font-semibold no-underline hover:bg-[#0088CC]/20 transition-colors"

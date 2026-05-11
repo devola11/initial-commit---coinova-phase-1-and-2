@@ -57,6 +57,27 @@ export async function sendSecurityEmail({
     return null
   }
 
+  let locationInfo = 'Unknown location'
+  if (type === 'new_login') {
+    try {
+      const geoRes = await fetch('https://ipapi.co/json/')
+      if (geoRes.ok) {
+        const geo = await geoRes.json()
+        if (geo.city && geo.country_name) {
+          locationInfo = `${geo.city}, ${geo.country_name}`
+        } else if (geo.country_name) {
+          locationInfo = geo.country_name
+        }
+      }
+    } catch {
+      locationInfo = 'Unknown location'
+    }
+  }
+
+  const deviceLabel = details.userAgent
+    ? details.userAgent.split('(')[0].trim()
+    : 'Unknown device'
+
   const templates = {
     new_login: {
       subject: 'New login to your Cointehera account',
@@ -66,7 +87,9 @@ export async function sendSecurityEmail({
         body: `We detected a new login to your Cointehera account.
 
 Time: ${new Date().toLocaleString()}
-Browser: ${details.userAgent || 'Unknown device'}
+Location: ${locationInfo}
+Device: ${deviceLabel}
+Browser: ${details.userAgent || 'Unknown'}
 
 If this was you, no action needed.
 

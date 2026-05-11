@@ -40,10 +40,10 @@ export default function CNCPromoBanner() {
         }}
       />
       <span style={{ color: '#000', fontWeight: 700, fontSize: 14 }}>
-        CNC PRESALE LIVE
+        CNC Presale LIVE
       </span>
       <span style={{ color: '#000', fontSize: 13 }}>
-        Buy Coinova Coin at $0.05 (50% off launch price)
+        Buy with BTC, USDT or ETH at $0.05 - 50% off launch price
       </span>
       <button
         onClick={(e) => {

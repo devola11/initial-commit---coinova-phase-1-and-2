@@ -552,7 +552,7 @@ export default function CNCToken() {
           <StatCard label="Current Price" value={formatUSD(cnc.price)} />
           <StatCard label="Market Cap" value={`$${formatNumber(cnc.marketCap)}`} />
           <StatCard label="Total Supply" value={`${formatNumber(cnc.total_supply)} CNC`} />
-          <StatCard label="Launch Price" value={formatUSD(cnc.launch_price)} sub="Q3 2026" />
+          <StatCard label="Launch Price" value={formatUSD(cnc.launch_price)} />
         </div>
 
         {/* TOKEN ROADMAP (phase indicators) */}
@@ -1596,7 +1596,7 @@ export default function CNCToken() {
           />
           <WhyHoldCard
             title="Staking Rewards"
-            desc="Stake CNC and earn up to 18% APY with flexible or locked terms."
+            desc="Stake CNC and earn up to 20% APY with flexible or locked terms."
             icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>}
           />
           <WhyHoldCard
@@ -1767,7 +1767,7 @@ export default function CNCToken() {
               Investment scenarios at presale (${PRESALE_PRICE.toFixed(2)}):
             </div>
 
-            {[10, 50, 100, 500, 1000].map((amount) => {
+            {[10, 50, 100, 500, 1000, 2500, 5000].map((amount) => {
               const cncAmount = amount / PRESALE_PRICE
               const launchValue = cncAmount * LAUNCH_PRICE
               return (
@@ -1822,10 +1822,73 @@ export default function CNCToken() {
         <h2 className="text-2xl font-bold text-white tracking-tight mb-6">How to Buy CNC</h2>
         <div className="rounded-xl p-6 sm:p-8 mb-12 space-y-5" style={{ background: '#141519', border: '1px solid #1E2025' }}>
           <HowToBuyStep n={1} title="Create a Cointehera account" desc="Sign up in under 60 seconds." />
-          <HowToBuyStep n={2} title="Visit the CNC page" desc="Open /cnc to access the presale dashboard." />
+          <HowToBuyStep n={2} title="Visit the CNC page" desc="Go to the CNC presale page and choose your preferred payment method." />
           <HowToBuyStep n={3} title="Choose your amount" desc="Enter USD amount or pick a quick preset." />
-          <HowToBuyStep n={4} title="Send USDT TRC-20" desc="Scan the QR or copy the treasury address." />
+          <HowToBuyStep n={4} title="Send Payment" desc="Send BTC, USDT TRC-20 or ETH to the wallet address shown. Scan QR code or copy address." />
           <HowToBuyStep n={5} title="Submit TX hash" desc="Receive your CNC within 24 hours after verification." />
+        </div>
+
+        {/* ACCEPTED PAYMENT METHODS */}
+        <div style={{
+          background: '#0A0B0D',
+          border: '1px solid #1E2025',
+          borderRadius: 12,
+          padding: 16,
+          marginTop: 16,
+          marginBottom: 48,
+          textAlign: 'center'
+        }}>
+          <div style={{ color: '#8A919E', fontSize: 13 }}>
+            Accepted payment methods
+          </div>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 12,
+            marginTop: 12,
+            flexWrap: 'wrap'
+          }}>
+            <div style={{
+              background: '#F7931A20',
+              border: '1px solid #F7931A',
+              borderRadius: 8,
+              padding: '8px 20px',
+              color: '#F7931A',
+              fontWeight: 700,
+              fontSize: 14
+            }}>
+              BTC
+            </div>
+            <div style={{
+              background: '#26A17B20',
+              border: '1px solid #26A17B',
+              borderRadius: 8,
+              padding: '8px 20px',
+              color: '#26A17B',
+              fontWeight: 700,
+              fontSize: 14
+            }}>
+              USDT TRC-20
+            </div>
+            <div style={{
+              background: '#627EEA20',
+              border: '1px solid #627EEA',
+              borderRadius: 8,
+              padding: '8px 20px',
+              color: '#627EEA',
+              fontWeight: 700,
+              fontSize: 14
+            }}>
+              ETH
+            </div>
+          </div>
+          <div style={{
+            color: '#8A919E',
+            fontSize: 12,
+            marginTop: 10
+          }}>
+            All payments manually verified within 24 hours
+          </div>
         </div>
       </div>
     </div>

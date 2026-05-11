@@ -38,13 +38,14 @@ export function useGeoLocation(userId) {
 
     async function detect() {
       try {
-        const res = await fetch('https://ip-api.com/json')
+        const res = await fetch('https://ipapi.co/json/')
+        if (!res.ok) return
         const data = await res.json()
-        if (cancelled || data.status !== 'success') return
+        if (cancelled) return
 
-        const country = data.country || 'United States'
-        const countryCode = data.countryCode || 'US'
-        const currency = detectCurrencyFromCountry(countryCode)
+        const country = data.country_name || 'United States'
+        const countryCode = data.country_code || 'US'
+        const currency = data.currency || detectCurrencyFromCountry(countryCode)
 
         localStorage.setItem('detected-country', country)
         localStorage.setItem('detected-currency', currency)
@@ -57,8 +58,8 @@ export function useGeoLocation(userId) {
             .update({ country, currency })
             .eq('id', userId)
         }
-      } catch (err) {
-        console.error('Geo detection failed:', err)
+      } catch {
+        // Silent fail
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -73,13 +74,13 @@ export function useGeoLocation(userId) {
 
 export async function detectAndSaveLocation(userId) {
   try {
-    const res = await fetch('https://ip-api.com/json')
+    const res = await fetch('https://ipapi.co/json/')
+    if (!res.ok) return null
     const data = await res.json()
-    if (data.status !== 'success') return null
 
-    const country = data.country || 'United States'
-    const countryCode = data.countryCode || 'US'
-    const currency = detectCurrencyFromCountry(countryCode)
+    const country = data.country_name || 'United States'
+    const countryCode = data.country_code || 'US'
+    const currency = data.currency || detectCurrencyFromCountry(countryCode)
 
     localStorage.setItem('detected-country', country)
     localStorage.setItem('detected-currency', currency)
@@ -92,8 +93,7 @@ export async function detectAndSaveLocation(userId) {
     }
 
     return { country, countryCode, currency }
-  } catch (err) {
-    console.error('Geo detection failed:', err)
+  } catch {
     return null
   }
 }

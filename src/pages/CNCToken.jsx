@@ -1431,7 +1431,7 @@ export default function CNCToken() {
               </button>
 
               <div style={{ textAlign: 'center', marginTop: 12, color: '#8A919E', fontSize: 12 }}>
-                Processing time: Up to 24 hours after submission
+                Payments verified and credited within 24 hours
               </div>
             </>
           ) : (
@@ -1887,7 +1887,7 @@ export default function CNCToken() {
             fontSize: 12,
             marginTop: 10
           }}>
-            All payments manually verified within 24 hours
+            Payments verified and credited within 24 hours
           </div>
         </div>
       </div>

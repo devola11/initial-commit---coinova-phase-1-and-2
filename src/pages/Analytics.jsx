@@ -129,7 +129,7 @@ function Sparkline({ positive }) {
   }, [positive])
 
   return (
-    <div className="w-16 h-6">
+    <div style={{ width: 64, height: 24, minHeight: 24 }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={pts}>
           <Line type="monotone" dataKey="y" stroke={positive ? '#05B169' : '#F6465D'}

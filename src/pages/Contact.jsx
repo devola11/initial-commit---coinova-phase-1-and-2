@@ -196,6 +196,7 @@ ${formData.message}`,
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <button
+                    type="button"
                     onClick={() => setShowSuccess(false)}
                     className="flex-1 py-2.5 rounded-lg border border-gray-200 text-black text-sm font-semibold bg-white hover:bg-gray-50 cursor-pointer transition-colors"
                   >

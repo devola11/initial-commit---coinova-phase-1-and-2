@@ -68,7 +68,10 @@ export default function LessonModal({ coin, onClose, onComplete }) {
       try {
         const resp = await fetch('/api/generate-lesson', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-internal-secret': import.meta.env.VITE_INTERNAL_SECRET || '',
+          },
           body: JSON.stringify({
             coinName: coin.name,
             coinSymbol: coin.symbol?.toUpperCase(),

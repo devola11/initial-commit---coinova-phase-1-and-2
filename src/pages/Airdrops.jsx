@@ -202,7 +202,7 @@ export default function Airdrops() {
       {error && (
         <div className="mb-4 rounded-lg border border-[#F6465D]/30 bg-[#F6465D]/10 px-4 py-3 text-[#F6465D] text-sm">
           {error}
-          <button onClick={() => setError('')} className="float-right bg-transparent border-none text-[#F6465D] cursor-pointer">&times;</button>
+          <button type="button" aria-label="Close" onClick={() => setError('')} className="float-right bg-transparent border-none text-[#F6465D] cursor-pointer">&times;</button>
         </div>
       )}
 

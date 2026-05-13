@@ -53,7 +53,6 @@ export async function sendSecurityEmail({
   details = {},
 }) {
   if (!userEmail) {
-    console.log('No email provided, skipping')
     return null
   }
 
@@ -176,14 +175,16 @@ Contact coinovasupport@gmail.com for more information.`,
 
   const template = templates[type]
   if (!template) {
-    console.log('Unknown email type:', type)
     return null
   }
 
   try {
     const response = await fetch('/api/send-email', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-secret': import.meta.env.VITE_INTERNAL_SECRET || '',
+      },
       body: JSON.stringify({
         to: userEmail,
         subject: template.subject,

@@ -63,6 +63,7 @@ export default function ForgotPassword() {
                 Didn&apos;t receive it? Check your spam folder.
               </div>
               <button
+                type="button"
                 onClick={() => sendReset(email)}
                 disabled={loading}
                 className="text-primary-blue text-sm font-semibold bg-transparent border-none cursor-pointer hover:underline disabled:opacity-50"

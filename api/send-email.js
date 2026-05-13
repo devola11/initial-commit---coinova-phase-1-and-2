@@ -1,40 +1,69 @@
 import { Resend } from 'resend'
 
+const ALLOWED_ORIGINS = [
+  'https://initial-commit-coinova-phase-1-and.vercel.app',
+  'https://cointehera.com',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175'
+]
+
+const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  const origin = req.headers.origin || ''
+
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+  } else {
+    res.setHeader('Access-Control-Allow-Origin',
+      'https://cointehera.com')
+  }
+
+  res.setHeader('Access-Control-Allow-Methods',
+    'POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers',
+    'Content-Type, x-internal-secret')
+  res.setHeader('Vary', 'Origin')
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end()
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({
+      error: 'Method not allowed'
+    })
   }
 
-  const body = req.body || {}
-  const to = typeof body.to === 'string' ? body.to.trim() : ''
-  const subject = typeof body.subject === 'string' ? body.subject.trim() : ''
-  const html = typeof body.html === 'string' ? body.html : ''
+  const secret = req.headers['x-internal-secret']
+  if (!INTERNAL_SECRET || secret !== INTERNAL_SECRET) {
+    return res.status(403).json({
+      error: 'Forbidden'
+    })
+  }
 
-  if (!to) {
-    return res.status(400).json({ error: 'Missing recipient (to)' })
+  const { to, subject, html } = req.body
+
+  if (!to || !subject || !html) {
+    return res.status(400).json({
+      error: 'Missing required fields'
+    })
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
-    return res.status(400).json({ error: 'Invalid recipient email format' })
-  }
-  if (!subject) {
-    return res.status(400).json({ error: 'Missing subject' })
-  }
-  if (!html) {
-    return res.status(400).json({ error: 'Missing html body' })
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(to)) {
+    return res.status(400).json({
+      error: 'Invalid email address'
+    })
   }
 
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
-    console.error('RESEND_API_KEY not set')
-    return res.status(500).json({ error: 'Email service not configured' })
+    console.error('RESEND_API_KEY not configured')
+    return res.status(500).json({
+      error: 'Email service not configured'
+    })
   }
 
   const verified = process.env.RESEND_DOMAIN_VERIFIED === 'true'
@@ -44,31 +73,30 @@ export default async function handler(req, res) {
 
   try {
     const resend = new Resend(apiKey)
-
     const { data, error } = await resend.emails.send({
       from: sender,
       to: [to],
-      subject,
-      html,
+      subject: subject,
+      html: html,
+      reply_to: 'coinovasupport@gmail.com'
     })
 
     if (error) {
-      console.error('Resend error:', JSON.stringify(error, null, 2))
-      return res.status(502).json({
-        error: error.message || 'Email provider rejected the request',
-        name: error.name,
-        statusCode: error.statusCode,
+      console.error('Resend error:', JSON.stringify(error))
+      return res.status(500).json({
+        error: 'Failed to send email'
       })
     }
 
     return res.status(200).json({
       success: true,
-      messageId: data?.id,
+      messageId: data?.id
     })
-  } catch (err) {
-    console.error('Email send exception:', err)
+
+  } catch(err) {
+    console.error('Send email error:', err.message)
     return res.status(500).json({
-      error: err?.message || 'Unknown server error',
+      error: 'Failed to send email'
     })
   }
 }

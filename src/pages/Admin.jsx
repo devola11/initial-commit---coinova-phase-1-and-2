@@ -832,7 +832,7 @@ Cointehera Support Team`,
           <div className="bg-card-bg border border-card-border rounded-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <div className="text-text-primary font-semibold text-lg">KYC Review</div>
-              <button onClick={() => { setKycReviewing(null); setShowKycReject(false); setKycRejectReason('') }} className="text-text-muted hover:text-white bg-transparent border-none cursor-pointer text-xl">&times;</button>
+              <button type="button" aria-label="Close" onClick={() => { setKycReviewing(null); setShowKycReject(false); setKycRejectReason('') }} className="text-text-muted hover:text-white bg-transparent border-none cursor-pointer text-xl">&times;</button>
             </div>
 
             {/* User details */}
@@ -1344,6 +1344,8 @@ function TicketDetailModal({ ticket, onClose, onSave, saving }) {
             </div>
           </div>
           <button
+            type="button"
+            aria-label="Close"
             onClick={onClose}
             className="text-text-muted hover:text-white bg-transparent border-none cursor-pointer text-xl flex-shrink-0"
           >
@@ -1468,6 +1470,8 @@ function WithdrawalDetailModal({ withdrawal, onClose, onSave, saving }) {
             </div>
           </div>
           <button
+            type="button"
+            aria-label="Close"
             onClick={onClose}
             className="text-text-muted hover:text-white bg-transparent border-none cursor-pointer text-xl flex-shrink-0"
           >

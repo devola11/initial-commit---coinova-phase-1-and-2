@@ -179,6 +179,7 @@ export default function Register() {
             </p>
 
             <button
+              type="button"
               onClick={() => navigate('/login')}
               style={{
                 background: '#0052FF',
@@ -196,6 +197,7 @@ export default function Register() {
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 setShowSuccess(false)
                 setRegisteredEmail('')

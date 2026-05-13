@@ -3,19 +3,33 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    {
-      name: 'anthropic-key-reminder',
-      closeBundle() {
-        console.log('\n\x1b[33m' +
-          '╔══════════════════════════════════════════════════════════╗\n' +
-          '║  IMPORTANT: Add ANTHROPIC_API_KEY to Vercel             ║\n' +
-          '║  environment variables in your project settings         ║\n' +
-          '╚══════════════════════════════════════════════════════════╝' +
-          '\x1b[0m\n')
+  plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('node_modules/react-router') || id.includes('node_modules/react-router-dom')) {
+            return 'vendor-react'
+          }
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/scheduler/')) {
+            return 'vendor-react'
+          }
+          if (id.includes('node_modules/@supabase/')) {
+            return 'vendor-supabase'
+          }
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-') || id.includes('node_modules/victory-vendor')) {
+            return 'vendor-charts'
+          }
+          if (id.includes('node_modules/qrcode.react') || id.includes('node_modules/qrcode')) {
+            return 'vendor-qr'
+          }
+          if (id.includes('node_modules/otplib') || id.includes('node_modules/@otplib')) {
+            return 'vendor-otp'
+          }
+        }
       }
-    }
-  ],
+    },
+    chunkSizeWarningLimit: 600
+  }
 })

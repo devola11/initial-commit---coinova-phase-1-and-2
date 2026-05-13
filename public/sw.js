@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cointehera-v1'
+const CACHE_NAME = 'cointehera-v2'
 const STATIC_ASSETS = [
   '/',
   '/index.html',

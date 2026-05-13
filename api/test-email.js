@@ -1,7 +1,16 @@
 import { Resend } from 'resend'
 
+const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Headers',
+    'Content-Type, x-internal-secret')
+
+  const secret = req.headers['x-internal-secret']
+  if (!INTERNAL_SECRET || secret !== INTERNAL_SECRET) {
+    return res.status(403).json({ error: 'Forbidden' })
+  }
 
   const apiKey = process.env.RESEND_API_KEY
   const verified = process.env.RESEND_DOMAIN_VERIFIED === 'true'

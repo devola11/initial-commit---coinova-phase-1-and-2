@@ -148,10 +148,10 @@ ${formData.message}`,
               description="Reach our team directly for any issue"
             >
               <a
-                href="mailto:coinovasupport@gmail.com"
+                href="mailto:info@cointehera.com"
                 className="text-[#0052FF] text-sm font-medium no-underline hover:underline"
               >
-                coinovasupport@gmail.com
+                info@cointehera.com
               </a>
               <p className="text-gray-400 text-xs mt-2">Response time: Within 24 hours</p>
             </InfoCard>

@@ -78,7 +78,7 @@ export default async function handler(req, res) {
       to: [to],
       subject: subject,
       html: html,
-      reply_to: 'coinovasupport@gmail.com'
+      reply_to: 'info@cointehera.com'
     })
 
     if (error) {

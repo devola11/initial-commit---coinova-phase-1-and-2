@@ -382,7 +382,7 @@ ${adminResponse}
 Reply to this email if you need more help.
 
 Cointehera Support Team`,
-              replyto: 'coinovasupport@gmail.com',
+              replyto: 'info@cointehera.com',
             }),
           })
         } catch (mailErr) {

@@ -33,7 +33,7 @@ ${body}
 
     <p style="color: #8A919E; font-size: 13px; margin-top: 32px;">
       Questions? Contact us at
-      <a href="mailto:coinovasupport@gmail.com" style="color: #4a9aff;">coinovasupport@gmail.com</a>
+      <a href="mailto:info@cointehera.com" style="color: #4a9aff;">info@cointehera.com</a>
     </p>
   </div>
 
@@ -109,7 +109,7 @@ If this was NOT you:
 
 Time: ${new Date().toLocaleString()}
 
-If you did not make this change, contact us immediately at coinovasupport@gmail.com`,
+If you did not make this change, contact us immediately at info@cointehera.com`,
       }),
     },
     twofa_enabled: {
@@ -168,7 +168,7 @@ Reason: ${details.reason || 'Please contact support'}
 
 Your funds have been returned to your Cointehera wallet.
 
-Contact coinovasupport@gmail.com for more information.`,
+Contact info@cointehera.com for more information.`,
       }),
     },
   }
